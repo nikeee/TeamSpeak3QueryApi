@@ -361,10 +361,27 @@ namespace CsTs
 
         public Parameter(string name, IParameterValue value, bool overloadFix)
         {
-            if(string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name");
             Name = name;
             Value = value;
+        }
+
+        public static implicit operator Parameter(string[] fromArray)
+        {
+            Debug.Assert(fromArray != null);
+
+            if(fromArray.Length == 0)
+                throw new ArgumentException("Invalid parameters");
+
+            var name = fromArray[0];
+            if(fromArray.Length == 2)
+                return new Parameter(name, new ParameterValue(fromArray[1]));
+
+            var values = new ParameterValue[fromArray.Length - 1];
+            for (int i = 1; i < fromArray.Length; ++i)
+                values[i - 1] = new ParameterValue(fromArray[i]);
+            return new Parameter(name, new ParameterValueArray(values));
         }
     }
 
