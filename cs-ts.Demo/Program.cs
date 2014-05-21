@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Text;
 
 namespace CsTs.Demo
@@ -31,10 +32,17 @@ namespace CsTs.Demo
             await cl.Send("use", new[] { "sid", "1" }); //await cl.Send("use", new Parameter("sid", 1));
             await cl.Send("whoami");
 
-            cl.Subscribe("message", data => { });
-            cl.Unsubscribe("message");
+            await cl.Send("servernotifyregister", new[] { "event", "channel" }, new[] { "id", "24" });
 
-            cl.Disconnect();
+            cl.Subscribe("clientmoved", data =>
+                                        {
+                                            Console.WriteLine("Some client moved!");
+                                            cl.Unsubscribe("clientmoved");
+                                            cl.Send("servernotifyunregister", new[] { "event", "channel" }, new[] { "id", "24" });
+                                        });
+            // cl.Unsubscribe("message");
+
+            //cl.Disconnect();
 
             Console.WriteLine("Done1");
         }

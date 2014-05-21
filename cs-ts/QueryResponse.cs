@@ -6,8 +6,4 @@ namespace CsTs
     {
 
     }
-    public class NotificationData : QueryResponse
-    {
-        // TODO?
-    }
 }

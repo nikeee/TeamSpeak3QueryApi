@@ -30,7 +30,6 @@ namespace CsTs
         public TeamSpeakClient(string hostName)
             : this(hostName, DefaultPort)
         { }
-
         public TeamSpeakClient(string hostName, short port)
         {
             if (string.IsNullOrWhiteSpace(hostName))
@@ -57,6 +56,7 @@ namespace CsTs
             await _reader.ReadLineAsync(); // Ignore welcome message
             await _reader.ReadLineAsync();
 
+            _cancelTask = false;
             ResponseProcessingLoop();
         }
 
@@ -107,9 +107,9 @@ namespace CsTs
             return await d.Task;
         }
 
-        private readonly ConcurrentDictionary<string, List<Action<NotificationData[]>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData[]>>>();
+        private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
 
-        public void Subscribe(string notificationName, Action<NotificationData[]> callback)
+        public void Subscribe(string notificationName, Action<NotificationData> callback)
         {
             if (callback == null)
                 throw new ArgumentNullException();
@@ -123,7 +123,7 @@ namespace CsTs
             }
             else
             {
-                _subscriptions[notificationName] = new List<Action<NotificationData[]>>() { callback };
+                _subscriptions[notificationName] = new List<Action<NotificationData>>() { callback };
             }
         }
         public void Unsubscribe(string notificationName)
@@ -136,10 +136,10 @@ namespace CsTs
                 return;
             _subscriptions[notificationName].Clear();
             _subscriptions[notificationName] = null;
-            List<Action<NotificationData[]>> dummy;
+            List<Action<NotificationData>> dummy;
             _subscriptions.TryRemove(notificationName, out dummy);
         }
-        public void Unsubscribe(string notificationName, Action<NotificationData[]> callback)
+        public void Unsubscribe(string notificationName, Action<NotificationData> callback)
         {
             if (callback == null)
                 throw new ArgumentNullException();
@@ -238,9 +238,9 @@ namespace CsTs
 
             var payload = notificationString.Substring(notificationName.Length + 1);
 
-            var data = ParseResponse(payload) as NotificationData[]; // Not tested
-
-            return new QueryNotification(notificationName, data);
+            var qRes = ParseResponse(payload); // Not tested
+            var notData = new NotificationData(qRes);
+            return new QueryNotification(notificationName, notData);
         }
 
         private void InvokeResponse(QueryCommand forCommand)
@@ -263,7 +263,7 @@ namespace CsTs
         {
             Debug.Assert(notification != null);
             Debug.Assert(notification.Name != null);
-            Debug.Assert(string.IsNullOrWhiteSpace(notification.Name));
+            Debug.Assert(!string.IsNullOrWhiteSpace(notification.Name));
 
             if (_subscriptions.Count == 0)
                 return; // going short here
@@ -306,8 +306,7 @@ namespace CsTs
                     }
                     else
                     {
-                        if (_currentCommand == null)
-                            throw new DivideByZeroException("wut");
+                        Debug.Assert(_currentCommand != null);
                         if (string.IsNullOrWhiteSpace(s))
                         {
                             _currentCommand.RawResponse = "";
