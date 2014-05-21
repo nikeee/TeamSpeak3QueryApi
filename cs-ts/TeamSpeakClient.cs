@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -106,6 +107,55 @@ namespace CsTs
             return await d.Task;
         }
 
+        private ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
+
+        public void Subscribe(string notificationName, Action<NotificationData> callback)
+        {
+            if (callback == null)
+                throw new ArgumentNullException();
+            if (string.IsNullOrWhiteSpace(notificationName))
+                throw new ArgumentNullException("notificationName");
+            notificationName = NormalizeNotificationName(notificationName);
+
+            if (_subscriptions.ContainsKey(notificationName))
+            {
+                _subscriptions[notificationName].Add(callback);
+            }
+            else
+            {
+                _subscriptions[notificationName] = new List<Action<NotificationData>>() { callback };
+            }
+        }
+        public void Unsubscribe(string notificationName)
+        {
+            if (string.IsNullOrWhiteSpace(notificationName))
+                throw new ArgumentNullException("notificationName");
+            notificationName = NormalizeNotificationName(notificationName);
+
+            if (!_subscriptions.ContainsKey(notificationName))
+                return;
+            _subscriptions[notificationName].Clear();
+            _subscriptions[notificationName] = null;
+            List<Action<NotificationData>> dummy;
+            _subscriptions.TryRemove(notificationName, out dummy);
+        }
+        public void Unsubscribe(string notificationName, Action<NotificationData> callback)
+        {
+            if (callback == null)
+                throw new ArgumentNullException();
+            if (string.IsNullOrWhiteSpace(notificationName))
+                throw new ArgumentNullException("notificationName");
+            notificationName = NormalizeNotificationName(notificationName);
+
+            if (!_subscriptions.ContainsKey(notificationName))
+                return;
+            _subscriptions[notificationName].Remove(callback);
+        }
+        private static string NormalizeNotificationName(string name)
+        {
+            return name.Trim().ToUpperInvariant();
+        }
+
         private QueryResponse[] ParseResponse(string rawResponse)
         {
             var records = rawResponse.Split('|');
@@ -181,6 +231,7 @@ namespace CsTs
 
         private QueryNotification ParseNotification(string notificationString)
         {
+            var r = ParseResponse(notificationString);
             throw new NotImplementedException();
         }
 
@@ -202,7 +253,21 @@ namespace CsTs
 
         private void InvokeNotification(QueryNotification notification)
         {
-            // TODO
+            Debug.Assert(notification != null);
+            Debug.Assert(notification.Name != null);
+            Debug.Assert(string.IsNullOrWhiteSpace(notification.Name));
+
+            var notName = NormalizeNotificationName(notification.Name);
+            if (_subscriptions.ContainsKey(notName))
+            {
+                var cbs = _subscriptions[notName];
+                for (int i = 0; i < cbs.Count; ++i)
+                {
+                    var cb = cbs[i];
+                    if (cb != null)
+                        cb(notification.Data);
+                }
+            }
         }
 
         private Task ResponseProcessingLoop()
@@ -225,6 +290,7 @@ namespace CsTs
                     }
                     else if (s.StartsWith("notify", StringComparison.InvariantCultureIgnoreCase))
                     {
+                        s = s.Remove(0, "notify".Length);
                         var not = ParseNotification(s);
                         InvokeNotification(not);
                     }
@@ -377,11 +443,11 @@ namespace CsTs
         {
             Debug.Assert(fromArray != null);
 
-            if(fromArray.Length == 0)
+            if (fromArray.Length == 0)
                 throw new ArgumentException("Invalid parameters");
 
             var name = fromArray[0];
-            if(fromArray.Length == 2)
+            if (fromArray.Length == 2)
                 return new Parameter(name, new ParameterValue(fromArray[1]));
 
             var values = new ParameterValue[fromArray.Length - 1];
@@ -391,6 +457,7 @@ namespace CsTs
         }
     }
 
+
     public class QueryError
     {
         public int Id { get; internal set; }
@@ -398,9 +465,16 @@ namespace CsTs
         public int FailedPermissionId { get; internal set; }
     }
 
-    public class QueryNotification
+    internal class QueryNotification
     {
-
+        public string Name { get; set; }
+        public NotificationData Data { get; set; }
+        public QueryNotification(string name, NotificationData data)
+        {
+            Debug.Assert(name != null);
+            Name = name;
+            Data = data;
+        }
     }
 
     class QueryCommand
@@ -428,5 +502,10 @@ namespace CsTs
     public class QueryResponse : Dictionary<string, object>
     {
 
+    }
+
+    public class NotificationData : QueryResponse
+    {
+        // TODO?
     }
 }

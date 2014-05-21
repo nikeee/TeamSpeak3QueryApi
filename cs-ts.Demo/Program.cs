@@ -25,6 +25,9 @@ namespace CsTs.Demo
             await cl.Send("use", new[] { "sid", "1" });
             await cl.Send("whoami");
 
+            cl.Subscribe("message", data => { });
+            cl.Unsubscribe("message");
+
             cl.Disconnect();
 
             Console.WriteLine("Done1");
