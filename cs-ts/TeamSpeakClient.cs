@@ -298,6 +298,13 @@ namespace CsTs
         {
             return new ParameterArray(fromParameters);
         }
+
+        public override string ToString()
+        {
+            if (_arr == null)
+                return "Params: null";
+            return string.Concat("Param: [", string.Join(", ", _arr.Select(s => s.ToString())), "]");
+        }
     }
 
     public class Parameter : IParameterValue
@@ -328,6 +335,11 @@ namespace CsTs
         public static explicit operator Parameter(string fromParameter)
         {
             return new Parameter(fromParameter);
+        }
+
+        public override string ToString()
+        {
+            return string.Concat("Param: ", Value ?? "null");
         }
     }
 
