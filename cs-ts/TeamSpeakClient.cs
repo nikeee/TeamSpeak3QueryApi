@@ -107,9 +107,9 @@ namespace CsTs
             return await d.Task;
         }
 
-        private ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
+        private readonly ConcurrentDictionary<string, List<Action<NotificationData[]>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData[]>>>();
 
-        public void Subscribe(string notificationName, Action<NotificationData> callback)
+        public void Subscribe(string notificationName, Action<NotificationData[]> callback)
         {
             if (callback == null)
                 throw new ArgumentNullException();
@@ -123,7 +123,7 @@ namespace CsTs
             }
             else
             {
-                _subscriptions[notificationName] = new List<Action<NotificationData>>() { callback };
+                _subscriptions[notificationName] = new List<Action<NotificationData[]>>() { callback };
             }
         }
         public void Unsubscribe(string notificationName)
@@ -136,10 +136,10 @@ namespace CsTs
                 return;
             _subscriptions[notificationName].Clear();
             _subscriptions[notificationName] = null;
-            List<Action<NotificationData>> dummy;
+            List<Action<NotificationData[]>> dummy;
             _subscriptions.TryRemove(notificationName, out dummy);
         }
-        public void Unsubscribe(string notificationName, Action<NotificationData> callback)
+        public void Unsubscribe(string notificationName, Action<NotificationData[]> callback)
         {
             if (callback == null)
                 throw new ArgumentNullException();
@@ -159,7 +159,7 @@ namespace CsTs
         private QueryResponse[] ParseResponse(string rawResponse)
         {
             var records = rawResponse.Split('|');
-            var response = records.Select<string, QueryResponse>(s =>
+            var response = records.Select(s =>
             {
                 var args = s.Split(' ');
                 var r = new QueryResponse();
@@ -231,14 +231,14 @@ namespace CsTs
 
         private QueryNotification ParseNotification(string notificationString)
         {
-            Debug.Asser(!string.IsNullOrWhiteSpace(notificationString));
+            Debug.Assert(!string.IsNullOrWhiteSpace(notificationString));
 
             var notificationName = notificationString.Remove(notificationString.IndexOf(" "));
             Debug.Assert(!string.IsNullOrWhiteSpace(notificationName));
 
             var payload = notificationString.Substring(notificationName.Length + 1);
 
-            var data = ParseResponse(payload) as NotificationData; // Not tested
+            var data = ParseResponse(payload) as NotificationData[]; // Not tested
 
             return new QueryNotification(notificationName, data);
         }
@@ -479,8 +479,8 @@ namespace CsTs
     internal class QueryNotification
     {
         public string Name { get; set; }
-        public NotificationData Data { get; set; }
-        public QueryNotification(string name, NotificationData data)
+        public NotificationData[] Data { get; set; }
+        public QueryNotification(string name, NotificationData[] data)
         {
             Debug.Assert(name != null);
             Name = name;

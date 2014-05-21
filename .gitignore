@@ -96,3 +96,7 @@ Thumbs.db
 !build/4.0/*.dll
 
 .gitattributes
+
+*.sln.ide/
+
+logindata.secret

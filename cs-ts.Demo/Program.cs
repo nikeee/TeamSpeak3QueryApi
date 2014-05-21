@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -18,7 +19,12 @@ namespace CsTs.Demo
 
         static async void DoIt()
         {
-            var cl = new TeamSpeakClient("localhost", 9002);
+            var loginData = File.ReadAllLines("..\\..\\logindata.secret");
+            var host = loginData[0].Trim();
+            var user = loginData[1].Trim();
+            var password = loginData[2].Trim();
+
+            var cl = new TeamSpeakClient(host);
 
             await cl.Connect();
             //await cl.Send("use", new Parameter("sid", 1));
