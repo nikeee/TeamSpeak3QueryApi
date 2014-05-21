@@ -18,11 +18,11 @@ namespace CsTs
         public static readonly string DefaultHost = "localhost";
         public static readonly short DefaultPort = 10011;
 
-        private TcpClient _client;
+        private readonly TcpClient _client;
         private StreamReader _reader;
         private StreamWriter _writer;
         private NetworkStream _ns;
-        private volatile bool _cancelTask = false;
+        private volatile bool _cancelTask;
 
         public TeamSpeakClient()
             : this(DefaultHost, DefaultPort)
@@ -66,7 +66,7 @@ namespace CsTs
             _client.Close();
         }
 
-        private Queue<QueryCommand> _queue = new Queue<QueryCommand>();
+        private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
 
         public Task<QueryResponse[]> Send(string cmd)
         {
@@ -283,7 +283,6 @@ namespace CsTs
 
         private Task ResponseProcessingLoop()
         {
-            //TODO: Refactor to readline loop
             return Task.Run(async () =>
             {
                 while (!_cancelTask)
@@ -359,7 +358,7 @@ namespace CsTs
 
     public class ParameterValueArray : IParameterValue
     {
-        private ParameterValue[] _arr;
+        private readonly ParameterValue[] _arr;
 
         public ParameterValueArray()
             : this(null)
