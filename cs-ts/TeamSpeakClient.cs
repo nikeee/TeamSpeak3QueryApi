@@ -257,6 +257,9 @@ namespace CsTs
             Debug.Assert(notification.Name != null);
             Debug.Assert(string.IsNullOrWhiteSpace(notification.Name));
 
+            if (_subscriptions.Count == 0)
+                return; // going short here
+
             var notName = NormalizeNotificationName(notification.Name);
             if (_subscriptions.ContainsKey(notName))
             {
