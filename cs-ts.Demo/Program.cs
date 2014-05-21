@@ -20,12 +20,10 @@ namespace CsTs.Demo
         {
             var cl = new TeamSpeakClient("localhost", 9002);
             await cl.Connect();
-            var dict = new Dictionary<string, IParameterValue>();
-            dict.Add("sid", (Parameter)"1");
-            await cl.Send("use", dict);
+            await cl.Send("use", new Parameter("sid", 1));
             await cl.Send("whoami");
-            await cl.Send("login");
-
+            Console.WriteLine("Done1");
+            // await cl.Send("login");
         }
     }
 }

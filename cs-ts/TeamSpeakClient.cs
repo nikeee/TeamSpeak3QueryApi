@@ -65,17 +65,17 @@ namespace CsTs
         {
             return Send(cmd, null);
         }
-        public Task<QueryResponse[]> Send(string cmd, Dictionary<string, IParameterValue> parameters)
+        public Task<QueryResponse[]> Send(string cmd, params Parameter[] parameters)
         {
             return Send(cmd, parameters, null);
         }
-        public async Task<QueryResponse[]> Send(string cmd, Dictionary<string, IParameterValue> parameters, string[] options)
+        public async Task<QueryResponse[]> Send(string cmd, Parameter[] parameters, string[] options)
         {
             if (string.IsNullOrWhiteSpace(cmd))
                 throw new ArgumentNullException("cmd"); //return Task.Run( () => throw new ArgumentNullException("cmd"));
 
             options = options ?? new string[0];
-            parameters = parameters ?? new Dictionary<string, IParameterValue>();
+            parameters = parameters ?? new Parameter[0];
 
             var toSend = new StringBuilder(cmd.TeamSpeakEscape());
             for (int i = 0; i < options.Length; ++i)
@@ -84,7 +84,7 @@ namespace CsTs
             foreach (var p in parameters)
             {
                 toSend.Append(' ')
-                    .Append(p.Key.TeamSpeakEscape())
+                    .Append(p.Name.TeamSpeakEscape())
                     .Append('=')
                     .Append(p.Value.GetParameterLine());
             }
@@ -274,14 +274,14 @@ namespace CsTs
         string GetParameterLine();
     }
 
-    public class ParameterArray : IParameterValue
+    public class ParameterValueArray : IParameterValue
     {
-        private Parameter[] _arr;
+        private ParameterValue[] _arr;
 
-        public ParameterArray()
+        public ParameterValueArray()
             : this(null)
         { }
-        public ParameterArray(Parameter[] arr)
+        public ParameterValueArray(ParameterValue[] arr)
         {
             _arr = arr;
         }
@@ -294,9 +294,9 @@ namespace CsTs
             return string.Join("|", strs);
         }
 
-        public static implicit operator ParameterArray(Parameter[] fromParameters)
+        public static implicit operator ParameterValueArray(ParameterValue[] fromParameters)
         {
-            return new ParameterArray(fromParameters);
+            return new ParameterValueArray(fromParameters);
         }
 
         public override string ToString()
@@ -307,16 +307,16 @@ namespace CsTs
         }
     }
 
-    public class Parameter : IParameterValue
+    public class ParameterValue : IParameterValue
     {
         //public string Key { get; set; }
         public string Value { get; set; }
 
-        public Parameter()
+        public ParameterValue()
             : this(null)
         { }
 
-        public Parameter(string value)
+        public ParameterValue(string value)
         {
             Value = value;
         }
@@ -332,14 +332,39 @@ namespace CsTs
         //{
         //    return new Parameter(fromParameter);
         //}
-        public static explicit operator Parameter(string fromParameter)
+        public static implicit operator ParameterValue(string fromParameter)
         {
-            return new Parameter(fromParameter);
+            return new ParameterValue(fromParameter);
+        }
+        public static implicit operator ParameterValue(int fromParameter)
+        {
+            return new ParameterValue(fromParameter.ToString());
         }
 
         public override string ToString()
         {
             return string.Concat("Param: ", Value ?? "null");
+        }
+    }
+
+    public class Parameter
+    {
+        public string Name { get; set; }
+        public IParameterValue Value { get; set; }
+
+        public Parameter(string name, ParameterValue value)
+            : this(name, value, true)
+        { }
+        public Parameter(string name, ParameterValueArray values)
+            : this(name, values, true)
+        { }
+
+        public Parameter(string name, IParameterValue value, bool overloadFix)
+        {
+            if(string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("name");
+            Name = name;
+            Value = value;
         }
     }
 
@@ -359,7 +384,7 @@ namespace CsTs
     {
         public string Command { get; private set; }
         public string[] Options { get; private set; }
-        public Dictionary<string, IParameterValue> Parameters { get; private set; }
+        public Parameter[] Parameters { get; private set; }
         public string SentText { get; private set; }
         public TaskCompletionSource<QueryResponse[]> Defer { get; private set; }
 
@@ -367,7 +392,7 @@ namespace CsTs
         public QueryResponse[] Response { get; set; }
         public QueryError Error { get; set; }
 
-        public QueryCommand(string cmd, Dictionary<string, IParameterValue> parameters, string[] options, TaskCompletionSource<QueryResponse[]> defer, string sentText)
+        public QueryCommand(string cmd, Parameter[] parameters, string[] options, TaskCompletionSource<QueryResponse[]> defer, string sentText)
         {
             Command = cmd;
             Parameters = parameters;
