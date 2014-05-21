@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -49,22 +50,32 @@ namespace CsTs
 
             _ns = _client.GetStream();
             _reader = new StreamReader(_ns);
-            _writer = new StreamWriter(_ns);
+            _writer = new StreamWriter(_ns) { NewLine = "\n" };
 
             await _reader.ReadLineAsync();
             await _reader.ReadLineAsync(); // Ignore welcome message
             await _reader.ReadLineAsync();
+
+            ResponseProcessingLoop();
         }
 
         private Queue<QueryCommand> _queue = new Queue<QueryCommand>();
 
-        public async Task<QueryResponse> Send(string cmd, Dictionary<string, ParameterValue> parameters, string[] options)
+        public Task<QueryResponse[]> Send(string cmd)
+        {
+            return Send(cmd, null);
+        }
+        public Task<QueryResponse[]> Send(string cmd, Dictionary<string, IParameterValue> parameters)
+        {
+            return Send(cmd, parameters, null);
+        }
+        public async Task<QueryResponse[]> Send(string cmd, Dictionary<string, IParameterValue> parameters, string[] options)
         {
             if (string.IsNullOrWhiteSpace(cmd))
                 throw new ArgumentNullException("cmd"); //return Task.Run( () => throw new ArgumentNullException("cmd"));
 
             options = options ?? new string[0];
-            parameters = parameters ?? new Dictionary<string, ParameterValue>();
+            parameters = parameters ?? new Dictionary<string, IParameterValue>();
 
             var toSend = new StringBuilder(cmd.TeamSpeakEscape());
             for (int i = 0; i < options.Length; ++i)
@@ -78,7 +89,7 @@ namespace CsTs
                     .Append(p.Value.GetParameterLine());
             }
 
-            var d = new TaskCompletionSource<QueryResponse>();
+            var d = new TaskCompletionSource<QueryResponse[]>();
 
             var newItem = new QueryCommand(cmd, parameters, options, d, toSend.ToString());
 
@@ -111,13 +122,15 @@ namespace CsTs
                         else
                             r[key] = value;
                     }
-                    r[arg] = "";
+                    else
+                    {
+                        r[arg] = null;
+                    }
                 }
                 return r;
             });
 
-            var enumeratedResponse = response.ToArray();
-            return enumeratedResponse;
+            return response.ToArray();
         }
         private QueryError ParseError(string errorString)
         {
@@ -148,7 +161,7 @@ namespace CsTs
                         parsedError.Id = errData.Length > 1 ? int.Parse(errData[1]) : -1;
                         continue;
                     case "MSG":
-                        parsedError.Message = errData.Length > 1 ? errData[1].TeamSpeakUnescape() : "";
+                        parsedError.Message = errData.Length > 1 ? errData[1].TeamSpeakUnescape() : null;
                         continue;
                     case "FAILED_PERMID":
                         parsedError.FailedPermissionId = errData.Length > 1 ? int.Parse(errData[1]) : -1;
@@ -167,58 +180,77 @@ namespace CsTs
 
         private void InvokeResponse(QueryCommand forCommand)
         {
+            Debug.Assert(forCommand != null);
+            Debug.Assert(forCommand.Defer != null);
+            Debug.Assert(forCommand.Error != null);
 
+            if (forCommand.Error.Id != 0)
+            {
+                forCommand.Defer.TrySetException(new QueryException(forCommand.Error));
+            }
+            else
+            {
+                forCommand.Defer.TrySetResult(forCommand.Response);
+            }
         }
 
         private void InvokeNotification(QueryNotification notification)
         {
-
+            // TODO
         }
 
-        private async Task CheckResponse()
+        private Task ResponseProcessingLoop()
         {
             //TODO: Refactor to readline loop
-
-            while (!_cancelTask)
+            return Task.Run(async () =>
             {
-                var line = await _reader.ReadLineAsync();
-                var s = line.Trim();
-                if (s.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
+                while (!_cancelTask)
                 {
-                    if (_currentCommand == null)
-                        throw new DivideByZeroException("wut1");
-                    var error = ParseError(s);
-                    _currentCommand.Error = error;
-                    InvokeResponse(_currentCommand);
-                    continue;
-                }
-                else if (s.StartsWith("notify", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    var not = ParseNotification(s);
-                    InvokeNotification(not);
-                    continue;
-                }
-                else
-                {
-                    if (_currentCommand == null)
-                        throw new DivideByZeroException("wut");
+                    var line = await _reader.ReadLineAsync();
+                    Trace.WriteLine(line);
+                    var s = line.Trim();
+                    if (s.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        Debug.Assert(_currentCommand != null);
 
-                    _currentCommand.RawResponse = s;
-                    _currentCommand.Response = ParseResponse(s);
-                    continue;
+                        var error = ParseError(s);
+                        _currentCommand.Error = error;
+                        InvokeResponse(_currentCommand);
+                    }
+                    else if (s.StartsWith("notify", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var not = ParseNotification(s);
+                        InvokeNotification(not);
+                    }
+                    else
+                    {
+                        if (_currentCommand == null)
+                            throw new DivideByZeroException("wut");
+                        if (string.IsNullOrWhiteSpace(s))
+                        {
+                            _currentCommand.RawResponse = "";
+                            _currentCommand.Response = new QueryResponse[0];
+                        }
+                        else
+                        {
+                            _currentCommand.RawResponse = s;
+                            _currentCommand.Response = ParseResponse(s);
+                        }
+                    }
                 }
-            }
+            });
         }
 
         private QueryCommand _currentCommand;
-        private Task CheckQueue()
+        private async Task CheckQueue()
         {
             if (_queue.Count > 0)
             {
                 _currentCommand = _queue.Dequeue();
-                return _writer.WriteLineAsync(_currentCommand.SentText);
+                Trace.WriteLine(_currentCommand.SentText);
+                await _writer.WriteLineAsync(_currentCommand.SentText);
+                await _writer.FlushAsync();
             }
-            return null;
         }
     }
 
@@ -237,14 +269,22 @@ namespace CsTs
 
     }
 
-    public interface ParameterValue
+    public interface IParameterValue
     {
         string GetParameterLine();
     }
 
-    public class ParameterArray : ParameterValue
+    public class ParameterArray : IParameterValue
     {
         private Parameter[] _arr;
+
+        public ParameterArray()
+            : this(null)
+        { }
+        public ParameterArray(Parameter[] arr)
+        {
+            _arr = arr;
+        }
 
         public string GetParameterLine()
         {
@@ -253,12 +293,26 @@ namespace CsTs
             var strs = _arr.Select(kv => kv.GetParameterLine());
             return string.Join("|", strs);
         }
+
+        public static implicit operator ParameterArray(Parameter[] fromParameters)
+        {
+            return new ParameterArray(fromParameters);
+        }
     }
 
-    public class Parameter : ParameterValue
+    public class Parameter : IParameterValue
     {
         //public string Key { get; set; }
         public string Value { get; set; }
+
+        public Parameter()
+            : this(null)
+        { }
+
+        public Parameter(string value)
+        {
+            Value = value;
+        }
 
         public string GetParameterLine()
         {
@@ -266,6 +320,14 @@ namespace CsTs
             var v = Value ?? "";
             //return k.TeamSpeakEscape() + "=" + v.TeamSpeakEscape();
             return v.TeamSpeakEscape();
+        }
+        //public static implicit operator Parameter(string fromParameter)
+        //{
+        //    return new Parameter(fromParameter);
+        //}
+        public static explicit operator Parameter(string fromParameter)
+        {
+            return new Parameter(fromParameter);
         }
     }
 
@@ -285,15 +347,15 @@ namespace CsTs
     {
         public string Command { get; private set; }
         public string[] Options { get; private set; }
-        public Dictionary<string, ParameterValue> Parameters { get; private set; }
+        public Dictionary<string, IParameterValue> Parameters { get; private set; }
         public string SentText { get; private set; }
-        public TaskCompletionSource<QueryResponse> Defer { get; private set; }
+        public TaskCompletionSource<QueryResponse[]> Defer { get; private set; }
 
         public string RawResponse { get; set; }
         public QueryResponse[] Response { get; set; }
         public QueryError Error { get; set; }
 
-        public QueryCommand(string cmd, Dictionary<string, ParameterValue> parameters, string[] options, TaskCompletionSource<QueryResponse> defer, string sentText)
+        public QueryCommand(string cmd, Dictionary<string, IParameterValue> parameters, string[] options, TaskCompletionSource<QueryResponse[]> defer, string sentText)
         {
             Command = cmd;
             Parameters = parameters;
