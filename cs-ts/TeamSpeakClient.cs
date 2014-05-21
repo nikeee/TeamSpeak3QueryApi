@@ -231,8 +231,16 @@ namespace CsTs
 
         private QueryNotification ParseNotification(string notificationString)
         {
-            var r = ParseResponse(notificationString);
-            throw new NotImplementedException();
+            Debug.Asser(!string.IsNullOrWhiteSpace(notificationString));
+
+            var notificationName = notificationString.Remove(notificationString.IndexOf(" "));
+            Debug.Assert(!string.IsNullOrWhiteSpace(notificationName));
+
+            var payload = notificationString.Substring(notificationName.Length + 1);
+
+            var data = ParseResponse(payload) as NotificationData; // Not tested
+
+            return new QueryNotification(notificationName, data);
         }
 
         private void InvokeResponse(QueryCommand forCommand)
