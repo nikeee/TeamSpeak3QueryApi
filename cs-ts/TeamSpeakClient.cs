@@ -435,13 +435,13 @@ namespace CsTs
         public IParameterValue Value { get; set; }
 
         public Parameter(string name, ParameterValue value)
-            : this(name, value, true)
+            : this(name, value as IParameterValue)
         { }
         public Parameter(string name, ParameterValueArray values)
-            : this(name, values, true)
+            : this(name, values as IParameterValue)
         { }
 
-        public Parameter(string name, IParameterValue value, bool overloadFix)
+        public Parameter(string name, IParameterValue value)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name");
