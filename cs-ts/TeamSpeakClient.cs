@@ -59,6 +59,12 @@ namespace CsTs
             ResponseProcessingLoop();
         }
 
+        public void Disconnect()
+        {
+            _cancelTask = true;
+            _client.Close();
+        }
+
         private Queue<QueryCommand> _queue = new Queue<QueryCommand>();
 
         public Task<QueryResponse[]> Send(string cmd)
