@@ -20,6 +20,7 @@ namespace CsTs
         private StreamReader _reader;
         private StreamWriter _writer;
         private NetworkStream _ns;
+        private volatile bool _cancelTask = false;
 
         public TeamSpeakClient()
             : this(DefaultHost, DefaultPort)
@@ -56,7 +57,6 @@ namespace CsTs
         }
 
         private Queue<QueryCommand> _queue = new Queue<QueryCommand>();
-        private QueryCommand _currentCommand;
 
         public async Task<QueryResponse> Send(string cmd, Dictionary<string, ParameterValue> parameters, string[] options)
         {
@@ -119,78 +119,98 @@ namespace CsTs
             var enumeratedResponse = response.ToArray();
             return enumeratedResponse;
         }
+        private QueryError ParseError(string errorString)
+        {
+            // Ex:
+            // error id=2568 msg=insufficient\sclient\spermissions failed_permid=27
+            if (errorString == null)
+                throw new ArgumentNullException("errorString");
+            errorString = errorString.Remove(0, "error ".Length);
+
+            var errParams = errorString.Split(' ');
+            /*
+             id=2568
+             msg=insufficient\sclient\spermissions
+             failed_permid=27
+            */
+            var parsedError = new QueryError() { FailedPermissionId = -1 };
+            for (int i = 0; i < errParams.Length; ++i)
+            {
+                var errData = errParams[i].Split('=');
+                /*
+                 id
+                 2568
+                */
+                string fieldName = errData[0].ToUpperInvariant();
+                switch (fieldName)
+                {
+                    case "ID":
+                        parsedError.Id = errData.Length > 1 ? int.Parse(errData[1]) : -1;
+                        continue;
+                    case "MSG":
+                        parsedError.Message = errData.Length > 1 ? errData[1].TeamSpeakUnescape() : "";
+                        continue;
+                    case "FAILED_PERMID":
+                        parsedError.FailedPermissionId = errData.Length > 1 ? int.Parse(errData[1]) : -1;
+                        continue;
+                    default:
+                        throw new TeamSpeakQueryProtocolException();
+                }
+            }
+            return parsedError;
+        }
+
+        private QueryNotification ParseNotification(string notificationString)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void InvokeResponse(QueryCommand forCommand)
+        {
+
+        }
+
+        private void InvokeNotification(QueryNotification notification)
+        {
+
+        }
 
         private async Task CheckResponse()
         {
             //TODO: Refactor to readline loop
 
-            /*
-            var line = await _reader.ReadLineAsync();
-
-            if (string.IsNullOrEmpty(line))
-                return;
-
-            var s = line.Trim();
-
-            QueryResponse[] responseItems;
-
-            if (s.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
+            while (!_cancelTask)
             {
-                responseItems = ParseResponse(s.Remove(0, "error".Length).Trim());
-
-                var firstRes = responseItems.First();
-
-                if (responseItems.Length > 1)
+                var line = await _reader.ReadLineAsync();
+                var s = line.Trim();
+                if (s.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var l = responseItems.ToList();
-                    l.Remove(firstRes);
-                    responseItems = l.ToArray();
+                    if (_currentCommand == null)
+                        throw new DivideByZeroException("wut1");
+                    var error = ParseError(s);
+                    _currentCommand.Error = error;
+                    InvokeResponse(_currentCommand);
+                    continue;
                 }
-
-                object errorId;
-                firstRes.TryGetValue("id", out errorId);
-
-                object errorMessage;
-                firstRes.TryGetValue("msg", out errorMessage);
-
-                //TODO: Permission
-
-                var currentError = new QueryError()
+                else if (s.StartsWith("notify", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Id = (int)errorId,
-                    Message = errorMessage as string
-                };
-
-                if (currentError.Id != 0)
-                    _currentCommand.Error = currentError;
+                    var not = ParseNotification(s);
+                    InvokeNotification(not);
+                    continue;
+                }
                 else
-                    _currentCommand.Error = null;
-
-                if (_currentCommand.Defer != null)
                 {
-                    if (_currentCommand.Error != null && _currentCommand.Error.Id != 0)
-                    {
-                        _currentCommand.Defer.SetException(new QueryException(_currentCommand.Error));
-                    }
-                    else
-                    {
-                        //_currentCommand.Defer.SetResult(responseItems);
-                    }
+                    if (_currentCommand == null)
+                        throw new DivideByZeroException("wut");
+
+                    _currentCommand.RawResponse = s;
+                    _currentCommand.Response = ParseResponse(s);
+                    continue;
                 }
             }
-            else if (s.StartsWith("notify", StringComparison.InvariantCultureIgnoreCase))
-            {
-                // TODO
-            }
-            else if (_currentCommand != null)
-            {
-                _currentCommand.RawResponse = s;
-                _currentCommand.Response = ParseResponse(s);
-            }
-
-            */
         }
 
+        private QueryCommand _currentCommand;
         private Task CheckQueue()
         {
             if (_queue.Count > 0)
@@ -210,6 +230,11 @@ namespace CsTs
         {
             Error = error;
         }
+    }
+
+    public class TeamSpeakQueryProtocolException : Exception
+    {
+
     }
 
     public interface ParameterValue
@@ -246,9 +271,14 @@ namespace CsTs
 
     public class QueryError
     {
-        public int Id { get; set; }
-        public string Message { get; set; }
-        public int MissingPermission { get; set; }
+        public int Id { get; internal set; }
+        public string Message { get; internal set; }
+        public int FailedPermissionId { get; internal set; }
+    }
+
+    public class QueryNotification
+    {
+
     }
 
     class QueryCommand
@@ -260,6 +290,7 @@ namespace CsTs
         public TaskCompletionSource<QueryResponse> Defer { get; private set; }
 
         public string RawResponse { get; set; }
+        public QueryResponse[] Response { get; set; }
         public QueryError Error { get; set; }
 
         public QueryCommand(string cmd, Dictionary<string, ParameterValue> parameters, string[] options, TaskCompletionSource<QueryResponse> defer, string sentText)
