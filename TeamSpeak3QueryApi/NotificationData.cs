@@ -1,11 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace TeamSpeak3QueryApi
 {
     public class NotificationData
     {
-        public ReadOnlyCollection<QueryResponseDictionary> Payload { get; private set; }
+        public IReadOnlyList<QueryResponseDictionary> Payload { get; private set; }
 
         internal NotificationData(QueryResponseDictionary[] queryResponseDictionary)
         {
