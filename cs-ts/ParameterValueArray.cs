@@ -4,21 +4,21 @@ namespace CsTs
 {
     public class ParameterValueArray : IParameterValue
     {
-        private readonly ParameterValue[] _arr;
+        private readonly ParameterValue[] _sourceArray;
 
         public ParameterValueArray()
             : this(null)
         { }
-        public ParameterValueArray(ParameterValue[] arr)
+        public ParameterValueArray(ParameterValue[] sourceArray)
         {
-            _arr = arr;
+            _sourceArray = sourceArray;
         }
 
         public string CreateParameterLine()
         {
-            if (_arr == null)
+            if (_sourceArray == null)
                 return string.Empty;
-            var strs = _arr.Select(kv => kv.CreateParameterLine());
+            var strs = _sourceArray.Select(kv => kv.CreateParameterLine());
             return string.Join("|", strs);
         }
 
@@ -29,9 +29,9 @@ namespace CsTs
 
         public override string ToString()
         {
-            if (_arr == null)
+            if (_sourceArray == null)
                 return "Params: null";
-            return string.Concat("Param: [", string.Join(", ", _arr.Select(s => s.ToString())), "]");
+            return string.Concat("Param: [", string.Join(", ", _sourceArray.Select(s => s.ToString())), "]");
         }
     }
 }

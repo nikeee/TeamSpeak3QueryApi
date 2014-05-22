@@ -5,12 +5,12 @@ namespace CsTs
 {
     public class NotificationData
     {
-        public ReadOnlyCollection<QueryResponse> Payload { get; private set; }
+        public ReadOnlyCollection<QueryResponseDictionary> Payload { get; private set; }
 
-        internal NotificationData(QueryResponse[] queryResponse)
+        internal NotificationData(QueryResponseDictionary[] queryResponseDictionary)
         {
-            Debug.Assert(queryResponse != null);
-            Payload = new ReadOnlyCollection<QueryResponse>(queryResponse);
+            Debug.Assert(queryResponseDictionary != null);
+            Payload = new ReadOnlyCollection<QueryResponseDictionary>(queryResponseDictionary);
         }
     }
 }

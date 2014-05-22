@@ -69,15 +69,15 @@ namespace CsTs
 
         private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
 
-        public Task<QueryResponse[]> Send(string cmd)
+        public Task<QueryResponseDictionary[]> Send(string cmd)
         {
             return Send(cmd, null);
         }
-        public Task<QueryResponse[]> Send(string cmd, params Parameter[] parameters)
+        public Task<QueryResponseDictionary[]> Send(string cmd, params Parameter[] parameters)
         {
             return Send(cmd, parameters, null);
         }
-        public async Task<QueryResponse[]> Send(string cmd, Parameter[] parameters, string[] options)
+        public async Task<QueryResponseDictionary[]> Send(string cmd, Parameter[] parameters, string[] options)
         {
             if (string.IsNullOrWhiteSpace(cmd))
                 throw new ArgumentNullException("cmd"); //return Task.Run( () => throw new ArgumentNullException("cmd"));
@@ -97,7 +97,7 @@ namespace CsTs
                     .Append(p.Value.CreateParameterLine());
             }
 
-            var d = new TaskCompletionSource<QueryResponse[]>();
+            var d = new TaskCompletionSource<QueryResponseDictionary[]>();
 
             var newItem = new QueryCommand(cmd, parameters, options, d, toSend.ToString());
 
@@ -157,13 +157,13 @@ namespace CsTs
             return name.Trim().ToUpperInvariant();
         }
 
-        private static QueryResponse[] ParseResponse(string rawResponse)
+        private static QueryResponseDictionary[] ParseResponse(string rawResponse)
         {
             var records = rawResponse.Split('|');
             var response = records.Select(s =>
             {
                 var args = s.Split(' ');
-                var r = new QueryResponse();
+                var r = new QueryResponseDictionary();
                 foreach (var arg in args)
                 {
                     if (arg.Contains('='))
@@ -260,7 +260,7 @@ namespace CsTs
             }
             else
             {
-                forCommand.Defer.TrySetResult(forCommand.Response);
+                forCommand.Defer.TrySetResult(forCommand.ResponseDictionary);
             }
         }
 
@@ -315,12 +315,12 @@ namespace CsTs
                         if (string.IsNullOrWhiteSpace(s))
                         {
                             _currentCommand.RawResponse = "";
-                            _currentCommand.Response = new QueryResponse[0];
+                            _currentCommand.ResponseDictionary = new QueryResponseDictionary[0];
                         }
                         else
                         {
                             _currentCommand.RawResponse = s;
-                            _currentCommand.Response = ParseResponse(s);
+                            _currentCommand.ResponseDictionary = ParseResponse(s);
                         }
                     }
                 }

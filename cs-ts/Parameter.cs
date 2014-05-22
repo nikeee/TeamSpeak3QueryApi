@@ -32,8 +32,8 @@ namespace CsTs
         {
             Debug.Assert(sourceArray != null);
 
-            if (sourceArray.Length == 0)
-                throw new ArgumentException("Invalid parameters");
+            if (sourceArray == null || sourceArray.Length == 0)
+                return null; //throw new ArgumentException("Invalid parameters");
 
             var name = sourceArray[0];
             if (sourceArray.Length == 2)
