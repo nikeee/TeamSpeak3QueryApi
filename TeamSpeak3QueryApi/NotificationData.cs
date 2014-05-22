@@ -4,8 +4,11 @@ using System.Diagnostics;
 
 namespace TeamSpeak3QueryApi
 {
+    /// <summary>Provides data that was retrieved by a notification.</summary>
     public class NotificationData
     {
+        /// <summary>The payload of the retrieved data.</summary>
+        /// <returns>The payload of the retrieved data.</returns>
         public IReadOnlyList<QueryResponseDictionary> Payload { get; private set; }
 
         internal NotificationData(QueryResponseDictionary[] queryResponseDictionary)
