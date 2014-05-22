@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("CsTs")]
@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]
+[assembly: CLSCompliant(true)]
 
 [assembly: Guid("88c8f775-505d-4912-87b8-93b71fdb8b28")]
 

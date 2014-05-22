@@ -23,20 +23,25 @@ namespace CsTs
             Value = value;
         }
 
-        public static implicit operator Parameter(string[] fromArray)
+        public static Parameter FromArray(string[] sourceArray)
         {
-            Debug.Assert(fromArray != null);
+            return sourceArray;
+        }
 
-            if (fromArray.Length == 0)
+        public static implicit operator Parameter(string[] sourceArray)
+        {
+            Debug.Assert(sourceArray != null);
+
+            if (sourceArray.Length == 0)
                 throw new ArgumentException("Invalid parameters");
 
-            var name = fromArray[0];
-            if (fromArray.Length == 2)
-                return new Parameter(name, new ParameterValue(fromArray[1]));
+            var name = sourceArray[0];
+            if (sourceArray.Length == 2)
+                return new Parameter(name, new ParameterValue(sourceArray[1]));
 
-            var values = new ParameterValue[fromArray.Length - 1];
-            for (int i = 1; i < fromArray.Length; ++i)
-                values[i - 1] = new ParameterValue(fromArray[i]);
+            var values = new ParameterValue[sourceArray.Length - 1];
+            for (int i = 1; i < sourceArray.Length; ++i)
+                values[i - 1] = new ParameterValue(sourceArray[i]);
             return new Parameter(name, new ParameterValueArray(values));
         }
     }

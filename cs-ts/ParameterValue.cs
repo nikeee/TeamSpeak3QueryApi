@@ -1,4 +1,6 @@
-﻿namespace CsTs
+﻿using System.Globalization;
+
+namespace CsTs
 {
     public class ParameterValue : IParameterValue
     {
@@ -31,7 +33,7 @@
         }
         public static implicit operator ParameterValue(int fromParameter)
         {
-            return new ParameterValue(fromParameter.ToString());
+            return new ParameterValue(fromParameter.ToString(CultureInfo.CurrentCulture));
         }
 
         public override string ToString()

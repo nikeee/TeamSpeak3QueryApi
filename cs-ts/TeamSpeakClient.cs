@@ -230,7 +230,7 @@ namespace CsTs
             return parsedError;
         }
 
-        private QueryNotification ParseNotification(string notificationString)
+        private static QueryNotification ParseNotification(string notificationString)
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(notificationString));
 
