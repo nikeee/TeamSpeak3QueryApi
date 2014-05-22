@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace CsTs
 {
@@ -11,6 +13,13 @@ namespace CsTs
             : base("An error occurred during the query.")
         {
             Error = error;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if(info != null)
+                info.AddValue("Error", Error);
+            base.GetObjectData(info, context);
         }
     }
 }

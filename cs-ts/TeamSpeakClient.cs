@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CsTs
 {
-    public class TeamSpeakClient
+    public class TeamSpeakClient : IDisposable
     {
         public string Host { get; private set; }
         public short Port { get; private set; }
@@ -61,11 +61,14 @@ namespace CsTs
             ResponseProcessingLoop();
         }
 
+        /*
+        // Using destructor/dispose instead
         public void Disconnect()
         {
             _cancelTask = true;
             _client.Close();
         }
+        */
 
         private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
 
@@ -338,5 +341,36 @@ namespace CsTs
                 await _writer.FlushAsync();
             }
         }
+
+#region IDisposable support
+
+        ~TeamSpeakClient()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                //TODO: Test this
+                if (_client != null)
+                    _client.Close();
+                if(_ns != null)
+                    _ns.Dispose();
+                if (_reader != null)
+                    _reader.Dispose();
+                if (_writer != null)
+                    _writer.Dispose();
+            }
+        }
+
+#endregion
     }
 }
