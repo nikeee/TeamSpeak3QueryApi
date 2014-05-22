@@ -11,12 +11,21 @@ using System.Threading.Tasks;
 
 namespace TeamSpeak3QueryApi
 {
+    /// <summary>Represents a client that can be used to access the TeamSpeak Query API on a remote server.</summary>
     public class TeamSpeakClient : IDisposable
     {
+        /// <summary>Gets the remote host of the Query API client.</summary>
+        /// <returns>The remote host of the Query API client.</returns>
         public string Host { get; private set; }
+
+        /// <summary>Gets the remote port of the Query API client.</summary>
+        /// <returns>The remote port of the Query API client.</returns>
         public short Port { get; private set; }
 
+        /// <summary>The default host which is used when no host is provided.</summary>
         public static readonly string DefaultHost = "localhost";
+
+        /// <summary>The default port which is used when no port is provided.</summary>
         public static readonly short DefaultPort = 10011;
 
         private readonly TcpClient _client;
@@ -25,12 +34,19 @@ namespace TeamSpeak3QueryApi
         private NetworkStream _ns;
         private volatile bool _cancelTask;
 
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.TeamSpeakClient"/> using the <see cref="TeamSpeakClient.DefaultHost"/> and <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
         public TeamSpeakClient()
             : this(DefaultHost, DefaultPort)
         { }
+
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.TeamSpeakClient"/> using the provided host and the <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
+        /// <param name="hostName">The host name of the remote server.</param>
         public TeamSpeakClient(string hostName)
             : this(hostName, DefaultPort)
         { }
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.TeamSpeakClient"/> using the provided host TCP port.</summary>
+        /// <param name="hostName">The host name of the remote server.</param>
+        /// <param name="port">The TCP port of the Query API server.</param>
         public TeamSpeakClient(string hostName, short port)
         {
             if (string.IsNullOrWhiteSpace(hostName))
@@ -43,6 +59,8 @@ namespace TeamSpeak3QueryApi
             _client = new TcpClient();
         }
 
+        /// <summary>Connects to the Query API server.</summary>
+        /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task Connect()
         {
             await _client.ConnectAsync(Host, Port);
@@ -72,14 +90,28 @@ namespace TeamSpeak3QueryApi
 
         private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
 
+        /// <summary>Sends a Query API command wihtout parameters to the server.</summary>
+        /// <param name="cmd">The command.</param>
+        /// <returns>An awaitable <see cref="Task{QueryResponseDictionary[]}"/>.</returns>
         public Task<QueryResponseDictionary[]> Send(string cmd)
         {
             return Send(cmd, null);
         }
+
+        /// <summary>Sends a Query API command with parameters to the server.</summary>
+        /// <param name="cmd">The command.</param>
+        /// <param name="parameters">The parameters of the command.</param>
+        /// <returns>An awaitable <see cref="Task{QueryResponseDictionary[]}"/>.</returns>
         public Task<QueryResponseDictionary[]> Send(string cmd, params Parameter[] parameters)
         {
             return Send(cmd, parameters, null);
         }
+
+        /// <summary>Sends a Query API command with parameters and options to the server.</summary>
+        /// <param name="cmd">The command.</param>
+        /// <param name="parameters">The parameters of the command.</param>
+        /// <param name="options">The options of the command.</param>
+        /// <returns>An awaitable <see cref="Task{QueryResponseDictionary[]}"/>.</returns>
         public async Task<QueryResponseDictionary[]> Send(string cmd, Parameter[] parameters, string[] options)
         {
             if (string.IsNullOrWhiteSpace(cmd))
@@ -113,6 +145,9 @@ namespace TeamSpeak3QueryApi
 
         private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
 
+        /// <summary>Subscribes to a notification. If the subscribed notification is received, the callback is getting executed.</summary>
+        /// <param name="notificationName">The name of the notification (without the "notify" prefix).</param>
+        /// <param name="callback">The callback to execute on occurrence.</param>
         public void Subscribe(string notificationName, Action<NotificationData> callback)
         {
             if (callback == null)
@@ -130,6 +165,9 @@ namespace TeamSpeak3QueryApi
                 _subscriptions[notificationName] = new List<Action<NotificationData>>() { callback };
             }
         }
+
+        /// <summary>Unsubscribes all callbacks of a notification.</summary>
+        /// <param name="notificationName">The name of the notification to unsubscribe (without the "notify" prefix).</param>
         public void Unsubscribe(string notificationName)
         {
             if (string.IsNullOrWhiteSpace(notificationName))
@@ -143,6 +181,10 @@ namespace TeamSpeak3QueryApi
             List<Action<NotificationData>> dummy;
             _subscriptions.TryRemove(notificationName, out dummy);
         }
+
+        /// <summary>Unsubscribe a callback of a notification.</summary>
+        /// <param name="notificationName">The name of the notification to unsubscribe (without the "notify" prefix).</param>
+        /// <param name="callback">The callback to unsubscribe.</param>
         public void Unsubscribe(string notificationName, Action<NotificationData> callback)
         {
             if (callback == null)
@@ -155,6 +197,7 @@ namespace TeamSpeak3QueryApi
                 return;
             _subscriptions[notificationName].Remove(callback);
         }
+
         private static string NormalizeNotificationName(string name)
         {
             return name.Trim().ToUpperInvariant();
@@ -344,17 +387,21 @@ namespace TeamSpeak3QueryApi
 
 #region IDisposable support
 
+        /// <summary>Finalizes the object.</summary>
         ~TeamSpeakClient()
         {
             Dispose(false);
         }
 
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        
+
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        /// <param name="disposing">A value indicating whether the object is disposing or finalizing.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
