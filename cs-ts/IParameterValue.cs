@@ -2,6 +2,6 @@
 {
     public interface IParameterValue
     {
-        string GetParameterLine();
+        string CreateParameterLine();
     }
 }

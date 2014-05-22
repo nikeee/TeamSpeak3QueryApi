@@ -1,15 +1,16 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace CsTs
 {
     public class NotificationData
     {
-        public QueryResponse[] Payload { get; private set; }
+        public ReadOnlyCollection<QueryResponse> Payload { get; private set; }
 
         internal NotificationData(QueryResponse[] queryResponse)
         {
             Debug.Assert(queryResponse != null);
-            Payload = queryResponse;
+            Payload = new ReadOnlyCollection<QueryResponse>(queryResponse);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -93,7 +94,7 @@ namespace CsTs
                 toSend.Append(' ')
                     .Append(p.Name.TeamSpeakEscape())
                     .Append('=')
-                    .Append(p.Value.GetParameterLine());
+                    .Append(p.Value.CreateParameterLine());
             }
 
             var d = new TaskCompletionSource<QueryResponse[]>();
@@ -112,7 +113,7 @@ namespace CsTs
         public void Subscribe(string notificationName, Action<NotificationData> callback)
         {
             if (callback == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("callback");
             if (string.IsNullOrWhiteSpace(notificationName))
                 throw new ArgumentNullException("notificationName");
             notificationName = NormalizeNotificationName(notificationName);
@@ -142,7 +143,7 @@ namespace CsTs
         public void Unsubscribe(string notificationName, Action<NotificationData> callback)
         {
             if (callback == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("callback");
             if (string.IsNullOrWhiteSpace(notificationName))
                 throw new ArgumentNullException("notificationName");
             notificationName = NormalizeNotificationName(notificationName);
@@ -156,7 +157,7 @@ namespace CsTs
             return name.Trim().ToUpperInvariant();
         }
 
-        private QueryResponse[] ParseResponse(string rawResponse)
+        private static QueryResponse[] ParseResponse(string rawResponse)
         {
             var records = rawResponse.Split('|');
             var response = records.Select(s =>
@@ -188,7 +189,7 @@ namespace CsTs
 
             return response.ToArray();
         }
-        private QueryError ParseError(string errorString)
+        private static QueryError ParseError(string errorString)
         {
             // Ex:
             // error id=2568 msg=insufficient\sclient\spermissions failed_permid=27
@@ -214,13 +215,13 @@ namespace CsTs
                 switch (fieldName)
                 {
                     case "ID":
-                        parsedError.Id = errData.Length > 1 ? int.Parse(errData[1]) : -1;
+                        parsedError.Id = errData.Length > 1 ? int.Parse(errData[1], NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CurrentCulture) : -1;
                         continue;
                     case "MSG":
                         parsedError.Message = errData.Length > 1 ? errData[1].TeamSpeakUnescape() : null;
                         continue;
                     case "FAILED_PERMID":
-                        parsedError.FailedPermissionId = errData.Length > 1 ? int.Parse(errData[1]) : -1;
+                        parsedError.FailedPermissionId = errData.Length > 1 ? int.Parse(errData[1], NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CurrentCulture) : -1;
                         continue;
                     default:
                         throw new TeamSpeakQueryProtocolException();
@@ -233,7 +234,11 @@ namespace CsTs
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(notificationString));
 
-            var notificationName = notificationString.Remove(notificationString.IndexOf(" "));
+            var index = notificationString.IndexOf(' ');
+
+            Debug.Assert(index > -1);
+
+            var notificationName = notificationString.Remove(index);
             Debug.Assert(!string.IsNullOrWhiteSpace(notificationName));
 
             var payload = notificationString.Substring(notificationName.Length + 1);
@@ -243,7 +248,7 @@ namespace CsTs
             return new QueryNotification(notificationName, notData);
         }
 
-        private void InvokeResponse(QueryCommand forCommand)
+        private static void InvokeResponse(QueryCommand forCommand)
         {
             Debug.Assert(forCommand != null);
             Debug.Assert(forCommand.Defer != null);

@@ -14,7 +14,7 @@
             Value = value;
         }
 
-        public string GetParameterLine()
+        public string CreateParameterLine()
         {
             //var k = Key ?? "";
             var v = Value ?? "";

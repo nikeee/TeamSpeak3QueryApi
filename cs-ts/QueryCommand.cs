@@ -2,7 +2,7 @@
 
 namespace CsTs
 {
-    class QueryCommand
+    internal class QueryCommand
     {
         public string Command { get; private set; }
         public string[] Options { get; private set; }

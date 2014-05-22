@@ -14,11 +14,11 @@ namespace CsTs
             _arr = arr;
         }
 
-        public string GetParameterLine()
+        public string CreateParameterLine()
         {
             if (_arr == null)
                 return string.Empty;
-            var strs = _arr.Select(kv => kv.GetParameterLine());
+            var strs = _arr.Select(kv => kv.CreateParameterLine());
             return string.Join("|", strs);
         }
 
