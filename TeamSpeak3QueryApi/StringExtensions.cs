@@ -3,9 +3,7 @@
     internal static class StringExtensions
     {
 
-        /// <summary>
-        /// Escapes a string so it can be safely used for querying the api.
-        /// </summary>
+        /// <summary>Escapes a string so it can be safely used for querying the api.</summary>
         /// <param name="s">The string to escape.</param>
         /// <returns>An escaped string.</returns>
         public static string TeamSpeakEscape(this string s)
@@ -24,9 +22,7 @@
             return s;
         }
 
-        /// <summary>
-        /// Unescapes a string so it can be used for processing the rawResponse of the api.
-        /// </summary>
+        /// <summary>Unescapes a string so it can be used for processing the rawResponse of the api.</summary>
         /// <param name="s">The string to unescape.</param>
         /// <returns>An unescaped string.</returns>
         public static string TeamSpeakUnescape(this string s)
@@ -43,7 +39,6 @@
             s = s.Replace("\\/", "/"); // Slash
             s = s.Replace("\\\\", "\\"); // Backslash
             return s;
-
         }
     }
 }
