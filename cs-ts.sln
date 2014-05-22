@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3QueryApi", "cs-ts\TeamSpeak3QueryApi.csproj", "{5E319CF3-6546-42B5-B9C2-E67D8E2C0D2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3QueryApi", "TeamSpeak3QueryApi\TeamSpeak3QueryApi.csproj", "{5E319CF3-6546-42B5-B9C2-E67D8E2C0D2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3QueryApi.Demo", "cs-ts.Demo\TeamSpeak3QueryApi.Demo.csproj", "{EC04B74D-A3B2-4494-960F-A2CB3DCD9811}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3QueryApi.Demo", "TeamSpeak3QueryApi.Demo\TeamSpeak3QueryApi.Demo.csproj", "{EC04B74D-A3B2-4494-960F-A2CB3DCD9811}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

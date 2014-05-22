@@ -7,8 +7,8 @@
     <ProjectGuid>{EC04B74D-A3B2-4494-960F-A2CB3DCD9811}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CsTs.Demo</RootNamespace>
-    <AssemblyName>CsTs.Demo</AssemblyName>
+    <RootNamespace>TeamSpeak3QueryApi.Demo</RootNamespace>
+    <AssemblyName>TeamSpeak3QueryApi.Demo</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

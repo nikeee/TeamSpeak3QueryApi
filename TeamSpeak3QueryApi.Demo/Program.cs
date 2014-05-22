@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.Remoting.Channels;
-using System.Text;
 
 namespace TeamSpeak3QueryApi.Demo
 {
