@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace CsTs
+namespace TeamSpeak3QueryApi
 {
     public class ParameterValue : IParameterValue
     {

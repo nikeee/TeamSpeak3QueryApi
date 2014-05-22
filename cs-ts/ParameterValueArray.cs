@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace CsTs
+namespace TeamSpeak3QueryApi
 {
     public class ParameterValueArray : IParameterValue
     {

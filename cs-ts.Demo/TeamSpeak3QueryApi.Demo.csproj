@@ -51,9 +51,9 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\cs-ts\cs-ts.csproj">
+    <ProjectReference Include="..\cs-ts\TeamSpeak3QueryApi.csproj">
       <Project>{5e319cf3-6546-42b5-b9c2-e67d8e2c0d2d}</Project>
-      <Name>cs-ts</Name>
+      <Name>TeamSpeak3QueryApi</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

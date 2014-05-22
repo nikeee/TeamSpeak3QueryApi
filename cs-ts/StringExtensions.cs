@@ -1,4 +1,4 @@
-﻿namespace CsTs
+﻿namespace TeamSpeak3QueryApi
 {
     internal static class StringExtensions
     {

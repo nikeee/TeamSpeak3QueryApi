@@ -9,7 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CsTs
+namespace TeamSpeak3QueryApi
 {
     public class TeamSpeakClient : IDisposable
     {

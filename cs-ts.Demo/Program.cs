@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.Remoting.Channels;
 using System.Text;
 
-namespace CsTs.Demo
+namespace TeamSpeak3QueryApi.Demo
 {
     class Program
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace CsTs
+namespace TeamSpeak3QueryApi
 {
     [Serializable]
     public class QueryResponseDictionary : Dictionary<string, object>

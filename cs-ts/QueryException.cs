@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
-namespace CsTs
+namespace TeamSpeak3QueryApi
 {
     [Serializable]
     public class QueryException : Exception
