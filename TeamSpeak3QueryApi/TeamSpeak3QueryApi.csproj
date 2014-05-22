@@ -39,6 +39,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IParameterValue.cs" />
     <Compile Include="NotificationData.cs" />
     <Compile Include="Parameter.cs" />
