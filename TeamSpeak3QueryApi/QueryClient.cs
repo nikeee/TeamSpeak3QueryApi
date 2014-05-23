@@ -36,6 +36,8 @@ namespace TeamSpeak3QueryApi.Net
         private NetworkStream _ns;
         private volatile bool _cancelTask;
 
+#region Ctors
+
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
         public QueryClient()
             : this(DefaultHost, DefaultPort)
@@ -61,6 +63,8 @@ namespace TeamSpeak3QueryApi.Net
             IsConnected = false;
             _client = new TcpClient();
         }
+
+#endregion
 
         /// <summary>Connects to the Query API server.</summary>
         /// <returns>An awaitable <see cref="Task"/>.</returns>
