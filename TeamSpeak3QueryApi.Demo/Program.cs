@@ -29,11 +29,11 @@ namespace TeamSpeak3QueryApi.Net.Demo
 
             await rc.Connect();
 
-            await cl.Send("login", new Parameter("client_login_name", user), new Parameter("client_login_password", password));
-            await cl.Send("use", new Parameter("sid", 1));
-            await cl.Send("whoami");
-            await cl.Send("servernotifyregister", new Parameter("event", "server"));//, new Parameter("id", "30"));
-            await cl.Send("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", "30"));
+            await rc.Client.Send("login", new Parameter("client_login_name", user), new Parameter("client_login_password", password));
+            await rc.Client.Send("use", new Parameter("sid", 1));
+            await rc.Client.Send("whoami");
+            await rc.Client.Send("servernotifyregister", new Parameter("event", "server"));//, new Parameter("id", "30"));
+            await rc.Client.Send("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", "30"));
             rc.Subscribe<ClientEnterView>(NotificationType.ClientEnterView, data =>
                                                                             {
                                                                                 foreach (var i in data)
