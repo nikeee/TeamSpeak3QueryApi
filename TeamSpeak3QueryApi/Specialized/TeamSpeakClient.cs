@@ -11,6 +11,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         private readonly QueryClient _client;
         public QueryClient Client { get { return _client; } }
 
+        private readonly List<Tuple<NotificationType, object, Action<NotificationData>>> _callbacks = new List<Tuple<NotificationType, object, Action<NotificationData>>>();
+
         #region Ctors
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
@@ -39,7 +41,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return _client.Connect();
         }
 
-        private readonly List<Tuple<NotificationType, object, Action<NotificationData>>> _callbacks = new List<Tuple<NotificationType, object, Action<NotificationData>>>();
+        #region Subscriptions
+
         public void Subscribe<T>(NotificationType notification, Action<IReadOnlyCollection<T>> callback)
             where T : Notify
         {
@@ -61,5 +64,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             if (cbt != null)
                 _client.Unsubscribe(notification.ToString(), cbt.Item3);
         }
+
+        #endregion
+
     }
 }
