@@ -22,7 +22,7 @@ namespace TeamSpeak3QueryApi.Net.Demo
             var user = loginData[1].Trim();
             var password = loginData[2].Trim();
 
-            using (var cl = new TeamSpeakClient(host))
+            using (var cl = new QueryClient(host))
             {
                 await cl.Connect();
                 await cl.Send("login", new Parameter("client_login_name", user), new Parameter("client_login_password", password));

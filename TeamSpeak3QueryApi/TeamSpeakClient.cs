@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace TeamSpeak3QueryApi.Net
 {
     /// <summary>Represents a client that can be used to access the TeamSpeak Query API on a remote server.</summary>
-    public class TeamSpeakClient : IDisposable
+    public class QueryClient : IDisposable
     {
         /// <summary>Gets the remote host of the Query API client.</summary>
         /// <returns>The remote host of the Query API client.</returns>
@@ -34,20 +34,20 @@ namespace TeamSpeak3QueryApi.Net
         private NetworkStream _ns;
         private volatile bool _cancelTask;
 
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.TeamSpeakClient"/> using the <see cref="TeamSpeakClient.DefaultHost"/> and <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
-        public TeamSpeakClient()
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
+        public QueryClient()
             : this(DefaultHost, DefaultPort)
         { }
 
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.TeamSpeakClient"/> using the provided host and the <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        public TeamSpeakClient(string hostName)
+        public QueryClient(string hostName)
             : this(hostName, DefaultPort)
         { }
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.TeamSpeakClient"/> using the provided host TCP port.</summary>
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, short port)
+        public QueryClient(string hostName, short port)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException("hostName");
@@ -388,7 +388,7 @@ namespace TeamSpeak3QueryApi.Net
 #region IDisposable support
 
         /// <summary>Finalizes the object.</summary>
-        ~TeamSpeakClient()
+        ~QueryClient()
         {
             Dispose(false);
         }
