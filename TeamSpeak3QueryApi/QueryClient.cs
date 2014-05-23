@@ -22,6 +22,8 @@ namespace TeamSpeak3QueryApi.Net
         /// <returns>The remote port of the Query API client.</returns>
         public short Port { get; private set; }
 
+        public bool IsConnected { get; private set; }
+
         /// <summary>The default host which is used when no host is provided.</summary>
         public static readonly string DefaultHost = "localhost";
 
@@ -56,6 +58,7 @@ namespace TeamSpeak3QueryApi.Net
 
             Host = hostName;
             Port = port;
+            IsConnected = false;
             _client = new TcpClient();
         }
 
@@ -70,6 +73,8 @@ namespace TeamSpeak3QueryApi.Net
             _ns = _client.GetStream();
             _reader = new StreamReader(_ns);
             _writer = new StreamWriter(_ns) { NewLine = "\n" };
+
+            IsConnected = true;
 
             await _reader.ReadLineAsync();
             await _reader.ReadLineAsync(); // Ignore welcome message
@@ -270,7 +275,7 @@ namespace TeamSpeak3QueryApi.Net
                         parsedError.FailedPermissionId = errData.Length > 1 ? int.Parse(errData[1], NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CurrentCulture) : -1;
                         continue;
                     default:
-                        throw new TeamSpeakQueryProtocolException();
+                        throw new QueryProtocolException();
                 }
             }
             return parsedError;
