@@ -156,23 +156,26 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
         #region KickClient
 
-        public Task KickClient(int clientId, KickTarget from)
+        public Task KickClient(int clientId, KickOrigin from)
         {
             return KickClient(new[] { clientId }, from);
         }
-
-        public Task KickClient(int clientId, KickTarget from, string reasonMessage)
+        public Task KickClient(int clientId, KickOrigin from, string reasonMessage)
         {
             return KickClient(new[] { clientId }, from, reasonMessage);
         }
-
-        public Task KickClient(IList<int> clientIds, KickTarget from)
+        public Task KickClient(IEnumerable<GetClientsInfo> clients, KickOrigin from)
+        {
+            var clIds = clients.Select(c => c.ClientId).ToArray();
+            return KickClient(clIds, from);
+        }
+        public Task KickClient(IList<int> clientIds, KickOrigin from)
         {
             return _client.Send("clientkick",
                 new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
                 new Parameter("reasonid", (int)from));
         }
-        public Task KickClient(IList<int> clientIds, KickTarget from, string reasonMessage)
+        public Task KickClient(IList<int> clientIds, KickOrigin from, string reasonMessage)
         {
             return _client.Send("clientkick",
                 new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
@@ -181,13 +184,55 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+        #region GetClients
+
+        public async Task<IReadOnlyList<GetClientsInfo>> GetClients()
+        {
+            var res = await _client.Send("clientlist");
+            return DataProxy.SerializeGeneric<GetClientsInfo>(res);
+        }
+
+        public async Task<IReadOnlyList<GetClientsInfo>> GetClients(GetClientOptions options)
+        {
+            var optionList = new List<string>();
+            foreach (var value in options.GetFlags())
+                optionList.Add(value.ToString().ToLowerInvariant());
+            var res = await _client.Send("clientlist", null, optionList.ToArray());
+            var info = DataProxy.SerializeGeneric<GetClientsInfo>(res);
+            return info;
+        }
+
+        #endregion
 
         #endregion
     }
 
-    public enum KickTarget
+    internal static class EnumExtensions
+    {
+        public static IEnumerable<Enum> GetFlags(this Enum input)
+        {
+            foreach (Enum value in Enum.GetValues(input.GetType()))
+                if (input.HasFlag(value))
+                    yield return value;
+        }
+    }
+
+    public enum KickOrigin
     {
         Channel = 4,
         Server = 5
+    }
+
+    [Flags]
+    public enum GetClientOptions
+    {
+        Uid,
+        Away,
+        Voice,
+        Times,
+        Groups,
+        Info,
+        Icon,
+        Country
     }
 }

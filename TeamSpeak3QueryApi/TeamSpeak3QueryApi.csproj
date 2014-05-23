@@ -78,6 +78,7 @@
     <Compile Include="Specialized\QuerySerializeAttribute.cs" />
     <Compile Include="Specialized\ReasonId.cs" />
     <Compile Include="Specialized\NotificationEventTarget.cs" />
+    <Compile Include="Specialized\Responses\GetClientInfo.cs" />
     <Compile Include="Specialized\Responses\Response.cs" />
     <Compile Include="Specialized\Responses\WhoAmI.cs" />
     <Compile Include="Specialized\TeamSpeakClient.cs" />

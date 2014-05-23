@@ -46,7 +46,6 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                         });
                     if (matchedEntry != null)
                     {
-
                         var castedValue = CastForType(matchedEntry.FieldType, v.Value);
                         try
                         {

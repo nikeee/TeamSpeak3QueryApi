@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using TeamSpeak3QueryApi.Net.Specialized;
 using TeamSpeak3QueryApi.Net.Specialized.Notifications;
 
@@ -36,6 +37,18 @@ namespace TeamSpeak3QueryApi.Net.Demo
 
             await rc.RegisterServerNotification();
             await rc.RegisterChannelNotification(30);
+
+            var currentClients = await rc.GetClients();
+
+            var fullClients = currentClients.Where(c => c.Type == ClientType.FullClient);
+            //var fullClients = from c
+            //                  in currentClients
+            //                  where c.Type == ClientType.FullClient
+            //                  select c;
+            await rc.KickClient(fullClients, KickOrigin.Channel);
+
+            //foreach (var client in fullClients)
+            //    await rc.KickClient(client.ClientId, KickTarget.Channel);
 
             // await rc.MoveClient(1, 1);
             // await rc.KickClient(1, KickTarget.Server);
