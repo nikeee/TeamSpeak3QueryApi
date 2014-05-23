@@ -11,11 +11,29 @@ namespace TeamSpeak3QueryApi.Net
         /// <returns>The returned error.</returns>
         public QueryError Error { get; private set; }
 
-        internal QueryException(QueryError error)
-            : base("An error occurred during the query.")
+        public QueryException()
+            : base()
+        {
+            Error = null;
+        }
+
+        public QueryException(string message)
+            : this(message, null)
+        { }
+
+        public QueryException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
+
+        public QueryException(QueryError error)
+            : this("An error occurred during the query.")
         {
             Error = error;
         }
+
+        protected QueryException(SerializationInfo info, StreamingContext context)
+             : base(info, context)
+        { }
 
         /// <summary> When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/> with information about the exception.</summary>
         /// <param name="info">The <see cref="System.Runtime.Serialization.SerializationInfo"/>that holds the serialized object data about the exception being thrown.</param>
