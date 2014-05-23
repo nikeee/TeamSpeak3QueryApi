@@ -43,6 +43,10 @@ namespace TeamSpeak3QueryApi.Net.Demo
                                                                                 foreach (var i in data)
                                                                                     Trace.WriteLine("Client with id " + i.ClientId + " left (kicked/banned/left).");
                                                                             });
+            rc.Subscribe<ServerEdited>(NotificationType.ServerEdited, data =>
+                                                                       {
+                                                                           Debugger.Break();
+                                                                       });
             Console.WriteLine("Done1");
         }
 

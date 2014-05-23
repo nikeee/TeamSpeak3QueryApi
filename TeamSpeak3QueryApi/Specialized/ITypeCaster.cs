@@ -6,6 +6,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
     {
         object Cast(object source);
     }
+
     class Int32TypeCaster : ITypeCaster
     {
         public virtual object Cast(object source)
@@ -15,6 +16,18 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             if (source is int)
                 return (int)source;
             return int.Parse(source.ToString());
+        }
+    }
+
+    class Int64TypeCaster : ITypeCaster
+    {
+        public virtual object Cast(object source)
+        {
+            if (source == null)
+                return 0;
+            if (source is long)
+                return (long)source;
+            return long.Parse(source.ToString());
         }
     }
 
@@ -50,6 +63,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return int.Parse(source.ToString()) != 0;
         }
     }
+
     class TimeSpanTypeCaster : ITypeCaster
     {
         public object Cast(object source)

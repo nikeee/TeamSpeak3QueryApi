@@ -93,7 +93,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         public bool ClientNeededServerQueryViewPower; // (Änderung für Voice-Nutzer während einer Sitzung manchmal nicht rückwirkend, public funktioniert; jedoch bei Gruppenwechsel)
 
         [QuerySerialize("client_icon_id")]
-        public int ClientIconId;
+        public long ClientIconId;
 
         [QuerySerialize("client_is_channel_commander")]
         public bool IsClientChannelCommander;
