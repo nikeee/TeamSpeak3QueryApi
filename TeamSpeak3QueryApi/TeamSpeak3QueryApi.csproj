@@ -61,6 +61,7 @@
     <Compile Include="Specialized\Notifications\ChannelEdited.cs" />
     <Compile Include="Specialized\Notifications\ChannelMoved.cs" />
     <Compile Include="Specialized\Notifications\ChannelPasswordChanged.cs" />
+    <Compile Include="Specialized\Notifications\TextMessage.cs" />
     <Compile Include="Specialized\Notifications\ClientMoved.cs" />
     <Compile Include="Specialized\Notifications\InfokerInformation.cs" />
     <Compile Include="Specialized\Notifications\ServerEdited.cs" />

@@ -19,7 +19,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                                                                     {typeof(ReasonId), new EnumCaster<ReasonId>()},
                                                                     {typeof(ClientType), new EnumCaster<ClientType>()},
                                                                     {typeof(TimeSpan), new TimeSpanTypeCaster()},
-                                                                    {typeof(long), new Int64TypeCaster()}
+                                                                    {typeof(long), new Int64TypeCaster()},
+                                                                    {typeof(MessageTarget), new EnumCaster<MessageTarget>()},
                                                                 };
 
         public static IReadOnlyList<T> SerializeGeneric<T>(NotificationData data)
