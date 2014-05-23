@@ -144,6 +144,17 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return MoveClient(new[] { clientId }, targetChannelId, channelPassword);
         }
 
+        public Task MoveClient(IEnumerable<GetClientsInfo> clients, int targetChannelId)
+        {
+            var clIds = clients.Select(c => c.ClientId).ToArray();
+            return MoveClient(clIds, targetChannelId);
+        }
+        public Task MoveClient(IEnumerable<GetClientsInfo> clients, int targetChannelId, string channelPassword)
+        {
+            var clIds = clients.Select(c => c.ClientId).ToArray();
+            return MoveClient(clIds, targetChannelId, channelPassword);
+        }
+
         public Task MoveClient(IList<int> clientIds, int targetChannelId)
         {
             return _client.Send("clientmove", new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()), new Parameter("cid", targetChannelId));
