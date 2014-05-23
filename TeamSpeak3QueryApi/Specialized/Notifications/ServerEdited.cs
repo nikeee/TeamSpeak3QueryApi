@@ -16,6 +16,9 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         [QuerySerialize("invokeruid")]
         public string InvokerUid;
 
+
+        //TODO: .NET naming
+
         public string virtualserver_name;
 
         public int virtualserver_codec_encryption_mode;

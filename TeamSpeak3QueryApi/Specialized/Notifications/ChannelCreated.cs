@@ -2,10 +2,13 @@
 
 namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
-    public class ChannelEdited : InfokerInformation
+    public class ChannelCreated : InfokerInformation
     {
         [QuerySerialize("cid")]
         public int ChannelId;
+
+        [QuerySerialize("cpid")]
+        public int ParentChannelId;
 
         [QuerySerialize("channel_name")]
         public string Name;
@@ -45,7 +48,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 
         [QuerySerialize("channel_codec_is_unencrypted")]
         public bool IsUnencrypted;
-
+        
         [QuerySerialize("channel_delete_delay")]
         public TimeSpan DelteDelay;
 
