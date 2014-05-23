@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using TeamSpeak3QueryApi.Net.Specialized;
@@ -31,30 +32,15 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await rc.Client.Send("login", new Parameter("client_login_name", user), new Parameter("client_login_password", password));
             await rc.Client.Send("use", new Parameter("sid", 1));
             await rc.Client.Send("whoami");
+
             await rc.Client.Send("servernotifyregister", new Parameter("event", "server"));//, new Parameter("id", "30"));
             await rc.Client.Send("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", "30"));
-            rc.Subscribe<ClientEnterView>(data =>
-                                            {
-                                                foreach (var i in data)
-                                                    Trace.WriteLine("Client " + i.ClientNickName + " joined.");
-                                            });
-            rc.Subscribe<ClientLeftView>(data =>
-                                        {
-                                            foreach (var i in data)
-                                                Trace.WriteLine("Client with id " + i.ClientId + " left (kicked/banned/left).");
-                                        });
-            rc.Subscribe<ServerEdited>(data =>
-                                        {
-                                            Debugger.Break();
-                                        });
-            rc.Subscribe<ChannelEdited>(data =>
-                                        {
-                                            Debugger.Break();
-                                        });
-            rc.Subscribe<ClientMoved>(data =>
-                                    {
-                                        Debugger.Break();
-                                    });
+
+            rc.Subscribe<ClientEnterView>(data => data.ForEach(c => Trace.WriteLine("Client " + c.ClientNickName + " joined.")));
+            rc.Subscribe<ClientLeftView>(data => data.ForEach(c => Trace.WriteLine("Client with id " + c.ClientId + " left (kicked/banned/left).")));
+            rc.Subscribe<ServerEdited>(data => Debugger.Break());
+            rc.Subscribe<ChannelEdited>(data => Debugger.Break());
+            rc.Subscribe<ClientMoved>(data => Debugger.Break());
 
             Console.WriteLine("Done1");
         }
@@ -90,4 +76,16 @@ namespace TeamSpeak3QueryApi.Net.Demo
         }
         */
     }
+
+    internal static class ReadOnlyCollectionExtensions
+    {
+        public static void ForEach<T>(this IReadOnlyCollection<T> collection, Action<T> action)
+        {
+            if (action == null)
+                throw new ArgumentNullException("action");
+            foreach (var i in collection)
+                action(i);
+        }
+    }
+
 }

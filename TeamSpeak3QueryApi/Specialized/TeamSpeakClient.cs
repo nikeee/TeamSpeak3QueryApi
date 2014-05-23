@@ -74,8 +74,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         private static NotificationType GetNotificationType<T>()
         {
             NotificationType notification;
-            if (!Enum.TryParse(typeof(T).Name, out notification))
-                throw new ArgumentException("The specified generic parameter is not a supported NotificationType.");
+            if (!Enum.TryParse(typeof(T).Name, out notification)) // This may violate the generic pattern. May change this later.
+                throw new ArgumentException("The specified generic parameter is not a supported NotificationType."); // For this time, we only support class-internal types which are listed in NotificationType
             return notification;
         }
 
