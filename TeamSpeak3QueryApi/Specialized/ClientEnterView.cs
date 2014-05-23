@@ -107,4 +107,49 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         [QuerySerialize("client_badges")]
         public string ClientBadges; // (leer bei Query- und zu alten Clients, sonst in sich selbst parametrisierter String)
     }
+
+    public class ChannelEdited : InfokerInformation
+    {
+        [QuerySerialize("cid")]
+        public int ChannelId;
+    }
+
+    public class ChannelDescriptionChanged : Notify
+    {
+        [QuerySerialize("cid")]
+        public int ChannelId;
+    }
+
+    public class ChannelPasswordChanged : Notify
+    {
+        [QuerySerialize("cid")]
+        public int ChannelId;
+    }
+
+    public abstract class InfokerInformation : Notify
+    {
+        [QuerySerialize("reasonid")]
+        public ReasonId Reason;
+
+        [QuerySerialize("invokerid")]
+        public int InvokerId;
+
+        [QuerySerialize("invokername")]
+        public string InvokerName;
+
+        [QuerySerialize("invokeruid")]
+        public string InvokerUid;
+    }
+
+    public class ChannelMoved : InfokerInformation
+    {
+        [QuerySerialize("cid")]
+        public int ChannelId;
+
+        [QuerySerialize("cpid")]
+        public int ParentChannelId;
+
+        [QuerySerialize("order")]
+        public int Order;
+    }
 }

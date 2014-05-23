@@ -33,6 +33,7 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await cl.Send("use", new Parameter("sid", 1));
             await cl.Send("whoami");
             await cl.Send("servernotifyregister", new Parameter("event", "server"));//, new Parameter("id", "30"));
+            await cl.Send("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", "30"));
             rc.Subscribe<ClientEnterView>(NotificationType.ClientEnterView, data =>
                                                                             {
                                                                                 foreach (var i in data)
@@ -47,6 +48,11 @@ namespace TeamSpeak3QueryApi.Net.Demo
                                                                        {
                                                                            Debugger.Break();
                                                                        });
+            rc.Subscribe<ChannelEdited>(NotificationType.ChannelEdited, data =>
+                                                                       {
+                                                                           Debugger.Break();
+                                                                       });
+
             Console.WriteLine("Done1");
         }
 
