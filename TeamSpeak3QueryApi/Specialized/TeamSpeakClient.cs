@@ -80,6 +80,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+        #region Implented api methods
+
+        public Task Login(string userName, string password)
+        {
+            return _client.Send("login", new Parameter("client_login_name", userName), new Parameter("client_login_password", password));
+        }
+
+        #endregion
 
     }
 }
