@@ -350,6 +350,8 @@ namespace TeamSpeak3QueryApi.Net
                 {
                     var line = await _reader.ReadLineAsync();
                     Trace.WriteLine(line);
+                    if(string.IsNullOrWhiteSpace(line))
+                        continue;
                     var s = line.Trim();
                     if (s.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -368,16 +370,8 @@ namespace TeamSpeak3QueryApi.Net
                     else
                     {
                         Debug.Assert(_currentCommand != null);
-                        if (string.IsNullOrWhiteSpace(s))
-                        {
-                            _currentCommand.RawResponse = "";
-                            _currentCommand.ResponseDictionary = new QueryResponseDictionary[0];
-                        }
-                        else
-                        {
-                            _currentCommand.RawResponse = s;
-                            _currentCommand.ResponseDictionary = ParseResponse(s);
-                        }
+                        _currentCommand.RawResponse = s;
+                        _currentCommand.ResponseDictionary = ParseResponse(s);
                     }
                 }
             });

@@ -7,6 +7,18 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         dynamic Cast(object source);
     }
 
+    class Int16TypeCaster : ITypeCaster
+    {
+        public virtual dynamic Cast(object source)
+        {
+            if (source == null)
+                return (short)0;
+            if (source is short)
+                return (short)source;
+            return short.Parse(source.ToString());
+        }
+    }
+
     class Int32TypeCaster : ITypeCaster
     {
         public virtual dynamic Cast(object source)
@@ -31,7 +43,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
     }
 
-    class EnumCaster<T> : Int32TypeCaster where T : struct
+    class EnumTypeCaster<T> : Int32TypeCaster where T : struct
     {
         public override dynamic Cast(object source)
         {

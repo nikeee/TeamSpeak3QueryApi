@@ -32,7 +32,8 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await rc.Login(user, password);
             await rc.UseServer(1);
 
-            await rc.WhoAmI();
+            var me = await rc.WhoAmI();
+            me = me;
 
             await rc.RegisterServerNotification();
             await rc.RegisterChannelNotification(30);

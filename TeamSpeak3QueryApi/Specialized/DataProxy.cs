@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using TeamSpeak3QueryApi.Net.Specialized.Notifications;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
 {
@@ -12,16 +11,17 @@ namespace TeamSpeak3QueryApi.Net.Specialized
     {
         private static readonly ITypeCaster DefaultCaster = new StringTypeCaster();
         private static readonly Dictionary<Type, ITypeCaster> Casters = new Dictionary<Type, ITypeCaster>
-                                                                {
-                                                                    {typeof(int), new Int32TypeCaster()},
-                                                                    {typeof(string), DefaultCaster},
-                                                                    {typeof(bool), new BooleanTypeCaster()},
-                                                                    {typeof(ReasonId), new EnumCaster<ReasonId>()},
-                                                                    {typeof(ClientType), new EnumCaster<ClientType>()},
-                                                                    {typeof(TimeSpan), new TimeSpanTypeCaster()},
-                                                                    {typeof(long), new Int64TypeCaster()},
-                                                                    {typeof(MessageTarget), new EnumCaster<MessageTarget>()},
-                                                                };
+                                                                        {
+                                                                            {typeof(int), new Int32TypeCaster()},
+                                                                            {typeof(string), DefaultCaster},
+                                                                            {typeof(bool), new BooleanTypeCaster()},
+                                                                            {typeof(ReasonId), new EnumTypeCaster<ReasonId>()},
+                                                                            {typeof(ClientType), new EnumTypeCaster<ClientType>()},
+                                                                            {typeof(TimeSpan), new TimeSpanTypeCaster()},
+                                                                            {typeof(long), new Int64TypeCaster()},
+                                                                            {typeof(MessageTarget), new EnumTypeCaster<MessageTarget>()},
+                                                                            {typeof(short), new Int16TypeCaster()},
+                                                                        };
 
         public static IReadOnlyList<T> SerializeGeneric<T>(IReadOnlyList<QueryResponseDictionary> response)
                 where T : ITeamSpeakSerializable
