@@ -55,24 +55,24 @@ namespace TeamSpeak3QueryApi.Net.Demo
             var user = loginData[1].Trim();
             var password = loginData[2].Trim();
 
-            using (var cl = new QueryClient(host))
-            {
-                await cl.Connect();
-                await cl.Send("login", new Parameter("client_login_name", user), new Parameter("client_login_password", password));
-                await cl.Send("use", new Parameter("sid", 1));
-                await cl.Send("whoami");
+            var cl = new QueryClient(host);
 
-                //await cl.Send("servernotifyregister", new[] { "event", "channel" }, new[] { "id", "24" });
-                await cl.Send("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", "24"));
+            await cl.Connect();
+            await cl.Send("login", new Parameter("client_login_name", user), new Parameter("client_login_password", password));
+            await cl.Send("use", new Parameter("sid", 1));
+            await cl.Send("whoami");
 
-                cl.Subscribe("clientmoved", data =>
-                                            {
-                                                Console.WriteLine("Some client moved!");
-                                                cl.Unsubscribe("clientmoved");
-                                                cl.Send("servernotifyunregister", new[] { "event", "channel" }, new[] { "id", "24" });
-                                            });
-                // cl.Unsubscribe("message");
-            }
+            //await cl.Send("servernotifyregister", new[] { "event", "channel" }, new[] { "id", "24" });
+            await cl.Send("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", "24"));
+
+            cl.Subscribe("clientmoved", data =>
+                                        {
+                                            Console.WriteLine("Some client moved!");
+                                            cl.Unsubscribe("clientmoved");
+                                            cl.Send("servernotifyunregister", new[] { "event", "channel" }, new[] { "id", "24" });
+                                        });
+            // cl.Unsubscribe("message");
+
             Console.WriteLine("Done1");
         }
         */
