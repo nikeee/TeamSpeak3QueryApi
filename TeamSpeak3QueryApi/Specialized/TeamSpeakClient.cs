@@ -101,6 +101,38 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return proxied.FirstOrDefault();
         }
 
+#region Register-Notification
+
+        public Task RegisterChannelNotification(int channelId)
+        {
+            return RegisterNotification(NotificationEventTarget.Channel, channelId);
+        }
+        public Task RegisterServerNotification()
+        {
+            return RegisterNotification(NotificationEventTarget.Server, -1);
+        }
+        public Task RegisterTextServerNotification()
+        {
+            return RegisterNotification(NotificationEventTarget.TextServer, -1);
+        }
+        public Task RegisterTextChannelNotification()
+        {
+            return RegisterNotification(NotificationEventTarget.TextChannel, -1);
+        }
+        public Task RegisterTextPrivateNotification()
+        {
+            return RegisterNotification(NotificationEventTarget.TextPrivate, -1);
+        }
+        private Task RegisterNotification(NotificationEventTarget target, int channelId)
+        {
+            var ev = new Parameter("event", target.ToString().ToLowerInvariant());
+            if (target == NotificationEventTarget.Channel)
+                return _client.Send("servernotifyregister", ev, new Parameter("id", channelId));
+            return _client.Send("servernotifyregister", ev);
+        }
+
+#endregion
+
         #endregion
 
     }
