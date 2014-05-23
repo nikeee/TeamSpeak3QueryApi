@@ -4,6 +4,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
     public class ServerEdited : Notify
     {
+        // TODO: Use enums from documentation
+
         [QuerySerialize("reasonid")]
         public ReasonId Reason;
 
