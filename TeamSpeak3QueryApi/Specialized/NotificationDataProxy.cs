@@ -56,7 +56,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                             }
                             catch (Exception)
                             {
-
+                                Debugger.Break();
                                 matchedEntry.SetValue(destType, DefaultCaster.Cast(v.Value));
                             }
                         }
