@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using TeamSpeak3QueryApi.Net.Specialized;
+using TeamSpeak3QueryApi.Net.Specialized.Notifications;
 
 namespace TeamSpeak3QueryApi.Net.Demo
 {

@@ -54,14 +54,19 @@
     <Compile Include="QueryException.cs" />
     <Compile Include="QueryNotification.cs" />
     <Compile Include="QueryResponseDictionary.cs" />
-    <Compile Include="Specialized\ServerEdited.cs" />
-    <Compile Include="Specialized\ClientLeftView.cs" />
-    <Compile Include="Specialized\ClientEnterView.cs" />
+    <Compile Include="Specialized\Notifications\ChannelDescriptionChanged.cs" />
+    <Compile Include="Specialized\Notifications\ChannelEdited.cs" />
+    <Compile Include="Specialized\Notifications\ChannelMoved.cs" />
+    <Compile Include="Specialized\Notifications\ChannelPasswordChanged.cs" />
+    <Compile Include="Specialized\Notifications\InfokerInformation.cs" />
+    <Compile Include="Specialized\Notifications\ServerEdited.cs" />
+    <Compile Include="Specialized\Notifications\ClientLeftView.cs" />
+    <Compile Include="Specialized\Notifications\ClientEnterView.cs" />
     <Compile Include="Specialized\ClientType.cs" />
     <Compile Include="Specialized\ITypeCaster.cs" />
     <Compile Include="Specialized\NotificationDataProxy.cs" />
     <Compile Include="Specialized\NotificationType.cs" />
-    <Compile Include="Specialized\Notify.cs" />
+    <Compile Include="Specialized\Notifications\Notify.cs" />
     <Compile Include="Specialized\QuerySerializeAttribute.cs" />
     <Compile Include="Specialized\ReasonId.cs" />
     <Compile Include="Specialized\TeamSpeakClient.cs" />
@@ -70,9 +75,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryProtocolException.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Specialized\Notifications\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

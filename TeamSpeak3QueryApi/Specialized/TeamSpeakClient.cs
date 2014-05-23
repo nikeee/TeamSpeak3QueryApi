@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TeamSpeak3QueryApi.Net.Specialized.Notifications;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
 {

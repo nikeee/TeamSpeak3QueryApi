@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TeamSpeak3QueryApi.Net.Specialized
+namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
     public class ClientLeftView : Notify
     {
