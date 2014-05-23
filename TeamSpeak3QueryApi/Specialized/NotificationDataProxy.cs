@@ -16,7 +16,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                                                                     {typeof(string), DefaultCaster},
                                                                     {typeof(bool), new BooleanTypeCaster()},
                                                                     {typeof(ReasonId), new EnumCaster<ReasonId>()},
-                                                                    {typeof(ClientType), new EnumCaster<ClientType>()}
+                                                                    {typeof(ClientType), new EnumCaster<ClientType>()},
+                                                                    {typeof(TimeSpan), new TimeSpanTypeCaster()},
                                                                 };
 
         public static IReadOnlyList<T> SerializeGeneric<T>(NotificationData data)
@@ -66,7 +67,6 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 }
                 destList.Add(destType);
             }
-
             return new ReadOnlyCollection<T>(destList);
         }
     }

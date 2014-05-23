@@ -1,4 +1,6 @@
-﻿namespace TeamSpeak3QueryApi.Net.Specialized
+﻿using System;
+
+namespace TeamSpeak3QueryApi.Net.Specialized
 {
     interface ITypeCaster
     {
@@ -46,6 +48,17 @@
             if (source is int)
                 return ((int)source) != 0;
             return int.Parse(source.ToString()) != 0;
+        }
+    }
+    class TimeSpanTypeCaster : ITypeCaster
+    {
+        public object Cast(object source)
+        {
+            if (source == null)
+                return false;
+            if (source is int)
+                return TimeSpan.FromSeconds((int)source);
+            return TimeSpan.FromSeconds(int.Parse(source.ToString()));
         }
     }
 }

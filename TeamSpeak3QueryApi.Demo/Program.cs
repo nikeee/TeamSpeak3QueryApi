@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using TeamSpeak3QueryApi.Net;
 using TeamSpeak3QueryApi.Net.Specialized;
 
 namespace TeamSpeak3QueryApi.Net.Demo
