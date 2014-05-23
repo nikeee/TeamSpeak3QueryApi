@@ -101,7 +101,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return proxied.FirstOrDefault();
         }
 
-#region Register-Notification
+        #region Register-Notification
 
         public Task RegisterChannelNotification(int channelId)
         {
@@ -131,9 +131,63 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return _client.Send("servernotifyregister", ev);
         }
 
-#endregion
+        #endregion
+
+        #region MoveClient
+
+        public Task MoveClient(int clientId, int targetChannelId)
+        {
+            return MoveClient(new[] { clientId }, targetChannelId);
+        }
+        public Task MoveClient(int clientId, int targetChannelId, string channelPassword)
+        {
+            return MoveClient(new[] { clientId }, targetChannelId, channelPassword);
+        }
+
+        public Task MoveClient(IList<int> clientIds, int targetChannelId)
+        {
+            return _client.Send("clientmove", new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()), new Parameter("cid", targetChannelId));
+        }
+        public Task MoveClient(IList<int> clientIds, int targetChannelId, string channelPassword)
+        {
+            return _client.Send("clientmove", new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()), new Parameter("cid", targetChannelId), new Parameter("cpw", channelPassword));
+        }
+
+        #endregion
+        #region KickClient
+
+        public Task KickClient(int clientId, KickTarget from)
+        {
+            return KickClient(new[] { clientId }, from);
+        }
+
+        public Task KickClient(int clientId, KickTarget from, string reasonMessage)
+        {
+            return KickClient(new[] { clientId }, from, reasonMessage);
+        }
+
+        public Task KickClient(IList<int> clientIds, KickTarget from)
+        {
+            return _client.Send("clientkick",
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
+                new Parameter("reasonid", (int)from));
+        }
+        public Task KickClient(IList<int> clientIds, KickTarget from, string reasonMessage)
+        {
+            return _client.Send("clientkick",
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
+                new Parameter("reasonid", (int)from),
+                new Parameter("reasonmsg", reasonMessage));
+        }
 
         #endregion
 
+        #endregion
+    }
+
+    public enum KickTarget
+    {
+        Channel = 4,
+        Server = 5
     }
 }

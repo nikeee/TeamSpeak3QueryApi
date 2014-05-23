@@ -37,6 +37,9 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await rc.RegisterServerNotification();
             await rc.RegisterChannelNotification(30);
 
+            // await rc.MoveClient(1, 1);
+            // await rc.KickClient(1, KickTarget.Server);
+
             rc.Subscribe<ClientEnterView>(data => data.ForEach(c => Trace.WriteLine("Client " + c.ClientNickName + " joined.")));
             rc.Subscribe<ClientLeftView>(data => data.ForEach(c => Trace.WriteLine("Client with id " + c.ClientId + " left (kicked/banned/left).")));
             rc.Subscribe<ServerEdited>(data => Debugger.Break());
