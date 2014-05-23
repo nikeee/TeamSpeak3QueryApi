@@ -35,8 +35,10 @@ namespace TeamSpeak3QueryApi.Net
         private StreamWriter _writer;
         private NetworkStream _ns;
         private volatile bool _cancelTask;
+        private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
+        private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
 
-#region Ctors
+        #region Ctors
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
         public QueryClient()
@@ -64,7 +66,7 @@ namespace TeamSpeak3QueryApi.Net
             _client = new TcpClient();
         }
 
-#endregion
+        #endregion
 
         /// <summary>Connects to the Query API server.</summary>
         /// <returns>An awaitable <see cref="Task"/>.</returns>
@@ -88,16 +90,7 @@ namespace TeamSpeak3QueryApi.Net
             ResponseProcessingLoop();
         }
 
-        /*
-        // Using destructor/dispose instead
-        public void Disconnect()
-        {
-            _cancelTask = true;
-            _client.Close();
-        }
-        */
-
-        private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
+        #region Send
 
         /// <summary>Sends a Query API command wihtout parameters to the server.</summary>
         /// <param name="cmd">The command.</param>
@@ -152,7 +145,8 @@ namespace TeamSpeak3QueryApi.Net
             return await d.Task;
         }
 
-        private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
+        #endregion
+        #region Subscriptions
 
         /// <summary>Subscribes to a notification. If the subscribed notification is received, the callback is getting executed.</summary>
         /// <param name="notificationName">The name of the notification (without the "notify" prefix).</param>
@@ -212,6 +206,9 @@ namespace TeamSpeak3QueryApi.Net
             return name.Trim().ToUpperInvariant();
         }
 
+        #endregion
+        #region Parsing
+
         private static QueryResponseDictionary[] ParseResponse(string rawResponse)
         {
             var records = rawResponse.Split('|');
@@ -244,6 +241,7 @@ namespace TeamSpeak3QueryApi.Net
 
             return response.ToArray();
         }
+
         private static QueryError ParseError(string errorString)
         {
             // Ex:
@@ -318,6 +316,9 @@ namespace TeamSpeak3QueryApi.Net
                 forCommand.Defer.TrySetResult(forCommand.ResponseDictionary);
             }
         }
+
+        #endregion
+        #region Invocation
 
         private void InvokeNotification(QueryNotification notification)
         {
@@ -394,7 +395,8 @@ namespace TeamSpeak3QueryApi.Net
             }
         }
 
-#region IDisposable support
+        #endregion
+        #region IDisposable support
 
         /// <summary>Finalizes the object.</summary>
         ~QueryClient()
@@ -418,7 +420,7 @@ namespace TeamSpeak3QueryApi.Net
                 //TODO: Test this
                 if (_client != null)
                     _client.Close();
-                if(_ns != null)
+                if (_ns != null)
                     _ns.Dispose();
                 if (_reader != null)
                     _reader.Dispose();
@@ -427,6 +429,6 @@ namespace TeamSpeak3QueryApi.Net
             }
         }
 
-#endregion
+        #endregion
     }
 }

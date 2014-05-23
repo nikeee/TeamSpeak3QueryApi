@@ -11,7 +11,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         private readonly QueryClient _client;
         public QueryClient Client { get { return _client; } }
 
-#region Ctors
+        #region Ctors
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
         public TeamSpeakClient()
@@ -32,7 +32,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             _client = new QueryClient(hostName, port);
         }
 
-#endregion
+        #endregion
 
         public Task Connect()
         {
