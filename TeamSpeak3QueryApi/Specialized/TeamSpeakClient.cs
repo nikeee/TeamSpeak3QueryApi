@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
@@ -18,7 +19,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         private List<Tuple<NotificationType, object, Action<NotificationData>>> _callbacks = new List<Tuple<NotificationType, object, Action<NotificationData>>>();
-        public void Subscribe<T>(NotificationType notification, Action<T> callback)
+        public void Subscribe<T>(NotificationType notification, Action<IReadOnlyCollection<T>> callback)
             where T : Notify
         {
             Action<NotificationData> cb = (NotificationData data) =>
@@ -36,7 +37,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             cbts.ForEach(k => _callbacks.Remove(k));
             _client.Unsubscribe(notification.ToString());
         }
-        public void Unsubscribe<T>(NotificationType notification, Action<T> callback)
+        public void Unsubscribe<T>(NotificationType notification, Action<IReadOnlyCollection<T>> callback)
             where T : Notify
         {
             var cbt = _callbacks.SingleOrDefault(t => t.Item1 == notification && t.Item2 == callback as object);
@@ -47,9 +48,24 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
     class NotificationDataProxy
     {
-        public static T SerializeGeneric<T>(NotificationData data)
+        public static IReadOnlyList<T> SerializeGeneric<T>(NotificationData data)
             where T : Notify
         {
+            if (data.Payload.Count == 0)
+                return new ReadOnlyCollection<T>(new T[0]);
+
+            T destType = Activator.CreateInstance<T>();
+            var pl = data.Payload;
+
+            var fields = typeof(T).GetFields(System.Reflection.BindingFlags.Public);
+
+
+            foreach (var item in pl)
+            {
+
+            }
+
+
             throw new NotImplementedException();
         }
     }
@@ -80,10 +96,13 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
     public class ClientEnterView : Notify
     {
-
+        [QuerySerialize("cfid")]
         public int cfid; // (Quellchannel; „0“ beim Betreten des Servers)
+        [QuerySerialize("ctid")]
         public int ctid; // (Zielchannel)
+        [QuerySerialize("reasinid")]
         public ReasonId reasonid;
+        [QuerySerialize("clid")]
         public int clid;
         public string client_unique_identifier;
         public string client_nickname;
@@ -117,6 +136,16 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         public int client_channel_group_inherited_channel_id;
         public string client_badges; // (leer bei Query- und zu alten Clients, sonst in sich selbst parametrisierter String)
 
+    }
+
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+    class QuerySerializeAttribute : Attribute
+    {
+        public string Name { get; private set; }
+        public QuerySerializeAttribute(string name)
+        {
+            Name = string.IsNullOrWhiteSpace(name) ? null : name;
+        }
     }
 
     // http://redeemer.biz/medien/artikel/ts3-query-notify/
