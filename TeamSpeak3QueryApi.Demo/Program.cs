@@ -26,7 +26,7 @@ namespace TeamSpeak3QueryApi.Net.Demo
 
             var cl = new QueryClient(host);
 
-                await cl.Connect();
+            await cl.Connect();
 
             var rc = new TeamSpeakClient(cl);
 

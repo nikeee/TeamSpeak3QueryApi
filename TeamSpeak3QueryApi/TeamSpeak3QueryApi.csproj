@@ -54,9 +54,12 @@
     <Compile Include="QueryException.cs" />
     <Compile Include="QueryNotification.cs" />
     <Compile Include="QueryResponseDictionary.cs" />
+    <Compile Include="Specialized\ClientEnterView.cs" />
     <Compile Include="Specialized\ClientType.cs" />
+    <Compile Include="Specialized\ITypeCaster.cs" />
     <Compile Include="Specialized\NotificationDataProxy.cs" />
     <Compile Include="Specialized\NotificationType.cs" />
+    <Compile Include="Specialized\Notify.cs" />
     <Compile Include="Specialized\QuerySerializeAttribute.cs" />
     <Compile Include="Specialized\ReasonId.cs" />
     <Compile Include="Specialized\TeamSpeakClient.cs" />
