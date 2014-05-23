@@ -31,8 +31,6 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
             var destList = new List<T>(pl.Count);
 
-            Debugger.Break();
-
             foreach (var item in pl)
             {
                 var destType = Activator.CreateInstance<T>();

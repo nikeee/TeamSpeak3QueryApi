@@ -35,11 +35,14 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await cl.Send("servernotifyregister", new Parameter("event", "server"));//, new Parameter("id", "30"));
             rc.Subscribe<ClientEnterView>(NotificationType.ClientEnterView, data =>
                                                                             {
-
-                                                                                Debugger.Break();
-
+                                                                                foreach (var i in data)
+                                                                                    Trace.WriteLine("Client " + i.ClientNickName + " joined.");
                                                                             });
-
+            rc.Subscribe<ClientLeftView>(NotificationType.ClientLeftView, data =>
+                                                                            {
+                                                                                foreach (var i in data)
+                                                                                    Trace.WriteLine("Client with id " + i.ClientId + " left (kicked/banned/left).");
+                                                                            });
             Console.WriteLine("Done1");
         }
 
