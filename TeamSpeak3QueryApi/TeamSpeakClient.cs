@@ -92,7 +92,7 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Sends a Query API command wihtout parameters to the server.</summary>
         /// <param name="cmd">The command.</param>
-        /// <returns>An awaitable <see cref="Task{QueryResponseDictionary[]}"/>.</returns>
+        /// <returns>An awaitable <see cref="T:System.Net.Threading.Tasks.Task{QueryResponseDictionary[]}"/>.</returns>
         public Task<QueryResponseDictionary[]> Send(string cmd)
         {
             return Send(cmd, null);
@@ -101,7 +101,7 @@ namespace TeamSpeak3QueryApi.Net
         /// <summary>Sends a Query API command with parameters to the server.</summary>
         /// <param name="cmd">The command.</param>
         /// <param name="parameters">The parameters of the command.</param>
-        /// <returns>An awaitable <see cref="Task{QueryResponseDictionary[]}"/>.</returns>
+        /// <returns>An awaitable <see cref="T:System.Net.Threading.Tasks.Task{QueryResponseDictionary[]}"/>.</returns>
         public Task<QueryResponseDictionary[]> Send(string cmd, params Parameter[] parameters)
         {
             return Send(cmd, parameters, null);
@@ -111,7 +111,7 @@ namespace TeamSpeak3QueryApi.Net
         /// <param name="cmd">The command.</param>
         /// <param name="parameters">The parameters of the command.</param>
         /// <param name="options">The options of the command.</param>
-        /// <returns>An awaitable <see cref="Task{QueryResponseDictionary[]}"/>.</returns>
+        /// <returns>An awaitable <see cref="T:System.Net.Threading.Tasks.Task{QueryResponseDictionary[]}"/>.</returns>
         public async Task<QueryResponseDictionary[]> Send(string cmd, Parameter[] parameters, string[] options)
         {
             if (string.IsNullOrWhiteSpace(cmd))
