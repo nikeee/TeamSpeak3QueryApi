@@ -4,12 +4,12 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 {
     interface ITypeCaster
     {
-        object Cast(object source);
+        dynamic Cast(object source);
     }
 
     class Int32TypeCaster : ITypeCaster
     {
-        public virtual object Cast(object source)
+        public virtual dynamic Cast(object source)
         {
             if (source == null)
                 return 0;
@@ -21,7 +21,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
     class Int64TypeCaster : ITypeCaster
     {
-        public virtual object Cast(object source)
+        public virtual dynamic Cast(object source)
         {
             if (source == null)
                 return 0;
@@ -33,7 +33,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
     class EnumCaster<T> : Int32TypeCaster where T : struct
     {
-        public override object Cast(object source)
+        public override dynamic Cast(object source)
         {
             var i = base.Cast(source);
             return (T)i;
@@ -42,7 +42,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
     class StringTypeCaster : ITypeCaster
     {
-        public object Cast(object source)
+        public dynamic Cast(object source)
         {
             if (source == null)
                 return null;
@@ -54,7 +54,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
     class BooleanTypeCaster : ITypeCaster
     {
-        public object Cast(object source)
+        public dynamic Cast(object source)
         {
             if (source == null)
                 return false;
@@ -66,7 +66,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
     class TimeSpanTypeCaster : ITypeCaster
     {
-        public object Cast(object source)
+        public dynamic Cast(object source)
         {
             if (source == null)
                 return false;

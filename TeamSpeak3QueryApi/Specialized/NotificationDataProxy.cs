@@ -46,11 +46,17 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                         });
                     if (matchedEntry != null)
                     {
-                        if (matchedEntry.FieldType.IsArray)
-                            Debugger.Break();
 
                         var castedValue = CastForType(matchedEntry.FieldType, v.Value);
-                        matchedEntry.SetValue(destType, castedValue);
+                        try
+                        {
+                            matchedEntry.SetValue(destType, castedValue);
+                        }
+                        catch (Exception)
+                        {
+                            Debugger.Break();
+                            throw;
+                        }
                     }
                 }
                 destList.Add(destType);
@@ -58,8 +64,24 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return new ReadOnlyCollection<T>(destList);
         }
 
-        private static object CastForType(Type type, object value)
+        private static dynamic CastForType(Type type, object value)
         {
+            if (type.IsArray)
+            {
+                if (value == null)
+                    return null;
+
+                var arrayOf = type.GetElementType();
+                var str = value.ToString();
+                var arr = str.Split('|');
+                dynamic typedArray = Array.CreateInstance(arrayOf, arr.Length);
+
+                for (int i = 0; i < arr.Length; ++i)
+                    typedArray[i] = CastForType(arrayOf, arr[i]);
+
+                return typedArray;
+            }
+
             if (Casters.ContainsKey(type))
             {
                 try

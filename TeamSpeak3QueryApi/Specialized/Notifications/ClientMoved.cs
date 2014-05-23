@@ -6,6 +6,6 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         public int TargetChannel;
 
         [QuerySerialize("clid")]
-        public int[] Clients;
+        public int[] ClientIds;
     }
 }
