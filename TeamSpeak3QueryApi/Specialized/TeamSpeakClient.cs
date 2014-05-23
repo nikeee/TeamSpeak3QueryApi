@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using TeamSpeak3QueryApi.Net.Specialized.Notifications;
@@ -85,6 +86,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         public Task Login(string userName, string password)
         {
             return _client.Send("login", new Parameter("client_login_name", userName), new Parameter("client_login_password", password));
+        }
+
+        public Task UseServer(int serverId)
+        {
+            return _client.Send("use", new Parameter("sid", serverId.ToString(CultureInfo.InvariantCulture)));
         }
 
         #endregion

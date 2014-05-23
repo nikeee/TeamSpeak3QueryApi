@@ -30,8 +30,8 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await rc.Connect();
 
             await rc.Login(user, password);
+            await rc.UseServer(1);
 
-            await rc.Client.Send("use", new Parameter("sid", 1));
             await rc.Client.Send("whoami");
 
             await rc.Client.Send("servernotifyregister", new Parameter("event", "server"));
