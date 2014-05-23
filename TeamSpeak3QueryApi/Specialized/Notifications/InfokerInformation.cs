@@ -1,6 +1,6 @@
 ﻿namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
-    public abstract class InfokerInformation : Notify
+    public abstract class InfokerInformation : Notification
     {
         [QuerySerialize("reasonid")]
         public ReasonId Reason;

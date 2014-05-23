@@ -1,5 +1,5 @@
 ﻿namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
-    public abstract class Notify
+    public abstract class Notification : ITeamSpeakSerializable
     { }
 }

@@ -2,7 +2,7 @@
 
 namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
-    public class ClientEnterView : Notify
+    public class ClientEnterView : Notification
     {
         [QuerySerialize("cfid")]
         public int SourceChannelId; // (Quellchannel; „0“ beim Betreten des Servers)

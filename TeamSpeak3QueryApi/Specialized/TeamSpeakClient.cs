@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using TeamSpeak3QueryApi.Net.Specialized.Notifications;
+using TeamSpeak3QueryApi.Net.Specialized.Responses;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
 {
@@ -46,17 +47,17 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #region Subscriptions
 
         public void Subscribe<T>(Action<IReadOnlyCollection<T>> callback)
-            where T : Notify
+            where T : Notification
         {
             var notification = GetNotificationType<T>();
 
-            Action<NotificationData> cb = data => callback(NotificationDataProxy.SerializeGeneric<T>(data));
+            Action<NotificationData> cb = data => callback(DataProxy.SerializeGeneric<T>(data.Payload));
 
             _callbacks.Add(Tuple.Create(notification, callback as object, cb));
             _client.Subscribe(notification.ToString(), cb);
         }
         public void Unsubscribe<T>()
-            where T : Notify
+            where T : Notification
         {
             var notification = GetNotificationType<T>();
             var cbts = _callbacks.Where(tp => tp.Item1 == notification).ToList();
@@ -64,7 +65,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             _client.Unsubscribe(notification.ToString());
         }
         public void Unsubscribe<T>(Action<IReadOnlyCollection<T>> callback)
-            where T : Notify
+            where T : Notification
         {
             var notification = GetNotificationType<T>();
             var cbt = _callbacks.SingleOrDefault(t => t.Item1 == notification && t.Item2 == callback as object);
@@ -91,6 +92,13 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         public Task UseServer(int serverId)
         {
             return _client.Send("use", new Parameter("sid", serverId.ToString(CultureInfo.InvariantCulture)));
+        }
+
+        public async Task<WhoAmI> WhoAmI()
+        {
+            var res = await _client.Send("whoami");
+            var proxied = DataProxy.SerializeGeneric<WhoAmI>(res);
+            return proxied.FirstOrDefault();
         }
 
         #endregion

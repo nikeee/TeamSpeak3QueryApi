@@ -2,7 +2,7 @@
 
 namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
-    public class ServerEdited : Notify
+    public class ServerEdited : Notification
     {
         // TODO: Use enums from documentation
 

@@ -8,7 +8,7 @@ using TeamSpeak3QueryApi.Net.Specialized.Notifications;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
 {
-    internal class NotificationDataProxy
+    internal class DataProxy
     {
         private static readonly ITypeCaster DefaultCaster = new StringTypeCaster();
         private static readonly Dictionary<Type, ITypeCaster> Casters = new Dictionary<Type, ITypeCaster>
@@ -23,18 +23,17 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                                                                     {typeof(MessageTarget), new EnumCaster<MessageTarget>()},
                                                                 };
 
-        public static IReadOnlyList<T> SerializeGeneric<T>(NotificationData data)
-                where T : Notify
+        public static IReadOnlyList<T> SerializeGeneric<T>(IReadOnlyList<QueryResponseDictionary> response)
+                where T : ITeamSpeakSerializable
         {
-            if (data.Payload.Count == 0)
+            if (response == null || response.Count == 0)
                 return new ReadOnlyCollection<T>(new T[0]);
 
-            var pl = data.Payload;
             var fields = typeof(T).GetFields();
 
-            var destList = new List<T>(pl.Count);
+            var destList = new List<T>(response.Count);
 
-            foreach (var item in pl)
+            foreach (var item in response)
             {
                 var destType = Activator.CreateInstance<T>();
                 foreach (var v in item)
