@@ -77,7 +77,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 dynamic typedArray = Array.CreateInstance(arrayOf, arr.Length);
 
                 for (int i = 0; i < arr.Length; ++i)
-                    typedArray[i] = CastForType(arrayOf, arr[i]);
+                    typedArray[i] = CastForType(arrayOf, arr[i]); // Multi-Dimensional array are not possible due to escaping limitations, but let's work recursive anyway
 
                 return typedArray;
             }
