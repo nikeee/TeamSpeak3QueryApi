@@ -24,11 +24,12 @@ namespace TeamSpeak3QueryApi.Net.Demo
             var cl = new TeamSpeakClient(host);
 
             await cl.Connect();
-            await cl.Send("login", new[] { "client_login_name", user }, new[] { "client_login_password", password });
-            await cl.Send("use", new[] { "sid", "1" }); //await cl.Send("use", new Parameter("sid", 1));
+            await cl.Send("login", new Parameter("client_login_name", user), new Parameter("client_login_password", password));
+            await cl.Send("use", new Parameter("sid", 1));
             await cl.Send("whoami");
 
-            await cl.Send("servernotifyregister", new[] { "event", "channel" }, new[] { "id", "24" });
+            //await cl.Send("servernotifyregister", new[] { "event", "channel" }, new[] { "id", "24" });
+            await cl.Send("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", "24"));
 
             cl.Subscribe("clientmoved", data =>
                                         {
