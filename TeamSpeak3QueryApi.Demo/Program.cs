@@ -33,28 +33,28 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await rc.Client.Send("whoami");
             await rc.Client.Send("servernotifyregister", new Parameter("event", "server"));//, new Parameter("id", "30"));
             await rc.Client.Send("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", "30"));
-            rc.Subscribe<ClientEnterView>(NotificationType.ClientEnterView, data =>
-                                                                            {
-                                                                                foreach (var i in data)
-                                                                                    Trace.WriteLine("Client " + i.ClientNickName + " joined.");
-                                                                            });
-            rc.Subscribe<ClientLeftView>(NotificationType.ClientLeftView, data =>
-                                                                            {
-                                                                                foreach (var i in data)
-                                                                                    Trace.WriteLine("Client with id " + i.ClientId + " left (kicked/banned/left).");
-                                                                            });
-            rc.Subscribe<ServerEdited>(NotificationType.ServerEdited, data =>
-                                                                       {
-                                                                           Debugger.Break();
-                                                                       });
-            rc.Subscribe<ChannelEdited>(NotificationType.ChannelEdited, data =>
-                                                                       {
-                                                                           Debugger.Break();
-                                                                       });
-            rc.Subscribe<ClientMoved>(NotificationType.ClientMoved, data =>
-                                                                       {
-                                                                           Debugger.Break();
-                                                                       });
+            rc.Subscribe<ClientEnterView>(data =>
+                                            {
+                                                foreach (var i in data)
+                                                    Trace.WriteLine("Client " + i.ClientNickName + " joined.");
+                                            });
+            rc.Subscribe<ClientLeftView>(data =>
+                                        {
+                                            foreach (var i in data)
+                                                Trace.WriteLine("Client with id " + i.ClientId + " left (kicked/banned/left).");
+                                        });
+            rc.Subscribe<ServerEdited>(data =>
+                                        {
+                                            Debugger.Break();
+                                        });
+            rc.Subscribe<ChannelEdited>(data =>
+                                        {
+                                            Debugger.Break();
+                                        });
+            rc.Subscribe<ClientMoved>(data =>
+                                    {
+                                        Debugger.Break();
+                                    });
 
             Console.WriteLine("Done1");
         }
