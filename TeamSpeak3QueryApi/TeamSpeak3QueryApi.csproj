@@ -54,11 +54,13 @@
     <Compile Include="QueryException.cs" />
     <Compile Include="QueryNotification.cs" />
     <Compile Include="QueryResponseDictionary.cs" />
+    <Compile Include="Specialized\Notifications\ChannelDeleted.cs" />
     <Compile Include="Specialized\Notifications\ChannelDescriptionChanged.cs" />
     <Compile Include="Specialized\Notifications\ChannelCreated.cs" />
     <Compile Include="Specialized\Notifications\ChannelEdited.cs" />
     <Compile Include="Specialized\Notifications\ChannelMoved.cs" />
     <Compile Include="Specialized\Notifications\ChannelPasswordChanged.cs" />
+    <Compile Include="Specialized\Notifications\ClientMoved.cs" />
     <Compile Include="Specialized\Notifications\InfokerInformation.cs" />
     <Compile Include="Specialized\Notifications\ServerEdited.cs" />
     <Compile Include="Specialized\Notifications\ClientLeftView.cs" />

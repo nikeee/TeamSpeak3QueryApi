@@ -53,6 +53,10 @@ namespace TeamSpeak3QueryApi.Net.Demo
                                                                        {
                                                                            Debugger.Break();
                                                                        });
+            rc.Subscribe<ClientMoved>(NotificationType.ClientMoved, data =>
+                                                                       {
+                                                                           Debugger.Break();
+                                                                       });
 
             Console.WriteLine("Done1");
         }

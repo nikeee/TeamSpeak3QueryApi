@@ -46,28 +46,34 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                         });
                     if (matchedEntry != null)
                     {
-                        if (Casters.ContainsKey(matchedEntry.FieldType))
-                        {
-                            try
-                            {
-                                var caster = Casters[matchedEntry.FieldType];
-                                matchedEntry.SetValue(destType, caster.Cast(v.Value));
-                            }
-                            catch (Exception)
-                            {
-                                Debugger.Break();
-                                matchedEntry.SetValue(destType, DefaultCaster.Cast(v.Value));
-                            }
-                        }
-                        else
-                        {
-                            matchedEntry.SetValue(destType, DefaultCaster.Cast(v.Value));
-                        }
+                        if (matchedEntry.FieldType.IsArray)
+                            Debugger.Break();
+
+                        var castedValue = CastForType(matchedEntry.FieldType, v.Value);
+                        matchedEntry.SetValue(destType, castedValue);
                     }
                 }
                 destList.Add(destType);
             }
             return new ReadOnlyCollection<T>(destList);
+        }
+
+        private static object CastForType(Type type, object value)
+        {
+            if (Casters.ContainsKey(type))
+            {
+                try
+                {
+                    var caster = Casters[type];
+                    return caster.Cast(value);
+                }
+                catch (Exception)
+                {
+                    Debugger.Break();
+                    return DefaultCaster.Cast(value);
+                }
+            }
+            return DefaultCaster.Cast(value);
         }
     }
 }
