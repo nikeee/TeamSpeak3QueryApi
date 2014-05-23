@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
@@ -43,30 +42,6 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             var cbt = _callbacks.SingleOrDefault(t => t.Item1 == notification && t.Item2 == callback as object);
             if (cbt != null)
                 _client.Unsubscribe(notification.ToString(), cbt.Item3);
-        }
-    }
-
-    class NotificationDataProxy
-    {
-        public static IReadOnlyList<T> SerializeGeneric<T>(NotificationData data)
-            where T : Notify
-        {
-            if (data.Payload.Count == 0)
-                return new ReadOnlyCollection<T>(new T[0]);
-
-            var destType = Activator.CreateInstance<T>();
-            var pl = data.Payload;
-
-            var fields = typeof(T).GetFields(System.Reflection.BindingFlags.Public);
-
-
-            foreach (var item in pl)
-            {
-
-            }
-
-
-            throw new NotImplementedException();
         }
     }
 
