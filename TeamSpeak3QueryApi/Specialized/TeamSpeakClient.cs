@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TeamSpeak3QueryApi.Net.Specialized.Notifications;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
@@ -8,14 +9,29 @@ namespace TeamSpeak3QueryApi.Net.Specialized
     public class TeamSpeakClient
     {
         private readonly QueryClient _client;
+        public QueryClient Client { get { return _client; } }
 
-        public TeamSpeakClient(QueryClient client)
+        /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
+        public TeamSpeakClient()
+            : this(QueryClient.DefaultHost, QueryClient.DefaultPort)
+        { }
+
+        /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
+        /// <param name="hostName">The host name of the remote server.</param>
+        public TeamSpeakClient(string hostName)
+            : this(hostName, QueryClient.DefaultPort)
+        { }
+        /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
+        /// <param name="hostName">The host name of the remote server.</param>
+        /// <param name="port">The TCP port of the Query API server.</param>
+        public TeamSpeakClient(string hostName, short port)
         {
-            if (client == null)
-                throw new ArgumentNullException("client");
-            if (!client.IsConnected)
-                throw new ArgumentException("client is not connected.");
-            _client = client;
+            _client = new QueryClient(hostName, port);
+        }
+
+        public Task Connect()
+        {
+            return _client.Connect();
         }
 
         private readonly List<Tuple<NotificationType, object, Action<NotificationData>>> _callbacks = new List<Tuple<NotificationType, object, Action<NotificationData>>>();

@@ -24,11 +24,10 @@ namespace TeamSpeak3QueryApi.Net.Demo
             var user = loginData[1].Trim();
             var password = loginData[2].Trim();
 
-            var cl = new QueryClient(host);
 
-            await cl.Connect();
+            var rc = new TeamSpeakClient(host);
 
-            var rc = new TeamSpeakClient(cl);
+            await rc.Connect();
 
             await cl.Send("login", new Parameter("client_login_name", user), new Parameter("client_login_password", password));
             await cl.Send("use", new Parameter("sid", 1));
