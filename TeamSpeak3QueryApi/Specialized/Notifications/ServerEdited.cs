@@ -16,37 +16,49 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         [QuerySerialize("invokeruid")]
         public string InvokerUid;
 
+        [QuerySerialize("virtualserver_name")]
+        public string VritualServerName;
 
-        //TODO: .NET naming
+        [QuerySerialize("virtualserver_codec_encryption_mode")]
+        public int VirtualServerCodecEncryptionMode;
 
-        public string virtualserver_name;
+        [QuerySerialize("virtualserver_default_server_group")]
+        public int VirtualServerDefaultServerGroup;
 
-        public int virtualserver_codec_encryption_mode;
+        [QuerySerialize("virtualserver_default_channel_group")]
+        public int VirtualServerDefaultChannelGroup;
 
-        public int virtualserver_default_server_group;
+        [QuerySerialize("virtualserver_hostbanner_url")]
+        public string HostbannerUrl;
 
-        public int virtualserver_default_channel_group;
+        [QuerySerialize("virtualserver_hostbanner_gfx_url")]
+        public string HostbannerGfxUrl;
 
-        public string virtualserver_hostbanner_url;
+        [QuerySerialize("virtualserver_hostbanner_gfx_interval")]
+        public TimeSpan HostbannerGfxInterval;
 
-        public string virtualserver_hostbanner_gfx_url;
+        [QuerySerialize("virtualserver_priority_speaker_dimm_modificator")]
+        public string PrioritySpeakerDimmModificator;
 
-        public TimeSpan virtualserver_hostbanner_gfx_interval;
+        [QuerySerialize("virtualserver_hostbutton_tooltip")]
+        public string HostButtonTooltipText;
 
-        public string virtualserver_priority_speaker_dimm_modificator;
+        [QuerySerialize("virtualserver_hostbutton_url")]
+        public string HostButtonUrl;
 
-        public string virtualserver_hostbutton_tooltip;
+        [QuerySerialize("virtualserver_hostbutton_url")]
+        public string HostButtonGfxUrl;
 
-        public string virtualserver_hostbutton_url;
+        [QuerySerialize("virtualserver_name_phonetic")]
+        public string VirtualServerPhoneticName;
 
-        public string virtualserver_hostbutton_gfx_url;
+        [QuerySerialize("virtualserver_icon_id")]
+        public long VirtualServerIconId;
 
-        public string virtualserver_name_phonetic;
+        [QuerySerialize("virtualserver_hostbanner_mode")]
+        public int HostbannerMode;
 
-        public long virtualserver_icon_id;
-
-        public int virtualserver_hostbanner_mode;
-
-        public int virtualserver_channel_temp_delete_delay_default;
+        [QuerySerialize("virtualserver_channel_temp_delete_delay_default")]
+        public TimeSpan TempChannelDefaultDeleteDelay;
     }
 }
