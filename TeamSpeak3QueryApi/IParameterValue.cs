@@ -1,4 +1,4 @@
-﻿namespace TeamSpeak3QueryApi
+﻿namespace TeamSpeak3QueryApi.Net
 {
     /// <summary>Represents an abstraction of a parameter value.</summary>
     public interface IParameterValue

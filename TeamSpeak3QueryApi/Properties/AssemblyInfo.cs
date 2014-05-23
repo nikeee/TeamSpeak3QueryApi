@@ -2,11 +2,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("TeamSpeak3QueryApi")]
+[assembly: AssemblyTitle("TeamSpeak3QueryApi.Net")]
 [assembly: AssemblyDescription("Provides classes to access a remote host uisng the TeamSpeak 3 Query API.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TeamSpeak3QueryApi")]
+[assembly: AssemblyProduct("TeamSpeak3QueryApi.Net")]
 [assembly: AssemblyCopyright("Copyright © Niklas Mollenhauer <holzig@outlook.com> 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

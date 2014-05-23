@@ -1,18 +1,18 @@
 ﻿using System.Linq;
 
-namespace TeamSpeak3QueryApi
+namespace TeamSpeak3QueryApi.Net
 {
     /// <summary>Represents the value of a parameter which consits of a multiple values.</summary>
     public class ParameterValueArray : IParameterValue
     {
         private readonly ParameterValue[] _sourceArray;
 
-        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.ParameterValue"/> using <see langword="null" /> as a value.</summary>
+        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.ParameterValue"/> using <see langword="null" /> as a value.</summary>
         public ParameterValueArray()
             : this(null)
         { }
 
-        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.ParameterValue"/> using the specified <see cref="T:System.String[]" /> as a value.</summary>
+        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.ParameterValue"/> using the specified <see cref="T:System.String[]" /> as a value.</summary>
         /// <param name="sourceArray">The values.</param>
         public ParameterValueArray(ParameterValue[] sourceArray)
         {

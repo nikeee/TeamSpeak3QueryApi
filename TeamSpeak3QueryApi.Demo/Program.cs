@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace TeamSpeak3QueryApi.Demo
+namespace TeamSpeak3QueryApi.Net.Demo
 {
     class Program
     {

@@ -9,7 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TeamSpeak3QueryApi
+namespace TeamSpeak3QueryApi.Net
 {
     /// <summary>Represents a client that can be used to access the TeamSpeak Query API on a remote server.</summary>
     public class TeamSpeakClient : IDisposable
@@ -34,17 +34,17 @@ namespace TeamSpeak3QueryApi
         private NetworkStream _ns;
         private volatile bool _cancelTask;
 
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.TeamSpeakClient"/> using the <see cref="TeamSpeakClient.DefaultHost"/> and <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.TeamSpeakClient"/> using the <see cref="TeamSpeakClient.DefaultHost"/> and <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
         public TeamSpeakClient()
             : this(DefaultHost, DefaultPort)
         { }
 
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.TeamSpeakClient"/> using the provided host and the <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.TeamSpeakClient"/> using the provided host and the <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         public TeamSpeakClient(string hostName)
             : this(hostName, DefaultPort)
         { }
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.TeamSpeakClient"/> using the provided host TCP port.</summary>
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
         public TeamSpeakClient(string hostName, short port)

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace TeamSpeak3QueryApi
+namespace TeamSpeak3QueryApi.Net
 {
     /// <summary>Represents the value of a parameter which consits of a single value.</summary>
     public class ParameterValue : IParameterValue
@@ -9,12 +9,12 @@ namespace TeamSpeak3QueryApi
         /// <returns>The value.</returns>
         public string Value { get; set; }
 
-        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.ParameterValue"/> using <see langword="null" /> as a value.</summary>
+        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.ParameterValue"/> using <see langword="null" /> as a value.</summary>
         public ParameterValue()
             : this(null)
         { }
 
-        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.ParameterValue"/> using the specified <see cref="T:System.String" /> as a value.</summary>
+        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.ParameterValue"/> using the specified <see cref="T:System.String" /> as a value.</summary>
         /// <param name="value">The value.</param>
         public ParameterValue(string value)
         {

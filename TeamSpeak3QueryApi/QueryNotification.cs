@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace TeamSpeak3QueryApi
+namespace TeamSpeak3QueryApi.Net
 {
     internal class QueryNotification
     {

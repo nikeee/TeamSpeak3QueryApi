@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace TeamSpeak3QueryApi
+namespace TeamSpeak3QueryApi.Net
 {
     internal class QueryCommand
     {

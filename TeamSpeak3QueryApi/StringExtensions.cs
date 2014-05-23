@@ -1,4 +1,4 @@
-﻿namespace TeamSpeak3QueryApi
+﻿namespace TeamSpeak3QueryApi.Net
 {
     internal static class StringExtensions
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace TeamSpeak3QueryApi
+namespace TeamSpeak3QueryApi.Net
 {
     /// <summary>Represents a Query API parameter.</summary>
     public class Parameter
@@ -13,21 +13,21 @@ namespace TeamSpeak3QueryApi
         /// <returns>The value of the parameter.</returns>
         public IParameterValue Value { get; set; }
 
-        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Parameter"/>.</summary>
+        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.Parameter"/>.</summary>
         /// <param name="name">The name of the Query API parameter.</param>
         /// <param name="value">The value of the Query API parameter.</param>
         public Parameter(string name, ParameterValue value)
             : this(name, value as IParameterValue)
         { }
 
-        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Parameter"/>.</summary>
+        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.Parameter"/>.</summary>
         /// <param name="name">The name of the Query API parameter.</param>
         /// <param name="values">The array value of the Query API parameter.</param>
         public Parameter(string name, ParameterValueArray values)
             : this(name, values as IParameterValue)
         { }
 
-        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Parameter"/>.</summary>
+        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.Parameter"/>.</summary>
         /// <param name="name">The name of the Query API parameter.</param>
         /// <param name="value">The value of the Query API parameter.</param>
         public Parameter(string name, IParameterValue value)
@@ -38,17 +38,17 @@ namespace TeamSpeak3QueryApi
             Value = value;
         }
 
-        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Parameter"/> using a string array.</summary>
+        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.Parameter"/> using a string array.</summary>
         /// <param name="sourceArray">The first item represents the name of the parameter, the rest is used as a value.</param>
-        /// <returns>A new instance of <see cref="T:TeamSpeak3QueryApi.Parameter"/>.</returns>
+        /// <returns>A new instance of <see cref="T:TeamSpeak3QueryApi.Net.Parameter"/>.</returns>
         public static Parameter FromArray(string[] sourceArray)
         {
             return sourceArray;
         }
 
-        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Parameter"/> using a string array.</summary>
+        /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.Parameter"/> using a string array.</summary>
         /// <param name="sourceArray">The first item represents the name of the parameter, the rest is used as a value.</param>
-        /// <returns>A new instance of <see cref="T:TeamSpeak3QueryApi.Parameter"/>.</returns>
+        /// <returns>A new instance of <see cref="T:TeamSpeak3QueryApi.Net.Parameter"/>.</returns>
         public static implicit operator Parameter(string[] sourceArray)
         {
             Debug.Assert(sourceArray != null);
