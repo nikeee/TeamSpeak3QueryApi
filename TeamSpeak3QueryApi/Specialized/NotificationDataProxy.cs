@@ -14,7 +14,9 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                                                                 {
                                                                     {typeof(int), new Int32TypeCaster()},
                                                                     {typeof(string), DefaultCaster},
-                                                                    {typeof(bool), new BooleanTypeCaster()}
+                                                                    {typeof(bool), new BooleanTypeCaster()},
+                                                                    {typeof(ReasonId), new EnumCaster<ReasonId>()},
+                                                                    {typeof(ClientType), new EnumCaster<ClientType>()}
                                                                 };
 
         public static IReadOnlyList<T> SerializeGeneric<T>(NotificationData data)
@@ -24,7 +26,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 return new ReadOnlyCollection<T>(new T[0]);
 
             var pl = data.Payload;
-            var fields = typeof(T).GetFields(BindingFlags.Public);
+            var fields = typeof(T).GetFields();
 
             var destList = new List<T>(pl.Count);
 
@@ -35,13 +37,28 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 var destType = Activator.CreateInstance<T>();
                 foreach (var v in item)
                 {
-                    var matchedEntry = fields.SingleOrDefault(fi => fi.CustomAttributes.OfType<QuerySerializeAttribute>().Any(qsa => qsa.Name == v.Key) || fi.Name == v.Key);
+                    var matchedEntry = fields.SingleOrDefault(
+                        fi =>
+                        {
+                            var ca = fi.GetCustomAttributes<QuerySerializeAttribute>(false);
+                            return fi.Name == v.Key || ca.Any(qsa => qsa.Name == v.Key);
+                        });
                     if (matchedEntry != null)
                     {
+
+
                         if (Casters.ContainsKey(matchedEntry.FieldType))
                         {
-                            var caster = Casters[matchedEntry.FieldType]; //_casters.Single(c => c.Key == matchedEntry.FieldType);
-                            matchedEntry.SetValue(destType, caster.Cast(v.Value));
+                            try
+                            {
+                                var caster = Casters[matchedEntry.FieldType]; //_casters.Single(c => c.Key == matchedEntry.FieldType);
+                                matchedEntry.SetValue(destType, caster.Cast(v.Value));
+                            }
+                            catch (Exception)
+                            {
+
+                                matchedEntry.SetValue(destType, DefaultCaster.Cast(v.Value));
+                            }
                         }
                         else
                         {
@@ -63,9 +80,22 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
     class Int32TypeCaster : ITypeCaster
     {
-        public object Cast(object source)
+        public virtual object Cast(object source)
         {
-            return int.Parse((string)source);
+            if (source == null)
+                return 0;
+            if (source is int)
+                return (int)source;
+            return int.Parse(source.ToString());
+        }
+    }
+
+    class EnumCaster<T> : Int32TypeCaster where T : struct
+    {
+        public override object Cast(object source)
+        {
+            var i = base.Cast(source);
+            return (T)i;
         }
     }
 
@@ -73,7 +103,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
     {
         public object Cast(object source)
         {
-            return (string)source;
+            if (source == null)
+                return null;
+            if (source is int)
+                return ((int)source).ToString().TeamSpeakUnescape();
+            return source.ToString().TeamSpeakUnescape();
         }
     }
 
@@ -81,7 +115,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
     {
         public object Cast(object source)
         {
-            return int.Parse((string)source) != 0;
+            if (source == null)
+                return false;
+            if (source is int)
+                return ((int)source) != 0;
+            return int.Parse(source.ToString()) != 0;
         }
     }
 }

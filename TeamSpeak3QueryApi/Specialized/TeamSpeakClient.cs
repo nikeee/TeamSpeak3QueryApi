@@ -6,7 +6,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 {
     public class TeamSpeakClient
     {
-        private QueryClient _client;
+        private readonly QueryClient _client;
 
         public TeamSpeakClient(QueryClient client)
         {
