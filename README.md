@@ -12,6 +12,7 @@ Key features of this library:
 # Examples
 Using the rich client, you can connect to a TeamSpeak Query server like this:
 ## Connect and Login
+
 ```C#
 var rc = new TeamSpeakClient(host, port); // Create rich client instance
 await rc.Connect(); // connect to the server
@@ -21,6 +22,7 @@ var me = await rc.WhoAmI(); // Get information about yourself!
 ```
 ## Notifications
 You can receive notifications. The notification data is fully typed, so you can access the response via properties and not - like other wrappers - using a dictionary.
+
 ```C#
 // assuming connected
 await rc.RegisterServerNotification(); // register notifications to receive server notifications
@@ -39,11 +41,13 @@ rc.Subscribe<ClientEnterView>(data => {
 
 ## Further Operations
 Getting all clients and moving them to a specific channel is as simple as:
+
 ```C#
 var currentClients = await rc.GetClients();
 await rc.MoveClient(currentClients, 30); // Where 30 is the channel id
 ```
 ...and kick someone whose name is "Foobar".
+
 ```C#
 var fooBar = currentClients.SingleOrDefault(c => c.ClientNickName == "Foobar"); // Using linq to find our dude
 if(fooBar != null) // Make sure we pass a valid reference
@@ -52,6 +56,7 @@ if(fooBar != null) // Make sure we pass a valid reference
 
 ## Middleware
 If you want to work more loose-typed, you can do this. This is possible using the `QueryClient`.
+
 ```C#
 var qc = new QueryClient(host, port);
 await qc.Connect();
