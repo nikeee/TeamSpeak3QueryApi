@@ -38,6 +38,11 @@ namespace TeamSpeak3QueryApi.Net
             Value = value;
         }
 
+        public string GetEscapedRepresentation()
+        {
+            return Value.CreateParameterLine(Name);
+        }
+
         /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.Parameter"/> using a string array.</summary>
         /// <param name="sourceArray">The first item represents the name of the parameter, the rest is used as a value.</param>
         /// <returns>A new instance of <see cref="T:TeamSpeak3QueryApi.Net.Parameter"/>.</returns>

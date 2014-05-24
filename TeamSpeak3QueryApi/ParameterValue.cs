@@ -21,11 +21,11 @@ namespace TeamSpeak3QueryApi.Net
             Value = value;
         }
 
-        /// <summary>Creates an escaped string representation of the parameter value.</summary>
-        /// <returns>An escaped string representation of the parameter value.</returns>
+        /// <summary>Creates an escaped string representation of the parameter.</summary>
+        /// <returns>An escaped string representation of the parameter.</returns>
         public string CreateParameterLine(string parameterName)
         {
-            return (Value ?? "").TeamSpeakEscape();
+            return string.Concat(parameterName.TeamSpeakEscape(), '=', (Value ?? "").TeamSpeakEscape());
         }
 
         /// <summary>Creates a new parameter value using a <see cref="T:System.String"/> as value.</summary>

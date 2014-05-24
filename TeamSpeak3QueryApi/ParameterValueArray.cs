@@ -27,19 +27,18 @@ namespace TeamSpeak3QueryApi.Net
         {
             if (_sourceArray == null)
                 return string.Empty;
+
             var strs = _sourceArray.Select(kv => kv.CreateParameterLine(parameterName)).ToArray();
-            //return string.Join("|", strs);
+            return string.Join("|", strs);
 
-            if (strs.Length == 1)
-                return strs[0];
-
+            /*
             // Pretty much design failure
-
             var sb = new StringBuilder();
             sb.Append(strs[0]);
             for (int i = 1; i < strs.Length; ++i)
                 sb.Append('|').Append(parameterName).Append('=').Append(strs[1]);
             return sb.ToString();
+            */
         }
 
         /// <summary>Creates a new parameter value using a <see cref="T:System.String[]"/> as value.</summary>

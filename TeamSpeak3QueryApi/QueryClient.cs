@@ -137,12 +137,7 @@ namespace TeamSpeak3QueryApi.Net
             }
 
             foreach (var p in parameters)
-            {
-                toSend.Append(' ')
-                    .Append(p.Name.TeamSpeakEscape())
-                    .Append('=')
-                    .Append(p.Value.CreateParameterLine(p.Name));
-            }
+                toSend.Append(' ').Append(p.GetEscapedRepresentation());
 
             var d = new TaskCompletionSource<QueryResponseDictionary[]>();
 
