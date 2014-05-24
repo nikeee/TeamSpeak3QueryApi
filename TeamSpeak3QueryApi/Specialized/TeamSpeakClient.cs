@@ -175,6 +175,10 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             return KickClient(new[] { clientId }, from, reasonMessage);
         }
+        public Task KickClient(GetClientsInfo client, KickOrigin from)
+        {
+            return KickClient(client.ClientId, from);
+        }
         public Task KickClient(IEnumerable<GetClientsInfo> clients, KickOrigin from)
         {
             var clIds = clients.Select(c => c.ClientId).ToArray();
@@ -183,15 +187,15 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         public Task KickClient(IList<int> clientIds, KickOrigin from)
         {
             return _client.Send("clientkick",
-                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
-                new Parameter("reasonid", (int)from));
+                new Parameter("reasonid", (int)from),
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()));
         }
         public Task KickClient(IList<int> clientIds, KickOrigin from, string reasonMessage)
         {
             return _client.Send("clientkick",
-                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
                 new Parameter("reasonid", (int)from),
-                new Parameter("reasonmsg", reasonMessage));
+                new Parameter("reasonmsg", reasonMessage),
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()));
         }
 
         #endregion

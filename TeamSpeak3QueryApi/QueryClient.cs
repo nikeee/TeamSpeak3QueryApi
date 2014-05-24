@@ -126,12 +126,22 @@ namespace TeamSpeak3QueryApi.Net
             for (int i = 0; i < options.Length; ++i)
                 toSend.Append(" -").Append(options[i].TeamSpeakEscape());
 
+            var lastParamArray = parameters.SingleOrDefault(p => p.Value is ParameterValueArray);
+            if (lastParamArray != null)
+            {
+                // This is crap, but I'm kinda drunk
+                var l = new List<Parameter>(parameters);
+                l.Remove(lastParamArray);
+                l.Add(lastParamArray);
+                parameters = l.ToArray();
+            }
+
             foreach (var p in parameters)
             {
                 toSend.Append(' ')
                     .Append(p.Name.TeamSpeakEscape())
                     .Append('=')
-                    .Append(p.Value.CreateParameterLine());
+                    .Append(p.Value.CreateParameterLine(p.Name));
             }
 
             var d = new TaskCompletionSource<QueryResponseDictionary[]>();

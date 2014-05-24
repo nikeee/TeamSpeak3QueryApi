@@ -23,7 +23,7 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates an escaped string representation of the parameter value.</summary>
         /// <returns>An escaped string representation of the parameter value.</returns>
-        public string CreateParameterLine()
+        public string CreateParameterLine(string parameterName)
         {
             return (Value ?? "").TeamSpeakEscape();
         }

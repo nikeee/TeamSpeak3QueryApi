@@ -5,6 +5,6 @@
     {
         /// <summary>Creates an escaped string representation of the parameter value.</summary>
         /// <returns>An escaped string representation of the parameter value.</returns>
-        string CreateParameterLine();
+        string CreateParameterLine(string parameterName);
     }
 }

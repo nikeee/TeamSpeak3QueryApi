@@ -40,11 +40,12 @@ namespace TeamSpeak3QueryApi.Net.Demo
 
             var currentClients = await rc.GetClients();
 
-            var fullClients = currentClients.Where(c => c.Type == ClientType.FullClient);
+            var fullClients = currentClients.Where(c => c.Type == ClientType.FullClient).ToList();
             //var fullClients = from c
             //                  in currentClients
             //                  where c.Type == ClientType.FullClient
             //                  select c;
+            //fullClients.ForEach(async c=> await rc.KickClient(c, KickOrigin.Channel));
             await rc.KickClient(fullClients, KickOrigin.Channel);
 
             //foreach (var client in fullClients)
