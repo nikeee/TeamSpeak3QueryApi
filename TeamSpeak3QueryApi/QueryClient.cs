@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -120,28 +121,25 @@ namespace TeamSpeak3QueryApi.Net
                 throw new ArgumentNullException("cmd"); //return Task.Run( () => throw new ArgumentNullException("cmd"));
 
             options = options ?? new string[0];
-            parameters = parameters ?? new Parameter[0];
+            var ps = parameters == null ? new List<Parameter>() : new List<Parameter>(parameters);
 
             var toSend = new StringBuilder(cmd.TeamSpeakEscape());
             for (int i = 0; i < options.Length; ++i)
-                toSend.Append(" -").Append(options[i].TeamSpeakEscape());
+                toSend.Append(" -").Append(options[i].ToLowerInvariant().TeamSpeakEscape());
 
-            var lastParamArray = parameters.SingleOrDefault(p => p.Value is ParameterValueArray);
+            // Parameter arrays should be the last parameters in the list
+            var lastParamArray = ps.SingleOrDefault(p => p.Value is ParameterValueArray);
             if (lastParamArray != null)
             {
-                // This is crap, but I'm kinda drunk
-                var l = new List<Parameter>(parameters);
-                l.Remove(lastParamArray);
-                l.Add(lastParamArray);
-                parameters = l.ToArray();
+                ps.MoveToBottom(lastParamArray);
             }
 
-            foreach (var p in parameters)
+            foreach (var p in ps)
                 toSend.Append(' ').Append(p.GetEscapedRepresentation());
 
             var d = new TaskCompletionSource<QueryResponseDictionary[]>();
 
-            var newItem = new QueryCommand(cmd, parameters, options, d, toSend.ToString());
+            var newItem = new QueryCommand(cmd, new ReadOnlyCollection<Parameter>(ps), options, d, toSend.ToString());
 
             _queue.Enqueue(newItem);
 

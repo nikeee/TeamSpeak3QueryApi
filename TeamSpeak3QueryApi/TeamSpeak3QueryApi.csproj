@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IParameterValue.cs" />
+    <Compile Include="ListExtensions.cs" />
     <Compile Include="NotificationData.cs" />
     <Compile Include="Parameter.cs" />
     <Compile Include="ParameterValue.cs" />
