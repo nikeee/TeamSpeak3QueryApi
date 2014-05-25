@@ -85,6 +85,7 @@
     <Compile Include="Specialized\ReasonId.cs" />
     <Compile Include="Specialized\NotificationEventTarget.cs" />
     <Compile Include="Specialized\Responses\ClientBan.cs" />
+    <Compile Include="Specialized\Responses\CreatedChannel.cs" />
     <Compile Include="Specialized\Responses\FoundChannel.cs" />
     <Compile Include="Specialized\Responses\GetChannelInfo.cs" />
     <Compile Include="Specialized\Responses\GetChannelListInfo.cs" />

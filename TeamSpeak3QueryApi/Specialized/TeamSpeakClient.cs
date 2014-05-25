@@ -345,6 +345,21 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+        #region CreateChannel
+
+        // Region setting properties not supported yet
+
+        public async Task<CreatedChannel> CreateChannel(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
+
+            var res = await _client.Send("channelcreate",
+                new Parameter("channel_name", name));
+            return DataProxy.SerializeGeneric<CreatedChannel>(res).FirstOrDefault();
+        }
+
+        #endregion
 
         #region GetServers
 
