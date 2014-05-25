@@ -278,12 +278,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
         #region GetChannelInfo
 
-        public async Task<GetChannelInfo> GetChannelInfo(GetChannelListInfo channel)
+        public Task<GetChannelInfo> GetChannelInfo(GetChannelListInfo channel)
         {
-            if(channel == null)
+            if (channel == null)
                 throw new ArgumentNullException("channel");
-            var res = await _client.Send("channelinfo", new Parameter("cid", channel.Id));
-            return DataProxy.SerializeGeneric<GetChannelInfo>(res).FirstOrDefault();
+            return GetChannelInfo(channel.Id);
         }
 
         public async Task<GetChannelInfo> GetChannelInfo(int channelId)
@@ -293,7 +292,20 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+        #region FindChannel
 
+        public async Task<IReadOnlyCollection<FoundChannel>> FindChannel()
+        {
+            var res = await _client.Send("channelfind");
+            return DataProxy.SerializeGeneric<FoundChannel>(res);
+        }
+        public async Task<IReadOnlyCollection<FoundChannel>> FindChannel(string pattern)
+        {
+            var res = await _client.Send("channelfind", new Parameter("pattern", pattern ?? ""));
+            return DataProxy.SerializeGeneric<FoundChannel>(res);
+        }
+
+        #endregion
 
         #region GetServers
 
