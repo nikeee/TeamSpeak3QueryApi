@@ -438,6 +438,15 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+        #region SendGlobalMessage
+
+        public Task SendGlobalMessage(string message)
+        {
+            return _client.Send("gm",
+                new Parameter("msg", message ?? ""));
+        }
+
+        #endregion
 
         #endregion
     }
