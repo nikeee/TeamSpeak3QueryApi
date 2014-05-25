@@ -56,6 +56,7 @@
     <Compile Include="QueryException.cs" />
     <Compile Include="QueryNotification.cs" />
     <Compile Include="QueryResponseDictionary.cs" />
+    <Compile Include="Specialized\EnumExtensions.cs" />
     <Compile Include="Specialized\ITeamSpeakSerializable.cs" />
     <Compile Include="Specialized\Notifications\ChannelDeleted.cs" />
     <Compile Include="Specialized\Notifications\ChannelDescriptionChanged.cs" />

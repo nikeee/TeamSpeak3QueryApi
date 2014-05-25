@@ -222,16 +222,6 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
     }
 
-    internal static class EnumExtensions
-    {
-        public static IEnumerable<Enum> GetFlags(this Enum input)
-        {
-            foreach (Enum value in Enum.GetValues(input.GetType()))
-                if (input.HasFlag(value))
-                    yield return value;
-        }
-    }
-
     public enum KickOrigin
     {
         Channel = 4,
