@@ -262,17 +262,34 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #region GetChannels
 
-        public async Task<IReadOnlyList<GetChannelInfo>> GetChannels()
+        public async Task<IReadOnlyList<GetChannelListInfo>> GetChannels()
         {
             var res = await _client.Send("channellist");
-            return DataProxy.SerializeGeneric<GetChannelInfo>(res);
+            return DataProxy.SerializeGeneric<GetChannelListInfo>(res);
         }
 
-        public async Task<IReadOnlyList<GetChannelInfo>> GetChannels(GetChannelOptions options)
+        public async Task<IReadOnlyList<GetChannelListInfo>> GetChannels(GetChannelOptions options)
         {
             var optionList = options.GetFlagsAsList();
             var res = await _client.Send("channellist", null, optionList.ToArray());
-            return DataProxy.SerializeGeneric<GetChannelInfo>(res);
+            return DataProxy.SerializeGeneric<GetChannelListInfo>(res);
+        }
+
+        #endregion
+        #region GetChannelInfo
+
+        public async Task<GetChannelInfo> GetChannelInfo(GetChannelListInfo channel)
+        {
+            if(channel == null)
+                throw new ArgumentNullException("channel");
+            var res = await _client.Send("channelinfo", new Parameter("cid", channel.Id));
+            return DataProxy.SerializeGeneric<GetChannelInfo>(res).FirstOrDefault();
+        }
+
+        public async Task<GetChannelInfo> GetChannelInfo(int channelId)
+        {
+            var res = await _client.Send("channelinfo", new Parameter("cid", channelId));
+            return DataProxy.SerializeGeneric<GetChannelInfo>(res).FirstOrDefault();
         }
 
         #endregion
@@ -280,21 +297,20 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #region GetServers
 
-        public async Task<IReadOnlyList<GetServerInfo>> GetServers()
+        public async Task<IReadOnlyList<GetServerListInfo>> GetServers()
         {
             var res = await _client.Send("serverlist");
-            return DataProxy.SerializeGeneric<GetServerInfo>(res);
+            return DataProxy.SerializeGeneric<GetServerListInfo>(res);
         }
 
-        public async Task<IReadOnlyList<GetServerInfo>> GetServers(GetServerOptions options)
+        public async Task<IReadOnlyList<GetServerListInfo>> GetServers(GetServerOptions options)
         {
             var optionList = options.GetFlagsAsList();
             var res = await _client.Send("serverlist", null, optionList.ToArray());
-            return DataProxy.SerializeGeneric<GetServerInfo>(res);
+            return DataProxy.SerializeGeneric<GetServerListInfo>(res);
         }
 
         #endregion
-
 
         #endregion
     }
