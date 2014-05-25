@@ -207,14 +207,12 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 throw new ArgumentNullException("client");
             return BanClient(client.ClientId);
         }
-
         public Task<IReadOnlyList<ClientBan>> BanClient(GetClientsInfo client, TimeSpan duration)
         {
             if (client == null)
                 throw new ArgumentNullException("client");
             return BanClient(client.ClientId, duration);
         }
-
         public Task<IReadOnlyList<ClientBan>> BanClient(GetClientsInfo client, TimeSpan duration, string reason)
         {
             if (client == null)
@@ -266,24 +264,5 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
 
         #endregion
-    }
-
-    public enum KickOrigin
-    {
-        Channel = 4,
-        Server = 5
-    }
-
-    [Flags]
-    public enum GetClientOptions
-    {
-        Uid,
-        Away,
-        Voice,
-        Times,
-        Groups,
-        Info,
-        Icon,
-        Country
     }
 }
