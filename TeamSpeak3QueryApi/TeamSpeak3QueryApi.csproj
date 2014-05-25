@@ -57,7 +57,9 @@
     <Compile Include="QueryNotification.cs" />
     <Compile Include="QueryResponseDictionary.cs" />
     <Compile Include="Specialized\EnumExtensions.cs" />
+    <Compile Include="Specialized\GetChannelOptions.cs" />
     <Compile Include="Specialized\GetClientOptions.cs" />
+    <Compile Include="Specialized\GetServerOptions.cs" />
     <Compile Include="Specialized\ITeamSpeakSerializable.cs" />
     <Compile Include="Specialized\KickOrigin.cs" />
     <Compile Include="Specialized\Notifications\ChannelDeleted.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Specialized\Responses\ClientBan.cs" />
     <Compile Include="Specialized\Responses\GetChannelInfo.cs" />
     <Compile Include="Specialized\Responses\GetClientInfo.cs" />
+    <Compile Include="Specialized\Responses\GetServerInfo.cs" />
     <Compile Include="Specialized\Responses\Response.cs" />
     <Compile Include="Specialized\Responses\WhoAmI.cs" />
     <Compile Include="Specialized\TeamSpeakClient.cs" />

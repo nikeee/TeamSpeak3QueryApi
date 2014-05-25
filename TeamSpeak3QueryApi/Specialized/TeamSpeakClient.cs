@@ -255,8 +255,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             var optionList = options.GetFlagsAsList();
             var res = await _client.Send("clientlist", null, optionList.ToArray());
-            var info = DataProxy.SerializeGeneric<GetClientsInfo>(res);
-            return info;
+            return DataProxy.SerializeGeneric<GetClientsInfo>(res);
         }
 
         #endregion
@@ -273,23 +272,30 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             var optionList = options.GetFlagsAsList();
             var res = await _client.Send("channellist", null, optionList.ToArray());
-            var info = DataProxy.SerializeGeneric<GetChannelInfo>(res);
-            return info;
+            return DataProxy.SerializeGeneric<GetChannelInfo>(res);
+        }
+
+        #endregion
+
+
+        #region GetServers
+
+        public async Task<IReadOnlyList<GetServerInfo>> GetServers()
+        {
+            var res = await _client.Send("serverlist");
+            return DataProxy.SerializeGeneric<GetServerInfo>(res);
+        }
+
+        public async Task<IReadOnlyList<GetServerInfo>> GetServers(GetServerOptions options)
+        {
+            var optionList = options.GetFlagsAsList();
+            var res = await _client.Send("serverlist", null, optionList.ToArray());
+            return DataProxy.SerializeGeneric<GetServerInfo>(res);
         }
 
         #endregion
 
 
         #endregion
-    }
-
-    public enum GetChannelOptions
-    {
-        Topic,
-        Flags,
-        Voice,
-        Limits,
-        Icon,
-        SecondsEmpty
     }
 }
