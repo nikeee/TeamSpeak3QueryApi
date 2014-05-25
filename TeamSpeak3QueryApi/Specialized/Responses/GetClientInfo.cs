@@ -3,16 +3,16 @@
     public class GetClientsInfo : Response
     {
         [QuerySerialize("clid")]
-        public int ClientId;
+        public int Id;
 
         [QuerySerialize("cid")]
         public int ChannelId;
 
         [QuerySerialize("client_database_id")]
-        public int ClientDatabaseId;
+        public int DatabaseId;
 
         [QuerySerialize("client_nickname")]
-        public string ClientNickName;
+        public string NickName;
 
         [QuerySerialize("client_type")]
         public ClientType Type;
