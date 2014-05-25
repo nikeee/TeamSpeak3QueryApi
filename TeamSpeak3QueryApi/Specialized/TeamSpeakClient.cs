@@ -157,11 +157,16 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public Task MoveClient(IList<int> clientIds, int targetChannelId)
         {
-            return _client.Send("clientmove", new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()), new Parameter("cid", targetChannelId));
+            return _client.Send("clientmove",
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
+                new Parameter("cid", targetChannelId));
         }
         public Task MoveClient(IList<int> clientIds, int targetChannelId, string channelPassword)
         {
-            return _client.Send("clientmove", new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()), new Parameter("cid", targetChannelId), new Parameter("cpw", channelPassword));
+            return _client.Send("clientmove",
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
+                new Parameter("cid", targetChannelId),
+                new Parameter("cpw", channelPassword));
         }
 
         #endregion
@@ -303,6 +308,23 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             var res = await _client.Send("channelfind", new Parameter("pattern", pattern ?? ""));
             return DataProxy.SerializeGeneric<FoundChannel>(res);
+        }
+
+        #endregion
+        #region MoveChannel
+
+        public Task MoveChannel(int channelId, int parentChannelId)
+        {
+            return _client.Send("channelmove",
+                new Parameter("cid", channelId.ToString(CultureInfo.InvariantCulture)),
+                new Parameter("cpid", parentChannelId.ToString(CultureInfo.InvariantCulture)));
+        }
+        public Task MoveChannel(int channelId, int parentChannelId, int order)
+        {
+            return _client.Send("channelmove",
+                new Parameter("cid", channelId.ToString(CultureInfo.InvariantCulture)),
+                new Parameter("cpid", parentChannelId.ToString(CultureInfo.InvariantCulture)),
+                new Parameter("order", order.ToString(CultureInfo.InvariantCulture)));
         }
 
         #endregion
