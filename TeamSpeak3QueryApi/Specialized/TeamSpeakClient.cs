@@ -201,6 +201,27 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
         #region BanClient
 
+        public Task<IReadOnlyList<ClientBan>> BanClient(GetClientsInfo client)
+        {
+            if (client == null)
+                throw new ArgumentNullException("client");
+            return BanClient(client.ClientId);
+        }
+
+        public Task<IReadOnlyList<ClientBan>> BanClient(GetClientsInfo client, TimeSpan duration)
+        {
+            if (client == null)
+                throw new ArgumentNullException("client");
+            return BanClient(client.ClientId, duration);
+        }
+
+        public Task<IReadOnlyList<ClientBan>> BanClient(GetClientsInfo client, TimeSpan duration, string reason)
+        {
+            if (client == null)
+                throw new ArgumentNullException("client");
+            return BanClient(client.ClientId, duration, reason);
+        }
+
         public async Task<IReadOnlyList<ClientBan>> BanClient(int clientId)
         {
             var res = await _client.Send("banclient",
