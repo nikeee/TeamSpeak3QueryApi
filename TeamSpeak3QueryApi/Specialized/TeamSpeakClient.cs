@@ -199,6 +199,31 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+        #region BanClient
+
+        public async Task<IReadOnlyList<ClientBan>> BanClient(int clientId)
+        {
+            var res = await _client.Send("banclient",
+                new Parameter("clid", clientId));
+            return DataProxy.SerializeGeneric<ClientBan>(res);
+        }
+        public async Task<IReadOnlyList<ClientBan>> BanClient(int clientId, TimeSpan duration)
+        {
+            var res = await _client.Send("banclient",
+                new Parameter("clid", clientId),
+                new Parameter("time", ((int)Math.Ceiling(duration.TotalSeconds)).ToString(CultureInfo.InvariantCulture)));
+            return DataProxy.SerializeGeneric<ClientBan>(res);
+        }
+        public async Task<IReadOnlyList<ClientBan>> BanClient(int clientId, TimeSpan duration, string reason)
+        {
+            var res = await _client.Send("banclient",
+                new Parameter("clid", clientId),
+                new Parameter("time", ((int)Math.Ceiling(duration.TotalSeconds)).ToString(CultureInfo.InvariantCulture)),
+                new Parameter("banreason", reason ?? ""));
+            return DataProxy.SerializeGeneric<ClientBan>(res);
+        }
+
+        #endregion
         #region GetClients
 
         public async Task<IReadOnlyList<GetClientsInfo>> GetClients()
