@@ -101,7 +101,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return proxied.FirstOrDefault();
         }
 
-        #region Register-Notification
+        #region Notification Methods
 
         public Task RegisterChannelNotification(int channelId)
         {
@@ -132,6 +132,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+
+        #region Client Methods
 
         #region MoveClient
 
@@ -265,6 +267,10 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #endregion
 
+        #endregion
+
+        #region Channel Methods
+
         #region GetChannels
 
         public async Task<IReadOnlyList<GetChannelListInfo>> GetChannels()
@@ -391,6 +397,10 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #endregion
 
+        #endregion
+
+        #region Server Methods
+
         #region GetServers
 
         public async Task<IReadOnlyList<GetServerListInfo>> GetServers()
@@ -407,6 +417,10 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+
+        #endregion
+
+        #region Message Methods
 
         #region SendTextMessage
 
@@ -445,6 +459,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return _client.Send("gm",
                 new Parameter("msg", message ?? ""));
         }
+
+        #endregion
 
         #endregion
 
