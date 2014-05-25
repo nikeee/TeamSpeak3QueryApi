@@ -313,6 +313,23 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
         #region MoveChannel
 
+        public Task MoveChannel(GetChannelListInfo channel, GetChannelListInfo parent)
+        {
+            if (channel == null)
+                throw new ArgumentNullException("channel");
+            if (parent == null)
+                throw new ArgumentNullException("parent");
+            return MoveChannel(channel.Id, parent.Id);
+        }
+        public Task MoveChannel(GetChannelListInfo channel, GetChannelListInfo parent, int order)
+        {
+            if (channel == null)
+                throw new ArgumentNullException("channel");
+            if (parent == null)
+                throw new ArgumentNullException("parent");
+            return MoveChannel(channel.Id, parent.Id, order);
+        }
+
         public Task MoveChannel(int channelId, int parentChannelId)
         {
             return _client.Send("channelmove",
