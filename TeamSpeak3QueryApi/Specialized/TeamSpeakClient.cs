@@ -158,13 +158,13 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         public Task MoveClient(IList<int> clientIds, int targetChannelId)
         {
             return _client.Send("clientmove",
-                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i)).ToArray()),
                 new Parameter("cid", targetChannelId));
         }
         public Task MoveClient(IList<int> clientIds, int targetChannelId, string channelPassword)
         {
             return _client.Send("clientmove",
-                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()),
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i)).ToArray()),
                 new Parameter("cid", targetChannelId),
                 new Parameter("cpw", channelPassword));
         }
@@ -235,14 +235,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             var res = await _client.Send("banclient",
                 new Parameter("clid", clientId),
-                new Parameter("time", ((int)Math.Ceiling(duration.TotalSeconds)).ToString(CultureInfo.InvariantCulture)));
+                new Parameter("time", (int)Math.Ceiling(duration.TotalSeconds)));
             return DataProxy.SerializeGeneric<ClientBan>(res);
         }
         public async Task<IReadOnlyList<ClientBan>> BanClient(int clientId, TimeSpan duration, string reason)
         {
             var res = await _client.Send("banclient",
                 new Parameter("clid", clientId),
-                new Parameter("time", ((int)Math.Ceiling(duration.TotalSeconds)).ToString(CultureInfo.InvariantCulture)),
+                new Parameter("time", (int)Math.Ceiling(duration.TotalSeconds)),
                 new Parameter("banreason", reason ?? ""));
             return DataProxy.SerializeGeneric<ClientBan>(res);
         }
@@ -292,7 +292,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<GetChannelInfo> GetChannelInfo(int channelId)
         {
-            var res = await _client.Send("channelinfo", new Parameter("cid", channelId));
+            var res = await _client.Send("channelinfo",
+                new Parameter("cid", channelId));
             return DataProxy.SerializeGeneric<GetChannelInfo>(res).FirstOrDefault();
         }
 
@@ -306,7 +307,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
         public async Task<IReadOnlyCollection<FoundChannel>> FindChannel(string pattern)
         {
-            var res = await _client.Send("channelfind", new Parameter("pattern", pattern ?? ""));
+            var res = await _client.Send("channelfind",
+                new Parameter("pattern", pattern ?? ""));
             return DataProxy.SerializeGeneric<FoundChannel>(res);
         }
 
@@ -333,15 +335,15 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         public Task MoveChannel(int channelId, int parentChannelId)
         {
             return _client.Send("channelmove",
-                new Parameter("cid", channelId.ToString(CultureInfo.InvariantCulture)),
-                new Parameter("cpid", parentChannelId.ToString(CultureInfo.InvariantCulture)));
+                new Parameter("cid", channelId),
+                new Parameter("cpid", parentChannelId));
         }
         public Task MoveChannel(int channelId, int parentChannelId, int order)
         {
             return _client.Send("channelmove",
-                new Parameter("cid", channelId.ToString(CultureInfo.InvariantCulture)),
-                new Parameter("cpid", parentChannelId.ToString(CultureInfo.InvariantCulture)),
-                new Parameter("order", order.ToString(CultureInfo.InvariantCulture)));
+                new Parameter("cid", channelId),
+                new Parameter("cpid", parentChannelId),
+                new Parameter("order", order));
         }
 
         #endregion
@@ -357,6 +359,34 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             var res = await _client.Send("channelcreate",
                 new Parameter("channel_name", name));
             return DataProxy.SerializeGeneric<CreatedChannel>(res).FirstOrDefault();
+        }
+
+        #endregion
+        #region DeleteChannel
+
+        public Task DeleteChannel(GetChannelListInfo channel)
+        {
+            if (channel == null)
+                throw new ArgumentNullException("channel");
+            return DeleteChannel(channel.Id);
+        }
+        public Task DeleteChannel(GetChannelListInfo channel, bool force)
+        {
+            if (channel == null)
+                throw new ArgumentNullException("channel");
+            return DeleteChannel(channel.Id, force);
+        }
+
+        public Task DeleteChannel(int channelId)
+        {
+            return _client.Send("channeldelete",
+                new Parameter("cid", channelId));
+        }
+        public Task DeleteChannel(int channelId, bool force)
+        {
+            return _client.Send("channeldelete",
+                new Parameter("cid", channelId),
+                new Parameter("force", force));
         }
 
         #endregion
