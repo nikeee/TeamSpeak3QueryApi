@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 namespace TeamSpeak3QueryApi.Net
 {
     /// <summary>Represents a client that can be used to access the TeamSpeak Query API on a remote server.</summary>
-    public class TeamSpeakClient : IDisposable
+    public class QueryClient : IDisposable
     {
         /// <summary>Gets the remote host of the Query API client.</summary>
         /// <returns>The remote host of the Query API client.</returns>
@@ -21,6 +22,8 @@ namespace TeamSpeak3QueryApi.Net
         /// <summary>Gets the remote port of the Query API client.</summary>
         /// <returns>The remote port of the Query API client.</returns>
         public short Port { get; private set; }
+
+        public bool IsConnected { get; private set; }
 
         /// <summary>The default host which is used when no host is provided.</summary>
         public static readonly string DefaultHost = "localhost";
@@ -33,21 +36,25 @@ namespace TeamSpeak3QueryApi.Net
         private StreamWriter _writer;
         private NetworkStream _ns;
         private volatile bool _cancelTask;
+        private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
+        private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
 
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.TeamSpeakClient"/> using the <see cref="TeamSpeakClient.DefaultHost"/> and <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
-        public TeamSpeakClient()
+        #region Ctors
+
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
+        public QueryClient()
             : this(DefaultHost, DefaultPort)
         { }
 
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.TeamSpeakClient"/> using the provided host and the <see cref="TeamSpeakClient.DefaultPort"/>.</summary>
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        public TeamSpeakClient(string hostName)
+        public QueryClient(string hostName)
             : this(hostName, DefaultPort)
         { }
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.TeamSpeakClient"/> using the provided host TCP port.</summary>
+        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, short port)
+        public QueryClient(string hostName, short port)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException("hostName");
@@ -56,8 +63,11 @@ namespace TeamSpeak3QueryApi.Net
 
             Host = hostName;
             Port = port;
+            IsConnected = false;
             _client = new TcpClient();
         }
+
+        #endregion
 
         /// <summary>Connects to the Query API server.</summary>
         /// <returns>An awaitable <see cref="Task"/>.</returns>
@@ -71,6 +81,8 @@ namespace TeamSpeak3QueryApi.Net
             _reader = new StreamReader(_ns);
             _writer = new StreamWriter(_ns) { NewLine = "\n" };
 
+            IsConnected = true;
+
             await _reader.ReadLineAsync();
             await _reader.ReadLineAsync(); // Ignore welcome message
             await _reader.ReadLineAsync();
@@ -79,16 +91,7 @@ namespace TeamSpeak3QueryApi.Net
             ResponseProcessingLoop();
         }
 
-        /*
-        // Using destructor/dispose instead
-        public void Disconnect()
-        {
-            _cancelTask = true;
-            _client.Close();
-        }
-        */
-
-        private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
+        #region Send
 
         /// <summary>Sends a Query API command wihtout parameters to the server.</summary>
         /// <param name="cmd">The command.</param>
@@ -118,23 +121,25 @@ namespace TeamSpeak3QueryApi.Net
                 throw new ArgumentNullException("cmd"); //return Task.Run( () => throw new ArgumentNullException("cmd"));
 
             options = options ?? new string[0];
-            parameters = parameters ?? new Parameter[0];
+            var ps = parameters == null ? new List<Parameter>() : new List<Parameter>(parameters);
 
             var toSend = new StringBuilder(cmd.TeamSpeakEscape());
             for (int i = 0; i < options.Length; ++i)
-                toSend.Append(" -").Append(options[i].TeamSpeakEscape());
+                toSend.Append(" -").Append(options[i].ToLowerInvariant().TeamSpeakEscape());
 
-            foreach (var p in parameters)
+            // Parameter arrays should be the last parameters in the list
+            var lastParamArray = ps.SingleOrDefault(p => p.Value is ParameterValueArray);
+            if (lastParamArray != null)
             {
-                toSend.Append(' ')
-                    .Append(p.Name.TeamSpeakEscape())
-                    .Append('=')
-                    .Append(p.Value.CreateParameterLine());
+                ps.MoveToBottom(lastParamArray);
             }
+
+            foreach (var p in ps)
+                toSend.Append(' ').Append(p.GetEscapedRepresentation());
 
             var d = new TaskCompletionSource<QueryResponseDictionary[]>();
 
-            var newItem = new QueryCommand(cmd, parameters, options, d, toSend.ToString());
+            var newItem = new QueryCommand(cmd, new ReadOnlyCollection<Parameter>(ps), options, d, toSend.ToString());
 
             _queue.Enqueue(newItem);
 
@@ -143,7 +148,8 @@ namespace TeamSpeak3QueryApi.Net
             return await d.Task;
         }
 
-        private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
+        #endregion
+        #region Subscriptions
 
         /// <summary>Subscribes to a notification. If the subscribed notification is received, the callback is getting executed.</summary>
         /// <param name="notificationName">The name of the notification (without the "notify" prefix).</param>
@@ -203,6 +209,9 @@ namespace TeamSpeak3QueryApi.Net
             return name.Trim().ToUpperInvariant();
         }
 
+        #endregion
+        #region Parsing
+
         private static QueryResponseDictionary[] ParseResponse(string rawResponse)
         {
             var records = rawResponse.Split('|');
@@ -235,6 +244,7 @@ namespace TeamSpeak3QueryApi.Net
 
             return response.ToArray();
         }
+
         private static QueryError ParseError(string errorString)
         {
             // Ex:
@@ -270,7 +280,7 @@ namespace TeamSpeak3QueryApi.Net
                         parsedError.FailedPermissionId = errData.Length > 1 ? int.Parse(errData[1], NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CurrentCulture) : -1;
                         continue;
                     default:
-                        throw new TeamSpeakQueryProtocolException();
+                        throw new QueryProtocolException();
                 }
             }
             return parsedError;
@@ -310,6 +320,9 @@ namespace TeamSpeak3QueryApi.Net
             }
         }
 
+        #endregion
+        #region Invocation
+
         private void InvokeNotification(QueryNotification notification)
         {
             Debug.Assert(notification != null);
@@ -340,6 +353,8 @@ namespace TeamSpeak3QueryApi.Net
                 {
                     var line = await _reader.ReadLineAsync();
                     Trace.WriteLine(line);
+                    if(string.IsNullOrWhiteSpace(line))
+                        continue;
                     var s = line.Trim();
                     if (s.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -358,16 +373,8 @@ namespace TeamSpeak3QueryApi.Net
                     else
                     {
                         Debug.Assert(_currentCommand != null);
-                        if (string.IsNullOrWhiteSpace(s))
-                        {
-                            _currentCommand.RawResponse = "";
-                            _currentCommand.ResponseDictionary = new QueryResponseDictionary[0];
-                        }
-                        else
-                        {
-                            _currentCommand.RawResponse = s;
-                            _currentCommand.ResponseDictionary = ParseResponse(s);
-                        }
+                        _currentCommand.RawResponse = s;
+                        _currentCommand.ResponseDictionary = ParseResponse(s);
                     }
                 }
             });
@@ -385,10 +392,11 @@ namespace TeamSpeak3QueryApi.Net
             }
         }
 
-#region IDisposable support
+        #endregion
+        #region IDisposable support
 
         /// <summary>Finalizes the object.</summary>
-        ~TeamSpeakClient()
+        ~QueryClient()
         {
             Dispose(false);
         }
@@ -409,7 +417,7 @@ namespace TeamSpeak3QueryApi.Net
                 //TODO: Test this
                 if (_client != null)
                     _client.Close();
-                if(_ns != null)
+                if (_ns != null)
                     _ns.Dispose();
                 if (_reader != null)
                     _reader.Dispose();
@@ -418,6 +426,6 @@ namespace TeamSpeak3QueryApi.Net
             }
         }
 
-#endregion
+        #endregion
     }
 }

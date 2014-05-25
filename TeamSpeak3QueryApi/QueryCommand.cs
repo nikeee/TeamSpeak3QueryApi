@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TeamSpeak3QueryApi.Net
 {
@@ -6,7 +7,7 @@ namespace TeamSpeak3QueryApi.Net
     {
         public string Command { get; private set; }
         public string[] Options { get; private set; }
-        public Parameter[] Parameters { get; private set; }
+        public IReadOnlyCollection<Parameter> Parameters { get; private set; }
         public string SentText { get; private set; }
         public TaskCompletionSource<QueryResponseDictionary[]> Defer { get; private set; }
 
@@ -14,7 +15,7 @@ namespace TeamSpeak3QueryApi.Net
         public QueryResponseDictionary[] ResponseDictionary { get; set; }
         public QueryError Error { get; set; }
 
-        public QueryCommand(string cmd, Parameter[] parameters, string[] options, TaskCompletionSource<QueryResponseDictionary[]> defer, string sentText)
+        public QueryCommand(string cmd, IReadOnlyCollection<Parameter> parameters, string[] options, TaskCompletionSource<QueryResponseDictionary[]> defer, string sentText)
         {
             Command = cmd;
             Parameters = parameters;

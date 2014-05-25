@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Text;
 
 namespace TeamSpeak3QueryApi.Net
 {
@@ -21,12 +23,22 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates an escaped string representation of the parameter value.</summary>
         /// <returns>An escaped string representation of the parameter value.</returns>
-        public string CreateParameterLine()
+        public string CreateParameterLine(string parameterName)
         {
             if (_sourceArray == null)
                 return string.Empty;
-            var strs = _sourceArray.Select(kv => kv.CreateParameterLine());
+
+            var strs = _sourceArray.Select(kv => kv.CreateParameterLine(parameterName)).ToArray();
             return string.Join("|", strs);
+
+            /*
+            // Pretty much design failure
+            var sb = new StringBuilder();
+            sb.Append(strs[0]);
+            for (int i = 1; i < strs.Length; ++i)
+                sb.Append('|').Append(parameterName).Append('=').Append(strs[1]);
+            return sb.ToString();
+            */
         }
 
         /// <summary>Creates a new parameter value using a <see cref="T:System.String[]"/> as value.</summary>
