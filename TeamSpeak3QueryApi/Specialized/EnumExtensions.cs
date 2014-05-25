@@ -11,5 +11,13 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 if (input.HasFlag(value))
                     yield return value;
         }
+
+        public static List<string> GetFlagsAsList(this Enum input)
+        {
+            var res = new List<string>();
+            foreach (var value in input.GetFlags())
+                res.Add(value.ToString().ToLowerInvariant());
+            return res;
+        }
     }
 }

@@ -253,9 +253,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetClientsInfo>> GetClients(GetClientOptions options)
         {
-            var optionList = new List<string>();
-            foreach (var value in options.GetFlags())
-                optionList.Add(value.ToString().ToLowerInvariant());
+            var optionList = options.GetFlagsAsList();
             var res = await _client.Send("clientlist", null, optionList.ToArray());
             var info = DataProxy.SerializeGeneric<GetClientsInfo>(res);
             return info;
@@ -263,6 +261,35 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #endregion
 
+        #region GetChannels
+
+        public async Task<IReadOnlyList<GetChannelInfo>> GetChannels()
+        {
+            var res = await _client.Send("channellist");
+            return DataProxy.SerializeGeneric<GetChannelInfo>(res);
+        }
+
+        public async Task<IReadOnlyList<GetChannelInfo>> GetChannels(GetChannelOptions options)
+        {
+            var optionList = options.GetFlagsAsList();
+            var res = await _client.Send("channellist", null, optionList.ToArray());
+            var info = DataProxy.SerializeGeneric<GetChannelInfo>(res);
+            return info;
+        }
+
         #endregion
+
+
+        #endregion
+    }
+
+    public enum GetChannelOptions
+    {
+        Topic,
+        Flags,
+        Voice,
+        Limits,
+        Icon,
+        SecondsEmpty
     }
 }
