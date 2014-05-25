@@ -1,6 +1,6 @@
 namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
-    public class TextMessage : InfokerInformation
+    public class TextMessage : InvokerInformation
     {
         [QuerySerialize("targetmode")]
         public MessageTarget TargetMode;

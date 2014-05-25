@@ -408,6 +408,37 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #endregion
 
+        #region SendTextMessage
+
+        public Task SendMessage(string message, GetServerListInfo targetServer)
+        {
+            if (targetServer == null)
+                throw new ArgumentNullException("targetServer");
+            return SendMessage(message, MessageTarget.Server, targetServer.Id);
+        }
+        public Task SendMessage(string message, GetChannelListInfo targetChannel)
+        {
+            if (targetChannel == null)
+                throw new ArgumentNullException("targetChannel");
+            return SendMessage(message, MessageTarget.Channel, targetChannel.Id);
+        }
+        public Task SendMessage(string message, GetClientsInfo targetClient)
+        {
+            if (targetClient == null)
+                throw new ArgumentNullException("targetClient");
+            return SendMessage(message, MessageTarget.Private, targetClient.ClientId);
+        }
+        public Task SendMessage(string message, MessageTarget target, int targetId)
+        {
+            message = message ?? "";
+            return _client.Send("sendtextmessage",
+                new Parameter("targetmode", (int)target),
+                new Parameter("target", targetId),
+                new Parameter("msg", message));
+        }
+
+        #endregion
+
         #endregion
     }
 }

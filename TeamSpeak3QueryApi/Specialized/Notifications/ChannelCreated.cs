@@ -2,7 +2,7 @@
 
 namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
-    public class ChannelCreated : InfokerInformation
+    public class ChannelCreated : InvokerInformation
     {
         [QuerySerialize("cid")]
         public int ChannelId;

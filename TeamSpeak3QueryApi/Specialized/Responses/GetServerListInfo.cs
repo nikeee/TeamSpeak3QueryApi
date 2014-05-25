@@ -3,5 +3,7 @@
     public class GetServerListInfo : Response
     {
         // TODO
+        [QuerySerialize("server_id")] // guessed
+        public int Id;
     }
 }

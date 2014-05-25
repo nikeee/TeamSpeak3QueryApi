@@ -1,6 +1,6 @@
 namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
-    public class TokenUsed : InfokerInformation
+    public class TokenUsed : InvokerInformation
     {
         [QuerySerialize("clid")]
         public int ClientId;

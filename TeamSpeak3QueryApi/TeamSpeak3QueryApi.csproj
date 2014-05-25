@@ -72,7 +72,7 @@
     <Compile Include="Specialized\Notifications\TokenUsed.cs" />
     <Compile Include="Specialized\Notifications\TextMessage.cs" />
     <Compile Include="Specialized\Notifications\ClientMoved.cs" />
-    <Compile Include="Specialized\Notifications\InfokerInformation.cs" />
+    <Compile Include="Specialized\Notifications\InvokerInformation.cs" />
     <Compile Include="Specialized\Notifications\ServerEdited.cs" />
     <Compile Include="Specialized\Notifications\ClientLeftView.cs" />
     <Compile Include="Specialized\Notifications\ClientEnterView.cs" />
