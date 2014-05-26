@@ -54,6 +54,17 @@ if(fooBar != null) // Make sure we pass a valid reference
     await rc.KickClient(fooBar, 30);
 ```
 
+## Exceptions
+There are two exceptions:
+- QueryProtocolException
+
+    Only occurs when the server sends an invalid response, meaning the server violates the protocol specifications.
+- QueryException
+
+    Occurs every time the server responds with an error code that is not `0`. It holds the error information, for example the error code, error message and - if applicatable - the missing permission id for the operation.
+
+Note that exceptions are also thrown when a network problem occurs. Just like a normal TcpClient.
+
 ## Middleware
 If you want to work more loose-typed, you can do this. This is possible using the `QueryClient`.
 
