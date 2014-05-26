@@ -14,7 +14,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         public ReasonId Reason;
 
         [QuerySerialize("clid")]
-        public int ClientId;
+        public int Id;
 
         [QuerySerialize("invokerid")]
         public int InvokerId;

@@ -14,7 +14,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         public string Topic;
 
         [QuerySerialize("channel_codec")]
-        public int Codec;
+        public Codec Codec;
 
         [QuerySerialize("channel_codec_quality")]
         public int CodecQuality;

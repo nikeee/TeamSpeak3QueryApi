@@ -19,7 +19,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         public string InvokerUid;
 
         [QuerySerialize("virtualserver_name")]
-        public string VritualServerName;
+        public string VirtualServerName;
 
         [QuerySerialize("virtualserver_codec_encryption_mode")]
         public int VirtualServerCodecEncryptionMode;
@@ -58,7 +58,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         public long VirtualServerIconId;
 
         [QuerySerialize("virtualserver_hostbanner_mode")]
-        public int HostbannerMode;
+        public HostBannerMode HostbannerMode;
 
         [QuerySerialize("virtualserver_channel_temp_delete_delay_default")]
         public TimeSpan TempChannelDefaultDeleteDelay;

@@ -17,7 +17,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         public string Topic;
 
         [QuerySerialize("channel_codec")]
-        public int Codec;
+        public Codec Codec;
 
         [QuerySerialize("channel_codec_quality")]
         public int CodecQuality;
@@ -50,7 +50,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         public bool IsUnencrypted;
         
         [QuerySerialize("channel_delete_delay")]
-        public TimeSpan DelteDelay;
+        public TimeSpan DeleteDelay;
 
         [QuerySerialize("channel_flag_maxclients_unlimited")]
         public bool CanHasUnlimitedClients;
