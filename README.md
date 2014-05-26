@@ -9,9 +9,18 @@ Key features of this library:
 - Query responses are fully mapped to .NET objects, including the naming style
 - Usable via Middleware/Rich Client
 
-# Examples
+##Contents
+1. [Examples](#examples)
+  1. [Connect and Login](#connect-and-login)
+  2. [Notifications](#notifications)
+  3. [Requesting Client Information](#requesting-client-information)
+  4. [Exceptions](#exceptions)
+2. [Middleware](#middleware)
+
+
+## Examples
 Using the rich client, you can connect to a TeamSpeak Query server like this:
-## Connect and Login
+### Connect and Login
 
 ```C#
 var rc = new TeamSpeakClient(host, port); // Create rich client instance
@@ -20,7 +29,8 @@ await rc.Login(user, password); // login to do some stuff that requires permissi
 await rc.UseServer(1); // Use the server with id '1'
 var me = await rc.WhoAmI(); // Get information about yourself!
 ```
-## Notifications
+
+### Notifications
 You can receive notifications. The notification data is fully typed, so you can access the response via properties and not - like other wrappers - using a dictionary.
 
 ```C#
@@ -39,7 +49,7 @@ rc.Subscribe<ClientEnterView>(data => {
 });
 ```
 
-## Further Operations
+### Requesting Client Information
 Getting all clients and moving them to a specific channel is as simple as:
 
 ```C#
@@ -54,7 +64,7 @@ if(fooBar != null) // Make sure we pass a valid reference
     await rc.KickClient(fooBar, 30);
 ```
 
-## Exceptions
+### Exceptions
 There are two exceptions:
 - QueryProtocolException
 
