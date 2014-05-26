@@ -1,0 +1,2 @@
+TeamSpeak3QueryAPI
+==================
