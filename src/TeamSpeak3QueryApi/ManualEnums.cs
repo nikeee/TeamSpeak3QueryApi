@@ -2,24 +2,34 @@
 {
     public enum HostMessageMode
     {
-        Log = 1, // 1: display message in chatlog
-        Modal, // 2: display message in modal dialog
-        ModalQuit // 3: display message in modal dialog and close connection
+        /// <summary>Display message in chatlog.</summary>
+        Log = 1,
+        /// <summary>Display message in modal dialog.</summary>
+        Modal,
+        /// <summary>Display message in modal dialog and close connection.</summary>
+        ModalQuit
     }
 
     public enum HostBannerMode
     {
-        NoAdjust = 0, // 0: do not adjust
-        IgnoreAspect, // 1: adjust but ignore aspect ratio (like TeamSpeak 2)
-        KeepAspect // 2: adjust and keep aspect ratio
+        ///<summary>Do not adjus.</summary>
+        NoAdjust = 0,
+        ///<summary>Adjust but ignore aspect ratio (like TeamSpeak 2).</summary>
+        IgnoreAspect,
+        ///<summary>Adjust and keep aspect ratio.</summary>
+        KeepAspect // 
     }
 
     public enum Codec
     {
-        SpeexNarrowband = 0, // 0: speex narrowband (mono, 16bit, 8kHz)
-        SpeexWideband, // 1: speex wideband (mono, 16bit, 16kHz)
-        SpeexUltraWideband, // 2: speex ultra-wideband (mono, 16bit, 32kHz)
-        CeltMono // 3: celt mono (mono, 16bit, 48kHz)
+        ///<summary>Speex narrowband (mono, 16bit, 8kHz).</summary>
+        SpeexNarrowband = 0,
+        ///<summary>Speex wideband (mono, 16bit, 16kHz).</summary>
+        SpeexWideband,
+        ///<summary>Speex ultra-wideband (mono, 16bit, 32kHz).</summary>
+        SpeexUltraWideband,
+        ///<summary>Celt mono (mono, 16bit, 48kHz).</summary>
+        CeltMono
         /*
             Opus may missing
         */
@@ -27,38 +37,55 @@
 
     public enum CodecEncryptionMode
     {
-        Individual = 0, // 0: configure per channel 
-        Disabled, // 1: globally disabled 
-        Enabled // 2: globally enabled 
+        ///<summary>Configure per channel.</summary>
+        Individual = 0,
+        ///<summary>Globally disabled.</summary>
+        Disabled,
+        ///<summary>Globally enabled.</summary>
+        Enabled
     }
 
     public enum LogLevel
     {
-        Error = 1, // 1: everything that is really bad 
-        Warning, // 2: everything that might be bad 
-        Debug, // 3: output that might help find a problem 
-        Info // 4: informational output 
+        ///<summary>Everything that is really bad.</summary>
+        Error = 1,
+        ///<summary>Everything that might be bad.</summary>
+        Warning,
+        ///<summary>Output that might help find a problem.</summary>
+        Debug,
+        ///<summary>Informational output.</summary>
+        Info
     }
 
     public enum PermissionGroupDatabaseType
     {
-        Template = 0, // 0: template group (used for new virtual servers) 
-        Regular, // 1: regular group (used for regular clients) 
-        Query // 2: global query group (used for ServerQuery clients) 
+        ///<summary>Template group (used for new virtual servers).</summary>
+        Template = 0,
+        ///<summary>Regular group (used for regular clients).</summary>
+        Regular,
+        ///<summary>Global query group (used for ServerQuery clients).</summary>
+        Query
     }
 
     public enum PermissionGroupType
     {
-        ServerGroup = 0, // 0: server group permission 
-        GlobalClient, // 1: client specific permission 
-        Channel, // 2: channel specific permission 
-        ChannelGroup, // 3: channel group permission 
-        ChannelClient // 4: channel-client specific permission 
+        ///<summary>Server group permission.</summary>
+        ServerGroup = 0,
+        ///<summary>Client specific permission.</summary>
+        GlobalClient,
+        ///<summary>Channel specific permission.</summary>
+        Channel,
+        ///<summary>Channel group permission.</summary>
+        ChannelGroup,
+        ///<summary>Channel-client specific permission.</summary>
+        ChannelClient
     }
 
     public enum TokenType
     {
-        ServerGroup = 0, // 0: server group token (id1={groupID} id2=0) 
-        ChannelGroup // 1: channel group token (id1={groupID} id2={channelID}) 
+        ///<summary>Server group token (id1={groupID} id2=0).</summary>
+        ServerGroup = 0,
+        ///<summary>Channel group token (id1={groupID} id2={channelID}).</summary>
+        ChannelGroup
     }
 }
