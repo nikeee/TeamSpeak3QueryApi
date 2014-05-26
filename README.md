@@ -19,7 +19,7 @@ Key features of this library:
   3. [Requesting Client Information](#requesting-client-information)
   4. [Exceptions](#exceptions)
 4. [Middleware](#middleware)
-5. Node.js
+5. [Node.js](#nodejs)
 
 ## Documentation
 
