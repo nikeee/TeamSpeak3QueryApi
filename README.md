@@ -113,11 +113,10 @@ Note that you have to look up the commands in the TeamSpeak documentation.
 
 ## Node.js
 Suddenly node.
-Actually, this library is a port of my TypeScript port of a JS library.
-The TypeScript port:
-https://github.com/nikeee/node-ts
 
-The original js library:
-https://github.com/gwTumm/node-teamspeak
+Actually, this library is a port of my TypeScript port of a JS library.
+
+- [The TypeScript port](https://github.com/nikeee/node-ts)
+- [The original js library](https://github.com/gwTumm/node-teamspeak)
 
 Note that these ports only contain the (in this library called) middleware.
