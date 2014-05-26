@@ -18,21 +18,21 @@
         public int ClientId;
 
         [QuerySerialize("client_channel_id")]
-        public int ClientChannelId;
+        public int ChannelId;
 
         [QuerySerialize("client_nickname")]
-        public string ClientNickName;
+        public string NickName;
 
         [QuerySerialize("client_database_id")]
-        public int ClientDatabaseId;
+        public int DatabaseId;
 
         [QuerySerialize("client_login_name")]
-        public string ClientLoginName;
+        public string LoginName;
 
         [QuerySerialize("client_unique_identifier")]
-        public string ClientUid;
+        public string Uid;
 
         [QuerySerialize("client_origin_server_id")]
-        public int ClientOriginServerId;
+        public int OriginServerId;
     }
 }
