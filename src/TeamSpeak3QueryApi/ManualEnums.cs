@@ -40,14 +40,14 @@
         Info // 4: informational output 
     }
 
-    public enum PermissionGroupDatabaseTypes
+    public enum PermissionGroupDatabaseType
     {
         Template = 0, // 0: template group (used for new virtual servers) 
         Regular, // 1: regular group (used for regular clients) 
         Query // 2: global query group (used for ServerQuery clients) 
     }
 
-    public enum PermissionGroupTypes
+    public enum PermissionGroupType
     {
         ServerGroup = 0, // 0: server group permission 
         GlobalClient, // 1: client specific permission 
