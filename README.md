@@ -11,17 +11,28 @@ Key features of this library:
 
 ##Contents
 1. [Documentation](#documentation)
-1. [Examples](#examples)
+2. [Compatibility](#compatibility)
+  1. [NuGet](#nuget)
+3. [Examples](#examples)
   1. [Connect and Login](#connect-and-login)
   2. [Notifications](#notifications)
   3. [Requesting Client Information](#requesting-client-information)
   4. [Exceptions](#exceptions)
-2. [Middleware](#middleware)
+4. [Middleware](#middleware)
+5. Node.js
 
 ## Documentation
 
 The TeamSpeak 3 Query API is documented [here](http://media.teamspeak.com/ts3_literature/TeamSpeak%203%20Server%20Query%20Manual.pdf).
 This library has an online documentation which was created using [sharpDox](http://sharpdox.de). You can find the documentation on the [GitHub Page of this repository](https://nikeee.github.io/TeamSpeak3QueryAPI).
+
+## Compatibility
+There will be a version for .NET 4.0 using the Async Targeting Pack.
+Every framework below .NET 4.0 will not be supported due to the lack of the TPL.
+Only God knows whether this library is compatible with Mono.
+
+### NuGet
+There is currently no NuGet package, but there will be one!
 
 ## Examples
 Using the rich client, you can connect to a TeamSpeak Query server like this:
@@ -99,3 +110,14 @@ await qc.Send("servernotifyregister", new Parameter("event", "channel"), new Par
 // and so on.
 ```
 Note that you have to look up the commands in the TeamSpeak documentation.
+
+## Node.js
+Suddenly node.
+Actually, this library is a port of my TypeScript port of a JS library.
+The TypeScript port:
+https://github.com/nikeee/node-ts
+
+The original js library:
+https://github.com/gwTumm/node-teamspeak
+
+Note that these ports only contain the (in this library called) middleware.
