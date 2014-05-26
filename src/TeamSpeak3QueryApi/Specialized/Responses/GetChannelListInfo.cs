@@ -32,7 +32,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
         public bool IsSemiPermanent;
 
         [QuerySerialize("channel_codec")]
-        public int Codec; // todo: codec
+        public Codec Codec; // todo: codec
 
         [QuerySerialize("channel_codec_quality")]
         public int CodecQuality;

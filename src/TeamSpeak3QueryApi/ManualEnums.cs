@@ -1,20 +1,20 @@
 ﻿namespace TeamSpeak3QueryApi.Net
 {
-    enum HostMessageMode
+    public enum HostMessageMode
     {
         Log = 1, // 1: display message in chatlog
         Modal, // 2: display message in modal dialog
         ModalQuit // 3: display message in modal dialog and close connection
     }
 
-    enum HostBannerMode
+    public enum HostBannerMode
     {
         NoAdjust = 0, // 0: do not adjust
         IgnoreAspect, // 1: adjust but ignore aspect ratio (like TeamSpeak 2)
         KeepAspect // 2: adjust and keep aspect ratio
     }
 
-    enum Codec
+    public enum Codec
     {
         SpeexNarrowband = 0, // 0: speex narrowband (mono, 16bit, 8kHz)
         SpeexWideband, // 1: speex wideband (mono, 16bit, 16kHz)
@@ -25,14 +25,14 @@
         */
     }
 
-    enum CodecEncryptionMode
+    public enum CodecEncryptionMode
     {
         Individual = 0, // 0: configure per channel 
         Disabled, // 1: globally disabled 
         Enabled // 2: globally enabled 
     }
 
-    enum LogLevel
+    public enum LogLevel
     {
         Error = 1, // 1: everything that is really bad 
         Warning, // 2: everything that might be bad 
@@ -40,14 +40,14 @@
         Info // 4: informational output 
     }
 
-    enum PermissionGroupDatabaseTypes
+    public enum PermissionGroupDatabaseTypes
     {
         Template = 0, // 0: template group (used for new virtual servers) 
         Regular, // 1: regular group (used for regular clients) 
         Query // 2: global query group (used for ServerQuery clients) 
     }
 
-    enum PermissionGroupTypes
+    public enum PermissionGroupTypes
     {
         ServerGroup = 0, // 0: server group permission 
         GlobalClient, // 1: client specific permission 
@@ -56,7 +56,7 @@
         ChannelClient // 4: channel-client specific permission 
     }
 
-    enum TokenType
+    public enum TokenType
     {
         ServerGroup = 0, // 0: server group token (id1={groupID} id2=0) 
         ChannelGroup // 1: channel group token (id1={groupID} id2={channelID}) 
