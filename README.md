@@ -10,6 +10,7 @@ Key features of this library:
 - Usable via Middleware/Rich Client
 
 ##Contents
+1. [Documentation](#documentation)
 1. [Examples](#examples)
   1. [Connect and Login](#connect-and-login)
   2. [Notifications](#notifications)
@@ -17,6 +18,10 @@ Key features of this library:
   4. [Exceptions](#exceptions)
 2. [Middleware](#middleware)
 
+## Documentation
+
+The TeamSpeak 3 Query API is documented [here](http://media.teamspeak.com/ts3_literature/TeamSpeak%203%20Server%20Query%20Manual.pdf).
+This library has an online documentation which was created using [sharpDox](http://sharpdox.de). You can find the documentation on the [GitHub Page of this repository](https://nikeee.github.io/TeamSpeak3QueryAPI).
 
 ## Examples
 Using the rich client, you can connect to a TeamSpeak Query server like this:
