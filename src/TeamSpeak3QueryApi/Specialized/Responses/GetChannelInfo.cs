@@ -21,7 +21,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
         public string Password;
 
         [QuerySerialize("channel_codec")]
-        public int Codec; // todo: codec
+        public Codec Codec;
 
         [QuerySerialize("channel_codec_quality")]
         public int CodecQuality;

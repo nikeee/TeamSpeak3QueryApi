@@ -37,7 +37,7 @@ namespace TeamSpeak3QueryApi.Net
         /// <returns>An escaped string representation of the parameter.</returns>
         public string CreateParameterLine(string parameterName)
         {
-            return string.Concat(parameterName.TeamSpeakEscape(), '=', (Value ?? "").TeamSpeakEscape());
+            return string.Concat(parameterName.TeamSpeakEscape(), '=', (Value ?? string.Empty).TeamSpeakEscape());
         }
 
         /// <summary>Creates a new parameter value using a <see cref="T:System.String"/> as value.</summary>

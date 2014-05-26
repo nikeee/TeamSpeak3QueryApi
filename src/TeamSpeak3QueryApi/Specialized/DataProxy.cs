@@ -21,6 +21,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                                                                             {typeof(long), new Int64TypeCaster()},
                                                                             {typeof(MessageTarget), new EnumTypeCaster<MessageTarget>()},
                                                                             {typeof(short), new Int16TypeCaster()},
+                                                                            {typeof(Codec), new EnumTypeCaster<Codec>()},
                                                                         };
 
         public static IReadOnlyList<T> SerializeGeneric<T>(IReadOnlyList<QueryResponseDictionary> response)

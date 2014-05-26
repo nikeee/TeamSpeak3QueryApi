@@ -195,14 +195,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             return _client.Send("clientkick",
                 new Parameter("reasonid", (int)from),
-                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()));
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i)).ToArray()));
         }
         public Task KickClient(IList<int> clientIds, KickOrigin from, string reasonMessage)
         {
             return _client.Send("clientkick",
                 new Parameter("reasonid", (int)from),
                 new Parameter("reasonmsg", reasonMessage),
-                new Parameter("clid", clientIds.Select(i => new ParameterValue(i.ToString(CultureInfo.InvariantCulture))).ToArray()));
+                new Parameter("clid", clientIds.Select(i => new ParameterValue(i)).ToArray()));
         }
 
         #endregion
@@ -245,7 +245,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             var res = await _client.Send("banclient",
                 new Parameter("clid", clientId),
                 new Parameter("time", (int)Math.Ceiling(duration.TotalSeconds)),
-                new Parameter("banreason", reason ?? ""));
+                new Parameter("banreason", reason ?? string.Empty));
             return DataProxy.SerializeGeneric<ClientBan>(res);
         }
 
@@ -314,7 +314,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         public async Task<IReadOnlyCollection<FoundChannel>> FindChannel(string pattern)
         {
             var res = await _client.Send("channelfind",
-                new Parameter("pattern", pattern ?? ""));
+                new Parameter("pattern", pattern ?? string.Empty));
             return DataProxy.SerializeGeneric<FoundChannel>(res);
         }
 
@@ -444,7 +444,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
         public Task SendMessage(string message, MessageTarget target, int targetId)
         {
-            message = message ?? "";
+            message = message ?? string.Empty;
             return _client.Send("sendtextmessage",
                 new Parameter("targetmode", (int)target),
                 new Parameter("target", targetId),
@@ -457,7 +457,34 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         public Task SendGlobalMessage(string message)
         {
             return _client.Send("gm",
-                new Parameter("msg", message ?? ""));
+                new Parameter("msg", message ?? string.Empty));
+        }
+
+        #endregion
+        #region PokeClient
+
+        public Task PokeClient(GetClientsInfo client)
+        {
+            if (client == null)
+                throw new ArgumentNullException("client");
+            return PokeClient(client.Id);
+        }
+        public Task PokeClient(int clientId)
+        {
+            return PokeClient(clientId, string.Empty);
+        }
+
+        public Task PokeClient(GetClientsInfo client, string message)
+        {
+            if (client == null)
+                throw new ArgumentNullException("client");
+            return PokeClient(client.Id, message);
+        }
+        public Task PokeClient(int clientId, string message)
+        {
+            return _client.Send("clientpoke",
+                new Parameter("msg", message ?? string.Empty),
+                new Parameter("clid", clientId));
         }
 
         #endregion
