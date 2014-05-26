@@ -34,7 +34,7 @@ await rc.RegisterChannelNotification(30);
 rc.Subscribe<ClientEnterView>(data => {
     foreach(var c in data)
     {
-        Trace.WriteLine("Client " + c.ClientNickName + " joined.");
+        Trace.WriteLine("Client " + c.NickName + " joined.");
     }
 });
 ```
@@ -49,7 +49,7 @@ await rc.MoveClient(currentClients, 30); // Where 30 is the channel id
 ...and kick someone whose name is "Foobar".
 
 ```C#
-var fooBar = currentClients.SingleOrDefault(c => c.ClientNickName == "Foobar"); // Using linq to find our dude
+var fooBar = currentClients.SingleOrDefault(c => c.NickName == "Foobar"); // Using linq to find our dude
 if(fooBar != null) // Make sure we pass a valid reference
     await rc.KickClient(fooBar, 30);
 ```

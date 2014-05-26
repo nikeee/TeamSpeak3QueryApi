@@ -148,12 +148,12 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public Task MoveClient(IEnumerable<GetClientsInfo> clients, int targetChannelId)
         {
-            var clIds = clients.Select(c => c.ClientId).ToArray();
+            var clIds = clients.Select(c => c.Id).ToArray();
             return MoveClient(clIds, targetChannelId);
         }
         public Task MoveClient(IEnumerable<GetClientsInfo> clients, int targetChannelId, string channelPassword)
         {
-            var clIds = clients.Select(c => c.ClientId).ToArray();
+            var clIds = clients.Select(c => c.Id).ToArray();
             return MoveClient(clIds, targetChannelId, channelPassword);
         }
 
@@ -184,11 +184,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
         public Task KickClient(GetClientsInfo client, KickOrigin from)
         {
-            return KickClient(client.ClientId, from);
+            return KickClient(client.Id, from);
         }
         public Task KickClient(IEnumerable<GetClientsInfo> clients, KickOrigin from)
         {
-            var clIds = clients.Select(c => c.ClientId).ToArray();
+            var clIds = clients.Select(c => c.Id).ToArray();
             return KickClient(clIds, from);
         }
         public Task KickClient(IList<int> clientIds, KickOrigin from)
@@ -212,19 +212,19 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             if (client == null)
                 throw new ArgumentNullException("client");
-            return BanClient(client.ClientId);
+            return BanClient(client.Id);
         }
         public Task<IReadOnlyList<ClientBan>> BanClient(GetClientsInfo client, TimeSpan duration)
         {
             if (client == null)
                 throw new ArgumentNullException("client");
-            return BanClient(client.ClientId, duration);
+            return BanClient(client.Id, duration);
         }
         public Task<IReadOnlyList<ClientBan>> BanClient(GetClientsInfo client, TimeSpan duration, string reason)
         {
             if (client == null)
                 throw new ArgumentNullException("client");
-            return BanClient(client.ClientId, duration, reason);
+            return BanClient(client.Id, duration, reason);
         }
 
         public async Task<IReadOnlyList<ClientBan>> BanClient(int clientId)
@@ -440,7 +440,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             if (targetClient == null)
                 throw new ArgumentNullException("targetClient");
-            return SendMessage(message, MessageTarget.Private, targetClient.ClientId);
+            return SendMessage(message, MessageTarget.Private, targetClient.Id);
         }
         public Task SendMessage(string message, MessageTarget target, int targetId)
         {
