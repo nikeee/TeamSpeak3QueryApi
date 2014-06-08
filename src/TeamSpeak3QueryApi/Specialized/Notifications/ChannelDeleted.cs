@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
+﻿namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
     public class ChannelDeleted : InvokerInformation
     {
