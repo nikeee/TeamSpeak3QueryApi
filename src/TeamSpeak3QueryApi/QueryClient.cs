@@ -17,11 +17,11 @@ namespace TeamSpeak3QueryApi.Net
     {
         /// <summary>Gets the remote host of the Query API client.</summary>
         /// <returns>The remote host of the Query API client.</returns>
-        public string Host { get; private set; }
+        public string Host { get; }
 
         /// <summary>Gets the remote port of the Query API client.</summary>
         /// <returns>The remote port of the Query API client.</returns>
-        public short Port { get; private set; }
+        public short Port { get; }
 
         public bool IsConnected { get; private set; }
 
@@ -57,9 +57,9 @@ namespace TeamSpeak3QueryApi.Net
         public QueryClient(string hostName, short port)
         {
             if (string.IsNullOrWhiteSpace(hostName))
-                throw new ArgumentNullException("hostName");
+                throw new ArgumentNullException(nameof(hostName));
             if (port < 1)
-                throw new ArgumentException("Invalid port.");
+                throw new ArgumentException($"Invalid {nameof(port)}.");
 
             Host = hostName;
             Port = port;
@@ -96,19 +96,13 @@ namespace TeamSpeak3QueryApi.Net
         /// <summary>Sends a Query API command wihtout parameters to the server.</summary>
         /// <param name="cmd">The command.</param>
         /// <returns>An awaitable <see cref="T:System.Net.Threading.Tasks.Task{QueryResponseDictionary[]}"/>.</returns>
-        public Task<QueryResponseDictionary[]> Send(string cmd)
-        {
-            return Send(cmd, null);
-        }
+        public Task<QueryResponseDictionary[]> Send(string cmd) => Send(cmd, null);
 
         /// <summary>Sends a Query API command with parameters to the server.</summary>
         /// <param name="cmd">The command.</param>
         /// <param name="parameters">The parameters of the command.</param>
         /// <returns>An awaitable <see cref="T:System.Net.Threading.Tasks.Task{QueryResponseDictionary[]}"/>.</returns>
-        public Task<QueryResponseDictionary[]> Send(string cmd, params Parameter[] parameters)
-        {
-            return Send(cmd, parameters, null);
-        }
+        public Task<QueryResponseDictionary[]> Send(string cmd, params Parameter[] parameters) => Send(cmd, parameters, null);
 
         /// <summary>Sends a Query API command with parameters and options to the server.</summary>
         /// <param name="cmd">The command.</param>
@@ -118,7 +112,7 @@ namespace TeamSpeak3QueryApi.Net
         public async Task<QueryResponseDictionary[]> Send(string cmd, Parameter[] parameters, string[] options)
         {
             if (string.IsNullOrWhiteSpace(cmd))
-                throw new ArgumentNullException("cmd"); //return Task.Run( () => throw new ArgumentNullException("cmd"));
+                throw new ArgumentNullException(nameof(cmd)); //return Task.Run( () => throw new ArgumentNullException("cmd"));
 
             options = options ?? new string[0];
             var ps = parameters == null ? new List<Parameter>() : new List<Parameter>(parameters);
@@ -157,9 +151,9 @@ namespace TeamSpeak3QueryApi.Net
         public void Subscribe(string notificationName, Action<NotificationData> callback)
         {
             if (callback == null)
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             if (string.IsNullOrWhiteSpace(notificationName))
-                throw new ArgumentNullException("notificationName");
+                throw new ArgumentNullException(nameof(notificationName));
             notificationName = NormalizeNotificationName(notificationName);
 
             if (_subscriptions.ContainsKey(notificationName))
@@ -177,7 +171,7 @@ namespace TeamSpeak3QueryApi.Net
         public void Unsubscribe(string notificationName)
         {
             if (string.IsNullOrWhiteSpace(notificationName))
-                throw new ArgumentNullException("notificationName");
+                throw new ArgumentNullException(nameof(notificationName));
             notificationName = NormalizeNotificationName(notificationName);
 
             if (!_subscriptions.ContainsKey(notificationName))
@@ -194,9 +188,9 @@ namespace TeamSpeak3QueryApi.Net
         public void Unsubscribe(string notificationName, Action<NotificationData> callback)
         {
             if (callback == null)
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             if (string.IsNullOrWhiteSpace(notificationName))
-                throw new ArgumentNullException("notificationName");
+                throw new ArgumentNullException(nameof(notificationName));
             notificationName = NormalizeNotificationName(notificationName);
 
             if (!_subscriptions.ContainsKey(notificationName))
@@ -204,10 +198,7 @@ namespace TeamSpeak3QueryApi.Net
             _subscriptions[notificationName].Remove(callback);
         }
 
-        private static string NormalizeNotificationName(string name)
-        {
-            return name.Trim().ToUpperInvariant();
-        }
+        private static string NormalizeNotificationName(string name) => name.Trim().ToUpperInvariant();
 
         #endregion
         #region Parsing
@@ -250,7 +241,7 @@ namespace TeamSpeak3QueryApi.Net
             // Ex:
             // error id=2568 msg=insufficient\sclient\spermissions failed_permid=27
             if (errorString == null)
-                throw new ArgumentNullException("errorString");
+                throw new ArgumentNullException(nameof(errorString));
             errorString = errorString.Remove(0, "error ".Length);
 
             var errParams = errorString.Split(' ');
@@ -415,14 +406,10 @@ namespace TeamSpeak3QueryApi.Net
             if (disposing)
             {
                 //TODO: Test this
-                if (_client != null)
-                    _client.Close();
-                if (_ns != null)
-                    _ns.Dispose();
-                if (_reader != null)
-                    _reader.Dispose();
-                if (_writer != null)
-                    _writer.Dispose();
+                _client?.Close();
+                _ns?.Dispose();
+                _reader?.Dispose();
+                _writer?.Dispose();
             }
         }
 

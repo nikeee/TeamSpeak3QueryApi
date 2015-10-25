@@ -9,7 +9,7 @@ namespace TeamSpeak3QueryApi.Net
     {
         /// <summary>Gets the returned error by the Query API host.</summary>
         /// <returns>The returned error.</returns>
-        public QueryError Error { get; private set; }
+        public QueryError Error { get; }
 
         /// <summary>Initializes a new instance of the <see cref="T:TeamSpeak3QueryApi.Net.QueryException"/> class.</summary>
         public QueryException()

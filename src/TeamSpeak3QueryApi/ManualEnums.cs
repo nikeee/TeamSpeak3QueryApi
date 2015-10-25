@@ -17,7 +17,7 @@
         ///<summary>Adjust but ignore aspect ratio (like TeamSpeak 2).</summary>
         IgnoreAspect,
         ///<summary>Adjust and keep aspect ratio.</summary>
-        KeepAspect // 
+        KeepAspect
     }
 
     public enum Codec

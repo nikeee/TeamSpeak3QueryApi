@@ -41,10 +41,7 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates a new parameter value using a <see cref="T:System.String[]"/> as value.</summary>
         /// <param name="fromParameters">The values</param>
-        public static implicit operator ParameterValueArray(ParameterValue[] fromParameters)
-        {
-            return new ParameterValueArray(fromParameters);
-        }
+        public static implicit operator ParameterValueArray(ParameterValue[] fromParameters) => new ParameterValueArray(fromParameters);
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
