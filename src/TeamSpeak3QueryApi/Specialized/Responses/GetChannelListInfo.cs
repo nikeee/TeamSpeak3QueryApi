@@ -19,11 +19,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
         [QuerySerialize("channel_topic")]
         public string Topic;
 
-        [QuerySerialize("channel_flag_password")]
+        [QuerySerialize("channel_flag_default")]
         public bool IsDefaultChannel;
 
         [QuerySerialize("channel_flag_password")]
-        public string IsPasswordProtected;
+        public bool HasPassword;
 
         [QuerySerialize("channel_flag_permanent")]
         public bool IsPermanent;
@@ -32,7 +32,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
         public bool IsSemiPermanent;
 
         [QuerySerialize("channel_codec")]
-        public Codec Codec; // todo: codec
+        public Codec Codec;
 
         [QuerySerialize("channel_codec_quality")]
         public int CodecQuality;

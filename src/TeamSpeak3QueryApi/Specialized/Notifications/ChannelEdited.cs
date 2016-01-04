@@ -47,7 +47,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         public bool IsUnencrypted;
 
         [QuerySerialize("channel_delete_delay")]
-        public TimeSpan DelteDelay;
+        public TimeSpan DeleteDelay;
 
         [QuerySerialize("channel_flag_maxclients_unlimited")]
         public bool CanHasUnlimitedClients;
