@@ -11,18 +11,18 @@ namespace TeamSpeak3QueryApi.Net.Specialized
     {
         private static readonly ITypeCaster DefaultCaster = new StringTypeCaster();
         private static readonly Dictionary<Type, ITypeCaster> Casters = new Dictionary<Type, ITypeCaster>
-                                                                        {
-                                                                            {typeof(int), new Int32TypeCaster()},
-                                                                            {typeof(string), DefaultCaster},
-                                                                            {typeof(bool), new BooleanTypeCaster()},
-                                                                            {typeof(ReasonId), new EnumTypeCaster<ReasonId>()},
-                                                                            {typeof(ClientType), new EnumTypeCaster<ClientType>()},
-                                                                            {typeof(TimeSpan), new TimeSpanTypeCaster()},
-                                                                            {typeof(long), new Int64TypeCaster()},
-                                                                            {typeof(MessageTarget), new EnumTypeCaster<MessageTarget>()},
-                                                                            {typeof(short), new Int16TypeCaster()},
-                                                                            {typeof(Codec), new EnumTypeCaster<Codec>()}
-                                                                        };
+        {
+            [typeof(int)] = new Int32TypeCaster(),
+            [typeof(string)] = DefaultCaster,
+            [typeof(bool)] = new BooleanTypeCaster(),
+            [typeof(ReasonId)] = new EnumTypeCaster<ReasonId>(),
+            [typeof(ClientType)] = new EnumTypeCaster<ClientType>(),
+            [typeof(TimeSpan)] = new TimeSpanTypeCaster(),
+            [typeof(long)] = new Int64TypeCaster(),
+            [typeof(MessageTarget)] = new EnumTypeCaster<MessageTarget>(),
+            [typeof(short)] = new Int16TypeCaster(),
+            [typeof(Codec)] = new EnumTypeCaster<Codec>()
+        };
 
         public static IReadOnlyList<T> SerializeGeneric<T>(IReadOnlyList<QueryResponseDictionary> response)
                 where T : ITeamSpeakSerializable

@@ -5,11 +5,11 @@ namespace TeamSpeak3QueryApi.Net
 {
     internal class QueryCommand
     {
-        public string Command { get; private set; }
-        public string[] Options { get; private set; }
-        public IReadOnlyCollection<Parameter> Parameters { get; private set; }
-        public string SentText { get; private set; }
-        public TaskCompletionSource<QueryResponseDictionary[]> Defer { get; private set; }
+        public string Command { get; }
+        public string[] Options { get; }
+        public IReadOnlyCollection<Parameter> Parameters { get; }
+        public string SentText { get; }
+        public TaskCompletionSource<QueryResponseDictionary[]> Defer { get; }
 
         public string RawResponse { get; set; }
         public QueryResponseDictionary[] ResponseDictionary { get; set; }

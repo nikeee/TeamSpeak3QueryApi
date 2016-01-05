@@ -9,7 +9,7 @@ namespace TeamSpeak3QueryApi.Net
     {
         /// <summary>The payload of the retrieved data.</summary>
         /// <returns>The payload of the retrieved data.</returns>
-        public IReadOnlyList<QueryResponseDictionary> Payload { get; private set; }
+        public IReadOnlyList<QueryResponseDictionary> Payload { get; }
 
         internal NotificationData(QueryResponseDictionary[] queryResponseDictionary)
         {

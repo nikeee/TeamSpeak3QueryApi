@@ -33,7 +33,7 @@ namespace TeamSpeak3QueryApi.Net
         public Parameter(string name, IParameterValue value)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             Name = name;
             Value = value;
         }
