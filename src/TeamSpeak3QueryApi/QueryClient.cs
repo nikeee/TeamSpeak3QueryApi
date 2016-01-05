@@ -139,7 +139,7 @@ namespace TeamSpeak3QueryApi.Net
 
             var d = new TaskCompletionSource<QueryResponseDictionary[]>();
 
-            var newItem = new QueryCommand(cmd, new ReadOnlyCollection<Parameter>(ps), options, d, toSend.ToString());
+            var newItem = new QueryCommand(cmd, ps.AsReadOnly(), options, d, toSend.ToString());
 
             _queue.Enqueue(newItem);
 

@@ -1,12 +1,14 @@
-﻿namespace TeamSpeak3QueryApi.Net.Specialized
+﻿using System;
+
+namespace TeamSpeak3QueryApi.Net.Specialized
 {
+    [Flags]
     public enum GetChannelOptions
     {
-        Topic,
-        Flags,
-        Voice,
-        Limits,
-        Icon,
-        SecondsEmpty
+        Topic = 1 << 0,
+        Flags = 1 << 1,
+        Voice = 1 << 2,
+        Limits = 1 << 3,
+        Icon = 1 << 4,
     }
 }

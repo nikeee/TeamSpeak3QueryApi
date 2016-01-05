@@ -35,11 +35,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
         [QuerySerialize("channel_order")]
         public int Order;
 
-        [QuerySerialize("channel_flag_password")]
+        [QuerySerialize("channel_flag_default")]
         public bool IsDefaultChannel;
 
         [QuerySerialize("channel_flag_password")]
-        public string IsPasswordProtected;
+        public bool HasPassword;
 
         [QuerySerialize("channel_flag_permanent")]
         public bool IsPermanent;

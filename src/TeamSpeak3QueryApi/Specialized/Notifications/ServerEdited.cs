@@ -4,8 +4,6 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
     public class ServerEdited : Notification
     {
-        // TODO: Use enums from documentation
-
         [QuerySerialize("reasonid")]
         public ReasonId Reason;
 
@@ -22,7 +20,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         public string VirtualServerName;
 
         [QuerySerialize("virtualserver_codec_encryption_mode")]
-        public int VirtualServerCodecEncryptionMode;
+        public CodecEncryptionMode VirtualServerCodecEncryptionMode;
 
         [QuerySerialize("virtualserver_default_server_group")]
         public int VirtualServerDefaultServerGroup;
@@ -48,7 +46,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
         [QuerySerialize("virtualserver_hostbutton_url")]
         public string HostButtonUrl;
 
-        [QuerySerialize("virtualserver_hostbutton_url")]
+        [QuerySerialize("virtualserver_hostbutton_gfx_url")]
         public string HostButtonGfxUrl;
 
         [QuerySerialize("virtualserver_name_phonetic")]

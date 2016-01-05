@@ -1,10 +1,13 @@
-﻿namespace TeamSpeak3QueryApi.Net.Specialized
+﻿using System;
+
+namespace TeamSpeak3QueryApi.Net.Specialized
 {
+    [Flags]
     public enum GetServerOptions
     {
-        Uid,
-        All,
-        Short,
-        OnlyOffline
+        Uid = 1 << 0,
+        All = 1 << 1,
+        Short = 1 << 2,
+        OnlyOffline = 1 << 3,
     }
 }

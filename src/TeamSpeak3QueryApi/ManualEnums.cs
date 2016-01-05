@@ -12,7 +12,7 @@
 
     public enum HostBannerMode
     {
-        ///<summary>Do not adjus.</summary>
+        ///<summary>Do not adjust.</summary>
         NoAdjust = 0,
         ///<summary>Adjust but ignore aspect ratio (like TeamSpeak 2).</summary>
         IgnoreAspect,
@@ -29,11 +29,12 @@
         ///<summary>Speex ultra-wideband (mono, 16bit, 32kHz).</summary>
         SpeexUltraWideband,
         ///<summary>Celt mono (mono, 16bit, 48kHz).</summary>
-        CeltMono
-        /*
-            Opus may missing
-        */
-    }
+        CeltMono,
+        ///<summary>Opus voice, optimized for voice (mono, 16bit, 48kHz).</summary>
+        OpusVoice,
+        ///<summary>Opus music, optimized for music (stereo, 16bit, 48kHz).</summary>
+        OpusMusic,
+	}
 
     public enum CodecEncryptionMode
     {

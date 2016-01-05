@@ -259,7 +259,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetClientsInfo>> GetClients(GetClientOptions options)
         {
-            var optionList = options.GetFlagsAsList();
+            var optionList = options.GetFlagsName();
             var res = await _client.Send("clientlist", null, optionList.ToArray());
             return DataProxy.SerializeGeneric<GetClientsInfo>(res);
         }
@@ -280,7 +280,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetChannelListInfo>> GetChannels(GetChannelOptions options)
         {
-            var optionList = options.GetFlagsAsList();
+            var optionList = options.GetFlagsName();
             var res = await _client.Send("channellist", null, optionList.ToArray());
             return DataProxy.SerializeGeneric<GetChannelListInfo>(res);
         }
@@ -410,7 +410,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetServerListInfo>> GetServers(GetServerOptions options)
         {
-            var optionList = options.GetFlagsAsList();
+            var optionList = options.GetFlagsName();
             var res = await _client.Send("serverlist", null, optionList.ToArray());
             return DataProxy.SerializeGeneric<GetServerListInfo>(res);
         }
