@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
 {
-    internal class DataProxy
+    internal static class DataProxy
     {
         private static readonly ITypeCaster DefaultCaster = new StringTypeCaster();
         private static readonly Dictionary<Type, ITypeCaster> Casters = new Dictionary<Type, ITypeCaster>
@@ -21,7 +21,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                                                                             {typeof(long), new Int64TypeCaster()},
                                                                             {typeof(MessageTarget), new EnumTypeCaster<MessageTarget>()},
                                                                             {typeof(short), new Int16TypeCaster()},
-                                                                            {typeof(Codec), new EnumTypeCaster<Codec>()},
+                                                                            {typeof(Codec), new EnumTypeCaster<Codec>()}
                                                                         };
 
         public static IReadOnlyList<T> SerializeGeneric<T>(IReadOnlyList<QueryResponseDictionary> response)

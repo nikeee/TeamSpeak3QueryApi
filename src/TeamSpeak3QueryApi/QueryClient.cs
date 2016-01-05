@@ -168,7 +168,7 @@ namespace TeamSpeak3QueryApi.Net
             }
             else
             {
-                _subscriptions[notificationName] = new List<Action<NotificationData>>() { callback };
+                _subscriptions[notificationName] = new List<Action<NotificationData>> { callback };
             }
         }
 
@@ -259,7 +259,7 @@ namespace TeamSpeak3QueryApi.Net
              msg=insufficient\sclient\spermissions
              failed_permid=27
             */
-            var parsedError = new QueryError() { FailedPermissionId = -1 };
+            var parsedError = new QueryError { FailedPermissionId = -1 };
             for (int i = 0; i < errParams.Length; ++i)
             {
                 var errData = errParams[i].Split('=');
