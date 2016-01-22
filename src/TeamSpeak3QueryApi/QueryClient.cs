@@ -406,7 +406,7 @@ namespace TeamSpeak3QueryApi.Net
             if (disposing)
             {
                 //TODO: Test this
-                _client?.Close();
+                _client?.Dispose();
                 _ns?.Dispose();
                 _reader?.Dispose();
                 _writer?.Dispose();
