@@ -100,7 +100,7 @@ namespace TeamSpeak3QueryApi.Net.Demo
         public static void ForEach<T>(this IReadOnlyCollection<T> collection, Action<T> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
             foreach (var i in collection)
                 action(i);
         }

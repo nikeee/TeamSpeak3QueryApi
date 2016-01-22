@@ -73,7 +73,7 @@ namespace TeamSpeak3QueryApi.Net
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task Connect()
         {
-            await _client.ConnectAsync(Host, Port);
+            await _client.ConnectAsync(Host, Port).ConfigureAwait(false);
             if (!_client.Connected)
                 throw new InvalidOperationException("Could not connect.");
 
@@ -83,9 +83,9 @@ namespace TeamSpeak3QueryApi.Net
 
             IsConnected = true;
 
-            await _reader.ReadLineAsync();
-            await _reader.ReadLineAsync(); // Ignore welcome message
-            await _reader.ReadLineAsync();
+            await _reader.ReadLineAsync().ConfigureAwait(false);
+            await _reader.ReadLineAsync().ConfigureAwait(false); // Ignore welcome message
+            await _reader.ReadLineAsync().ConfigureAwait(false);
 
             _cancelTask = false;
             ResponseProcessingLoop();
@@ -137,9 +137,9 @@ namespace TeamSpeak3QueryApi.Net
 
             _queue.Enqueue(newItem);
 
-            await CheckQueue();
+            await CheckQueue().ConfigureAwait(false);
 
-            return await d.Task;
+            return await d.Task.ConfigureAwait(false);
         }
 
         #endregion
@@ -342,7 +342,7 @@ namespace TeamSpeak3QueryApi.Net
             {
                 while (!_cancelTask)
                 {
-                    var line = await _reader.ReadLineAsync();
+                    var line = await _reader.ReadLineAsync().ConfigureAwait(false);
                     Trace.WriteLine(line);
                     if(string.IsNullOrWhiteSpace(line))
                         continue;
@@ -378,8 +378,8 @@ namespace TeamSpeak3QueryApi.Net
             {
                 _currentCommand = _queue.Dequeue();
                 Trace.WriteLine(_currentCommand.SentText);
-                await _writer.WriteLineAsync(_currentCommand.SentText);
-                await _writer.FlushAsync();
+                await _writer.WriteLineAsync(_currentCommand.SentText).ConfigureAwait(false);
+                await _writer.FlushAsync().ConfigureAwait(false);
             }
         }
 
