@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -31,7 +30,7 @@ namespace TeamSpeak3QueryApi.Net
         /// <summary>The default port which is used when no port is provided.</summary>
         public static readonly short DefaultPort = 10011;
 
-        private readonly TcpClient _client;
+        public TcpClient Client { get; }
         private StreamReader _reader;
         private StreamWriter _writer;
         private NetworkStream _ns;
@@ -64,7 +63,7 @@ namespace TeamSpeak3QueryApi.Net
             Host = hostName;
             Port = port;
             IsConnected = false;
-            _client = new TcpClient();
+            Client = new TcpClient();
         }
 
         #endregion
@@ -73,11 +72,11 @@ namespace TeamSpeak3QueryApi.Net
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task Connect()
         {
-            await _client.ConnectAsync(Host, Port).ConfigureAwait(false);
-            if (!_client.Connected)
+            await Client.ConnectAsync(Host, Port).ConfigureAwait(false);
+            if (!Client.Connected)
                 throw new InvalidOperationException("Could not connect.");
 
-            _ns = _client.GetStream();
+            _ns = Client.GetStream();
             _reader = new StreamReader(_ns);
             _writer = new StreamWriter(_ns) { NewLine = "\n" };
 
@@ -344,7 +343,7 @@ namespace TeamSpeak3QueryApi.Net
                 {
                     var line = await _reader.ReadLineAsync().ConfigureAwait(false);
                     Trace.WriteLine(line);
-                    if(string.IsNullOrWhiteSpace(line))
+                    if (string.IsNullOrWhiteSpace(line))
                         continue;
                     var s = line.Trim();
                     if (s.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
@@ -406,7 +405,7 @@ namespace TeamSpeak3QueryApi.Net
             if (disposing)
             {
                 //TODO: Test this
-                _client?.Close();
+                Client?.Close();
                 _ns?.Dispose();
                 _reader?.Dispose();
                 _writer?.Dispose();
