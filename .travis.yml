@@ -4,4 +4,4 @@ sudo: false
 install:
   - nuget restore ./src/TeamSpeak3QueryApi.sln
 script:
-  - xbuild /p:Configuration=Release /p:PostBuildEventUseInBuild=false /p:PreBuildEvent="" /p:PostBuildEvent="" /p:TargetFrameworkProfile="" ./src/OpenDLC/OpenDLC.sln
+  - xbuild /p:Configuration=Release /p:PostBuildEventUseInBuild=false /p:PreBuildEvent="" /p:PostBuildEvent="" /p:TargetFrameworkProfile="" ./src/TeamSpeak3QueryApi.sln
