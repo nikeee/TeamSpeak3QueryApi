@@ -1,0 +1,7 @@
+language: csharp
+solution: ./src/TeamSpeak3QueryApi.sln
+sudo: false
+install:
+  - nuget restore ./src/TeamSpeak3QueryApi.sln
+script:
+  - xbuild /p:Configuration=Release /p:PostBuildEventUseInBuild=false /p:PreBuildEvent="" /p:PostBuildEvent="" /p:TargetFrameworkProfile="" ./src/OpenDLC/OpenDLC.sln
