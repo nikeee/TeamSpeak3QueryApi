@@ -4,7 +4,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
 {
     public class GetChannelListInfo : Response
     {
-        [QuerySerialize("id")]
+        [QuerySerialize("cid")]
         public int Id;
 
         [QuerySerialize("pid")]

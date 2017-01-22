@@ -2,6 +2,7 @@
 {
     public class WhoAmI : Response
     {
+        
         [QuerySerialize("virtualserver_status")]
         public string VirtualServerStatus; // Status of the virtual server (online | virtual online | offline | booting up | shutting down| ...
 
@@ -34,5 +35,6 @@
 
         [QuerySerialize("client_origin_server_id")]
         public int OriginServerId;
+
     }
 }

@@ -72,7 +72,7 @@ namespace TeamSpeak3QueryApi.Net
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task Connect()
         {
-            await Client.ConnectAsync(Host, Port).ConfigureAwait(false);
+            await Client.ConnectAsync(Host, Port);
             if (!Client.Connected)
                 throw new InvalidOperationException("Could not connect.");
 
@@ -82,9 +82,9 @@ namespace TeamSpeak3QueryApi.Net
 
             IsConnected = true;
 
-            await _reader.ReadLineAsync().ConfigureAwait(false);
-            await _reader.ReadLineAsync().ConfigureAwait(false); // Ignore welcome message
-            await _reader.ReadLineAsync().ConfigureAwait(false);
+            await _reader.ReadLineAsync();
+            await _reader.ReadLineAsync(); // Ignore welcome message
+            await _reader.ReadLineAsync();
 
             _cancelTask = false;
             ResponseProcessingLoop();
@@ -136,9 +136,9 @@ namespace TeamSpeak3QueryApi.Net
 
             _queue.Enqueue(newItem);
 
-            await CheckQueue().ConfigureAwait(false);
+            await CheckQueue();
 
-            return await d.Task.ConfigureAwait(false);
+            return await d.Task;
         }
 
         #endregion
@@ -341,7 +341,7 @@ namespace TeamSpeak3QueryApi.Net
             {
                 while (!_cancelTask)
                 {
-                    var line = await _reader.ReadLineAsync().ConfigureAwait(false);
+                    var line = await _reader.ReadLineAsync();
                     Trace.WriteLine(line);
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
@@ -377,8 +377,8 @@ namespace TeamSpeak3QueryApi.Net
             {
                 _currentCommand = _queue.Dequeue();
                 Trace.WriteLine(_currentCommand.SentText);
-                await _writer.WriteLineAsync(_currentCommand.SentText).ConfigureAwait(false);
-                await _writer.FlushAsync().ConfigureAwait(false);
+                await _writer.WriteLineAsync(_currentCommand.SentText);
+                await _writer.FlushAsync();
             }
         }
 

@@ -94,7 +94,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<WhoAmI> WhoAmI()
         {
-            var res = await Client.Send("whoami").ConfigureAwait(false);
+            var res = await Client.Send("whoami");
             var proxied = DataProxy.SerializeGeneric<WhoAmI>(res);
             return proxied.FirstOrDefault();
         }
@@ -214,7 +214,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             var res = await Client.Send("banclient",
                 new Parameter("clid", clientId))
-                .ConfigureAwait(false);
+                ;
             return DataProxy.SerializeGeneric<ClientBan>(res);
         }
         public async Task<IReadOnlyList<ClientBan>> BanClient(int clientId, TimeSpan duration)
@@ -222,7 +222,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             var res = await Client.Send("banclient",
                 new Parameter("clid", clientId),
                 new Parameter("time", (int)Math.Ceiling(duration.TotalSeconds)))
-                .ConfigureAwait(false);
+                ;
             return DataProxy.SerializeGeneric<ClientBan>(res);
         }
         public async Task<IReadOnlyList<ClientBan>> BanClient(int clientId, TimeSpan duration, string reason)
@@ -231,7 +231,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 new Parameter("clid", clientId),
                 new Parameter("time", (int)Math.Ceiling(duration.TotalSeconds)),
                 new Parameter("banreason", reason ?? string.Empty))
-                .ConfigureAwait(false);
+                ;
             return DataProxy.SerializeGeneric<ClientBan>(res);
         }
 
@@ -240,14 +240,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetClientsInfo>> GetClients()
         {
-            var res = await Client.Send("clientlist").ConfigureAwait(false);
+            var res = await Client.Send("clientlist");
             return DataProxy.SerializeGeneric<GetClientsInfo>(res);
         }
 
         public async Task<IReadOnlyList<GetClientsInfo>> GetClients(GetClientOptions options)
         {
             var optionList = options.GetFlagsName();
-            var res = await Client.Send("clientlist", null, optionList.ToArray()).ConfigureAwait(false);
+            var res = await Client.Send("clientlist", null, optionList.ToArray());
             return DataProxy.SerializeGeneric<GetClientsInfo>(res);
         }
 
@@ -261,14 +261,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetChannelListInfo>> GetChannels()
         {
-            var res = await Client.Send("channellist").ConfigureAwait(false);
+            var res = await Client.Send("channellist");
             return DataProxy.SerializeGeneric<GetChannelListInfo>(res);
         }
 
         public async Task<IReadOnlyList<GetChannelListInfo>> GetChannels(GetChannelOptions options)
         {
             var optionList = options.GetFlagsName();
-            var res = await Client.Send("channellist", null, optionList.ToArray()).ConfigureAwait(false);
+            var res = await Client.Send("channellist", null, optionList.ToArray());
             return DataProxy.SerializeGeneric<GetChannelListInfo>(res);
         }
 
@@ -286,7 +286,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             var res = await Client.Send("channelinfo",
                 new Parameter("cid", channelId))
-                .ConfigureAwait(false);
+                ;
             return DataProxy.SerializeGeneric<GetChannelInfo>(res).FirstOrDefault();
         }
 
@@ -295,14 +295,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyCollection<FoundChannel>> FindChannel()
         {
-            var res = await Client.Send("channelfind").ConfigureAwait(false);
+            var res = await Client.Send("channelfind");
             return DataProxy.SerializeGeneric<FoundChannel>(res);
         }
         public async Task<IReadOnlyCollection<FoundChannel>> FindChannel(string pattern)
         {
             var res = await Client.Send("channelfind",
                 new Parameter("pattern", pattern ?? string.Empty))
-                .ConfigureAwait(false);
+                ;
             return DataProxy.SerializeGeneric<FoundChannel>(res);
         }
 
@@ -352,7 +352,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
             var res = await Client.Send("channelcreate",
                 new Parameter("channel_name", name))
-                .ConfigureAwait(false);
+                ;
             return DataProxy.SerializeGeneric<CreatedChannel>(res).FirstOrDefault();
         }
 
@@ -386,6 +386,39 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #endregion
 
+        #region EditChannel
+
+        public Task EditChannel(int channelid, EditChannelInfo channel)
+        {
+            List<Parameter> UpdateParameters = new List<Parameter>();
+
+            UpdateParameters.Add(new Parameter("cid", channelid));
+
+            if (channel.Name != null){UpdateParameters.Add(new Parameter("channel_name", channel.Name));}
+            if (channel.Topic != null) { UpdateParameters.Add(new Parameter("channel_topic", channel.Topic));}
+            if (channel.Description != null) { UpdateParameters.Add(new Parameter("channel_description", channel.Description));}
+            if (channel.Password != null) { UpdateParameters.Add(new Parameter("channel_password", channel.Password));}
+            if (channel.Codec != null) { UpdateParameters.Add(new Parameter("channel_codec", (int) channel.Codec));}
+            if (channel.CodecQuality != null) { UpdateParameters.Add(new Parameter("channel_codec_quality", channel.CodecQuality));}
+            if (channel.MaxClients != null) { UpdateParameters.Add(new Parameter("channel_maxclients", channel.MaxClients));}
+            if (channel.MaxFamilyClients != null) { UpdateParameters.Add(new Parameter("channel_maxfamilyclients", channel.MaxFamilyClients));}
+            if (channel.Order != null) { UpdateParameters.Add(new Parameter("channel_order", channel.Order));}
+            if (channel.IsPermanent != null) { UpdateParameters.Add(new Parameter("channel_flag_permanent", channel.IsPermanent));}
+            if (channel.IsSemiPermanent != null) { UpdateParameters.Add(new Parameter("channel_flag_semi_permanent", channel.IsSemiPermanent));}
+            if (channel.IsTemporary != null) { UpdateParameters.Add(new Parameter("channel_flag_temporary", channel.IsTemporary));}
+            if (channel.IsDefaultChannel != null) { UpdateParameters.Add(new Parameter("channel_flag_default", channel.IsDefaultChannel)); }
+            if (channel.IsMaxClientsUnlimited != null) { UpdateParameters.Add(new Parameter("channel_flag_maxclients_unlimited", channel.IsMaxClientsUnlimited)); }
+            if (channel.IsMaxFamilyClientsUnlimited != null) { UpdateParameters.Add(new Parameter("channel_flag_maxfamilyclients_unlimited", channel.IsMaxFamilyClientsUnlimited)); }
+            if (channel.IsMaxFamilyClientsInherited != null) { UpdateParameters.Add(new Parameter("channel_flag_maxfamilyclients_inherited", channel.IsMaxFamilyClientsInherited)); }
+            if (channel.NeededTalkPower != null) { UpdateParameters.Add(new Parameter("channel_needed_talk_power", channel.NeededTalkPower)); }
+            if (channel.PhoneticName != null) { UpdateParameters.Add(new Parameter("channel_name_phonetic", channel.PhoneticName)); }
+            if (channel.IconId != null) { UpdateParameters.Add(new Parameter("channel_icon_id", (int) channel.IconId)); }
+            if (channel.IsCodecUnencrypted != null) { UpdateParameters.Add(new Parameter("channel_codec_is_unencrypted", channel.IsCodecUnencrypted)); }
+            if (channel.ParentChannelId != null) { UpdateParameters.Add(new Parameter("channel_cpid", channel.ParentChannelId)); }
+            return Client.Send("channeledit", UpdateParameters.ToArray());
+        }
+
+        #endregion
         #endregion
 
         #region Server Methods
@@ -394,14 +427,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetServerListInfo>> GetServers()
         {
-            var res = await Client.Send("serverlist").ConfigureAwait(false);
+            var res = await Client.Send("serverlist");
             return DataProxy.SerializeGeneric<GetServerListInfo>(res);
         }
 
         public async Task<IReadOnlyList<GetServerListInfo>> GetServers(GetServerOptions options)
         {
             var optionList = options.GetFlagsName();
-            var res = await Client.Send("serverlist", null, optionList.ToArray()).ConfigureAwait(false);
+            var res = await Client.Send("serverlist", null, optionList.ToArray());
             return DataProxy.SerializeGeneric<GetServerListInfo>(res);
         }
 
@@ -479,6 +512,20 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
 
         #endregion
+
+        public Task ChangeNickName(string NickName)
+        {
+            return ChangeNickName(NickName, null);
+        }
+        public Task ChangeNickName(string NickName, WhoAmI WhoAmI)
+        {
+            if (WhoAmI != null)
+            {
+                WhoAmI.NickName = NickName;
+            }
+            return Client.Send("clientupdate",
+                new Parameter("client_nickname", NickName));
+        }
 
         #endregion
     }
