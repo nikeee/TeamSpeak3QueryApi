@@ -527,6 +527,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 new Parameter("client_nickname", NickName));
         }
 
+        public Task ChannelAddPerm(int ChannelId, string PermsId, int PermValue)
+        {
+            return Client.Send("channeladdperm",
+                new Parameter("cid",ChannelId),
+                new Parameter("permsid" , PermsId),
+                new Parameter("permvalue", PermValue));
+        }
+
         #endregion
     }
 }
