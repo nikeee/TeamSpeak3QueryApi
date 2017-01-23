@@ -94,7 +94,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<WhoAmI> WhoAmI()
         {
-            var res = await Client.Send("whoami");
+            var res = await Client.Send("whoami").ConfigureAwait(false);
             var proxied = DataProxy.SerializeGeneric<WhoAmI>(res);
             return proxied.FirstOrDefault();
         }
@@ -214,6 +214,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             var res = await Client.Send("banclient",
                 new Parameter("clid", clientId))
+                .ConfigureAwait(false);
                 ;
             return DataProxy.SerializeGeneric<ClientBan>(res);
         }
@@ -222,6 +223,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             var res = await Client.Send("banclient",
                 new Parameter("clid", clientId),
                 new Parameter("time", (int)Math.Ceiling(duration.TotalSeconds)))
+                .ConfigureAwait(false);
                 ;
             return DataProxy.SerializeGeneric<ClientBan>(res);
         }
@@ -231,6 +233,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 new Parameter("clid", clientId),
                 new Parameter("time", (int)Math.Ceiling(duration.TotalSeconds)),
                 new Parameter("banreason", reason ?? string.Empty))
+                .ConfigureAwait(false);
                 ;
             return DataProxy.SerializeGeneric<ClientBan>(res);
         }
@@ -240,14 +243,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetClientsInfo>> GetClients()
         {
-            var res = await Client.Send("clientlist");
+            var res = await Client.Send("clientlist").ConfigureAwait(false);
             return DataProxy.SerializeGeneric<GetClientsInfo>(res);
         }
 
         public async Task<IReadOnlyList<GetClientsInfo>> GetClients(GetClientOptions options)
         {
             var optionList = options.GetFlagsName();
-            var res = await Client.Send("clientlist", null, optionList.ToArray());
+            var res = await Client.Send("clientlist", null, optionList.ToArray()).ConfigureAwait(false);
             return DataProxy.SerializeGeneric<GetClientsInfo>(res);
         }
 
@@ -261,14 +264,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetChannelListInfo>> GetChannels()
         {
-            var res = await Client.Send("channellist");
+            var res = await Client.Send("channellist").ConfigureAwait(false);
             return DataProxy.SerializeGeneric<GetChannelListInfo>(res);
         }
 
         public async Task<IReadOnlyList<GetChannelListInfo>> GetChannels(GetChannelOptions options)
         {
             var optionList = options.GetFlagsName();
-            var res = await Client.Send("channellist", null, optionList.ToArray());
+            var res = await Client.Send("channellist", null, optionList.ToArray()).ConfigureAwait(false);
             return DataProxy.SerializeGeneric<GetChannelListInfo>(res);
         }
 
@@ -295,7 +298,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyCollection<FoundChannel>> FindChannel()
         {
-            var res = await Client.Send("channelfind");
+            var res = await Client.Send("channelfind").ConfigureAwait(false); ;
             return DataProxy.SerializeGeneric<FoundChannel>(res);
         }
         public async Task<IReadOnlyCollection<FoundChannel>> FindChannel(string pattern)
@@ -427,14 +430,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public async Task<IReadOnlyList<GetServerListInfo>> GetServers()
         {
-            var res = await Client.Send("serverlist");
+            var res = await Client.Send("serverlist").ConfigureAwait(false);
             return DataProxy.SerializeGeneric<GetServerListInfo>(res);
         }
 
         public async Task<IReadOnlyList<GetServerListInfo>> GetServers(GetServerOptions options)
         {
             var optionList = options.GetFlagsName();
-            var res = await Client.Send("serverlist", null, optionList.ToArray());
+            var res = await Client.Send("serverlist", null, optionList.ToArray()).ConfigureAwait(false);
             return DataProxy.SerializeGeneric<GetServerListInfo>(res);
         }
 
