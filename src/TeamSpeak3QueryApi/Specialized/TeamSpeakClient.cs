@@ -385,7 +385,48 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+        #region EditChannel
 
+        public Task EditChannel(int channelId, EditChannelInfo channel)
+        {
+            List<Parameter> updateParameters = new List<Parameter>();
+
+            updateParameters.Add(new Parameter("cid", channelId));
+
+            if (channel.Name != null) { updateParameters.Add(new Parameter("channel_name", channel.Name)); }
+            if (channel.Topic != null) { updateParameters.Add(new Parameter("channel_topic", channel.Topic)); }
+            if (channel.Description != null) { updateParameters.Add(new Parameter("channel_description", channel.Description)); }
+            if (channel.Password != null) { updateParameters.Add(new Parameter("channel_password", channel.Password)); }
+            if (channel.Codec != null) { updateParameters.Add(new Parameter("channel_codec", (int)channel.Codec)); }
+            if (channel.CodecQuality != null) { updateParameters.Add(new Parameter("channel_codec_quality", channel.CodecQuality)); }
+            if (channel.MaxClients != null) { updateParameters.Add(new Parameter("channel_maxclients", channel.MaxClients)); }
+            if (channel.MaxFamilyClients != null) { updateParameters.Add(new Parameter("channel_maxfamilyclients", channel.MaxFamilyClients)); }
+            if (channel.Order != null) { updateParameters.Add(new Parameter("channel_order", channel.Order)); }
+            if (channel.IsPermanent != null) { updateParameters.Add(new Parameter("channel_flag_permanent", channel.IsPermanent)); }
+            if (channel.IsSemiPermanent != null) { updateParameters.Add(new Parameter("channel_flag_semi_permanent", channel.IsSemiPermanent)); }
+            if (channel.IsTemporary != null) { updateParameters.Add(new Parameter("channel_flag_temporary", channel.IsTemporary)); }
+            if (channel.IsDefaultChannel != null) { updateParameters.Add(new Parameter("channel_flag_default", channel.IsDefaultChannel)); }
+            if (channel.IsMaxClientsUnlimited != null) { updateParameters.Add(new Parameter("channel_flag_maxclients_unlimited", channel.IsMaxClientsUnlimited)); }
+            if (channel.IsMaxFamilyClientsUnlimited != null) { updateParameters.Add(new Parameter("channel_flag_maxfamilyclients_unlimited", channel.IsMaxFamilyClientsUnlimited)); }
+            if (channel.IsMaxFamilyClientsInherited != null) { updateParameters.Add(new Parameter("channel_flag_maxfamilyclients_inherited", channel.IsMaxFamilyClientsInherited)); }
+            if (channel.NeededTalkPower != null) { updateParameters.Add(new Parameter("channel_needed_talk_power", channel.NeededTalkPower)); }
+            if (channel.PhoneticName != null) { updateParameters.Add(new Parameter("channel_name_phonetic", channel.PhoneticName)); }
+            if (channel.IconId != null) { updateParameters.Add(new Parameter("channel_icon_id", (int)channel.IconId)); }
+            if (channel.IsCodecUnencrypted != null) { updateParameters.Add(new Parameter("channel_codec_is_unencrypted", channel.IsCodecUnencrypted)); }
+            if (channel.ParentChannelId != null) { updateParameters.Add(new Parameter("channel_cpid", channel.ParentChannelId)); }
+            return Client.Send("channeledit", updateParameters.ToArray());
+        }
+
+        #endregion
+        #region ChannelAddPerm
+        public Task ChannelAddPerm(int channelId, string permsId, int permValue)
+        {
+            return Client.Send("channeladdperm",
+                new Parameter("cid", channelId),
+                new Parameter("permsid", permsId),
+                new Parameter("permvalue", permValue));
+        }
+        #endregion
         #endregion
 
         #region Server Methods
@@ -476,6 +517,21 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 new Parameter("clid", clientId));
         }
 
+        #endregion
+
+        #region ChangeNickName
+        public Task ChangeNickName(string nickName)
+        {
+            return ChangeNickName(nickName, null);
+        }
+
+        public Task ChangeNickName(string nickName, WhoAmI whoAmI)
+        {
+            if(whoAmI != null)
+                whoAmI.NickName = nickName;
+            return Client.Send("clientupdate",
+                new Parameter("client_nickname", nickName));
+        }
         #endregion
 
         #endregion

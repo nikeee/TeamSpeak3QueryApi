@@ -87,6 +87,7 @@
     <Compile Include="Specialized\NotificationEventTarget.cs" />
     <Compile Include="Specialized\Responses\ClientBan.cs" />
     <Compile Include="Specialized\Responses\CreatedChannel.cs" />
+    <Compile Include="Specialized\Responses\EditChannelInfo.cs" />
     <Compile Include="Specialized\Responses\FoundChannel.cs" />
     <Compile Include="Specialized\Responses\GetChannelInfo.cs" />
     <Compile Include="Specialized\Responses\GetChannelListInfo.cs" />
@@ -107,7 +108,7 @@
     <Analyzer Include="..\packages\ConfigureAwaitChecker.Analyzer.1.0.0-beta4\analyzers\dotnet\cs\ConfigureAwaitChecker.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
