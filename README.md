@@ -9,7 +9,7 @@ Key features of this library:
 - Query responses are fully mapped to .NET objects, including the naming style
 - Usable via Middleware/Rich Client
 
-##Contents
+## Contents
 1. [Documentation](#documentation)
 2. [Compatibility](#compatibility)
   1. [NuGet](#nuget)
