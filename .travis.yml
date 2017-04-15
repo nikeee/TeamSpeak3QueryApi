@@ -1,5 +1,4 @@
 language: csharp
-dist: xenial
 sudo: false
 mono: none
 dotnet: 1.0.1
