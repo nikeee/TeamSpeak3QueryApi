@@ -1,7 +1,9 @@
 language: csharp
-solution: ./src/TeamSpeak3QueryApi.sln
+dist: xenial
 sudo: false
+mono: none
+dotnet: 1.0.1
 install:
-  - nuget restore ./src/TeamSpeak3QueryApi.sln
+  - dotnet restore
 script:
-  - xbuild /p:Configuration=Release /p:PostBuildEventUseInBuild=false /p:PreBuildEvent="" /p:PostBuildEvent="" /p:TargetFrameworkProfile="" ./src/TeamSpeak3QueryApi.sln
+  - dotnet build
