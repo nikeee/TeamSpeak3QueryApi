@@ -12,7 +12,6 @@ namespace TeamSpeak3QueryApi.Net.Demo
     {
         static void Main(string[] args)
         {
-            Trace.Listeners.Add(new ConsoleTraceListener());
             DoItRich();
             Console.WriteLine("Done");
             Console.ReadLine();
@@ -54,8 +53,8 @@ namespace TeamSpeak3QueryApi.Net.Demo
             // await rc.MoveClient(1, 1);
             // await rc.KickClient(1, KickTarget.Server);
 
-            rc.Subscribe<ClientEnterView>(data => data.ForEach(c => Trace.WriteLine("Client " + c.NickName + " joined.")));
-            rc.Subscribe<ClientLeftView>(data => data.ForEach(c => Trace.WriteLine("Client with id " + c.Id + " left (kicked/banned/left).")));
+            rc.Subscribe<ClientEnterView>(data => data.ForEach(c => Debug.WriteLine($"Client {c.NickName} joined.")));
+            rc.Subscribe<ClientLeftView>(data => data.ForEach(c => Debug.WriteLine($"Client with id {c.Id} left (kicked/banned/left).")));
             rc.Subscribe<ServerEdited>(data => Debugger.Break());
             rc.Subscribe<ChannelEdited>(data => Debugger.Break());
             rc.Subscribe<ClientMoved>(data => Debugger.Break());
