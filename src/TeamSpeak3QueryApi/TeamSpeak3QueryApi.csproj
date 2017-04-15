@@ -6,7 +6,7 @@
     <Company />
     <Product />
     <Description>.NET API for the TeamSpeak 3 Query API</Description>
-    <PackageLicenseUrl>https://github.com/nikeee/TeamSpeak3QueryAPI/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/nikeee/TeamSpeak3QueryAPI/raw/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/nikeee/TeamSpeak3QueryAPI</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nikeee/TeamSpeak3QueryAPI</RepositoryUrl>
     <RepositoryType />
