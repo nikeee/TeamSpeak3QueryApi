@@ -177,8 +177,7 @@ namespace TeamSpeak3QueryApi.Net
                 return;
             _subscriptions[notificationName].Clear();
             _subscriptions[notificationName] = null;
-            List<Action<NotificationData>> dummy;
-            _subscriptions.TryRemove(notificationName, out dummy);
+            _subscriptions.TryRemove(notificationName, out var _); // TODO: Revisit this
         }
 
         /// <summary>Unsubscribe a callback of a notification.</summary>
@@ -218,8 +217,7 @@ namespace TeamSpeak3QueryApi.Net
                         var key = arg.Substring(0, eqIndex).TeamSpeakUnescape();
                         var value = arg.Remove(0, eqIndex + 1);
 
-                        int intVal;
-                        if (int.TryParse(value, out intVal))
+                        if (int.TryParse(value, out var intVal))
                             r[key] = intVal;
                         else
                             r[key] = value;
@@ -328,9 +326,7 @@ namespace TeamSpeak3QueryApi.Net
                 var cbs = _subscriptions[notName];
                 for (int i = 0; i < cbs.Count; ++i)
                 {
-                    var cb = cbs[i];
-                    if (cb != null)
-                        cb(notification.Data);
+                    cbs[i]?.Invoke(notification.Data);
                 }
             }
         }
@@ -342,11 +338,11 @@ namespace TeamSpeak3QueryApi.Net
                 while (!_cancelTask)
                 {
                     var line = await _reader.ReadLineAsync().ConfigureAwait(false);
-                    Trace.WriteLine(line);
+                    Debug.WriteLine(line);
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
                     var s = line.Trim();
-                    if (s.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
+                    if (s.StartsWith("error", StringComparison.OrdinalIgnoreCase))
                     {
                         Debug.Assert(_currentCommand != null);
 
@@ -354,7 +350,7 @@ namespace TeamSpeak3QueryApi.Net
                         _currentCommand.Error = error;
                         InvokeResponse(_currentCommand);
                     }
-                    else if (s.StartsWith("notify", StringComparison.InvariantCultureIgnoreCase))
+                    else if (s.StartsWith("notify", StringComparison.OrdinalIgnoreCase))
                     {
                         s = s.Remove(0, "notify".Length);
                         var not = ParseNotification(s);
@@ -376,7 +372,7 @@ namespace TeamSpeak3QueryApi.Net
             if (_queue.Count > 0)
             {
                 _currentCommand = _queue.Dequeue();
-                Trace.WriteLine(_currentCommand.SentText);
+                Debug.WriteLine(_currentCommand.SentText);
                 await _writer.WriteLineAsync(_currentCommand.SentText).ConfigureAwait(false);
                 await _writer.FlushAsync().ConfigureAwait(false);
             }
@@ -405,7 +401,7 @@ namespace TeamSpeak3QueryApi.Net
             if (disposing)
             {
                 //TODO: Test this
-                Client?.Close();
+                Client?.Dispose();
                 _ns?.Dispose();
                 _reader?.Dispose();
                 _writer?.Dispose();

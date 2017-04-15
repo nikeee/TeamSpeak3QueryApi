@@ -30,7 +30,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             if (response == null || response.Count == 0)
                 return new ReadOnlyCollection<T>(new T[0]);
 
-            var fields = typeof(T).GetFields();
+            var fields = typeof(T).GetRuntimeFields(); // Was: .GetFields();
 
             var destList = new List<T>(response.Count);
 
