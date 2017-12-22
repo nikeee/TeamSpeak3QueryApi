@@ -527,7 +527,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public Task ChangeNickName(string nickName, WhoAmI whoAmI)
         {
-            if(whoAmI != null)
+            if (whoAmI != null)
                 whoAmI.NickName = nickName;
             return Client.Send("clientupdate",
                 new Parameter("client_nickname", nickName));
