@@ -9,8 +9,4 @@
     <ProjectReference Include="..\TeamSpeak3QueryApi\TeamSpeak3QueryApi.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
 </Project>
