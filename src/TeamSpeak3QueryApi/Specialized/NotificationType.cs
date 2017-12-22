@@ -1,4 +1,4 @@
-﻿namespace TeamSpeak3QueryApi.Net.Specialized
+namespace TeamSpeak3QueryApi.Net.Specialized
 {
     ///<remarks>http://redeemer.biz/medien/artikel/ts3-query-notify/</remarks>
     public enum NotificationType

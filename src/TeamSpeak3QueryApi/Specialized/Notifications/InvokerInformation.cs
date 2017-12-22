@@ -1,4 +1,4 @@
-﻿namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
+namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
     public abstract class InvokerInformation : Notification
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 {
@@ -48,7 +48,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
 
         [QuerySerialize("channel_codec_is_unencrypted")]
         public bool IsUnencrypted;
-        
+
         [QuerySerialize("channel_delete_delay")]
         public TimeSpan DeleteDelay;
 
