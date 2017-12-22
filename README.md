@@ -30,7 +30,7 @@ This library has an online documentation which was created using [sharpDox](http
 Every framework below .NET 4.0 will not be supported due to the lack of the TPL. If you find something that is missing (espacially in the `TeamSpeakClient` class), just submit a PR or an issue!
 
 ### NuGet
-There is currently no NuGet package, but there will be one as soon as this librar is ported to .NET Standard.
+There is currently no NuGet package, but there will be one as soon as this library is ported to .NET Standard.
 
 ## Examples
 Using the rich client, you can connect to a TeamSpeak Query server like this:

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -15,7 +15,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public static IEnumerable<string> GetFlagsName(this Enum input)
         {
-			return input.GetFlags().Select(value =>  value.ToString().ToLowerInvariant());
+            return input.GetFlags().Select(value => value.ToString().ToLowerInvariant());
         }
     }
 }

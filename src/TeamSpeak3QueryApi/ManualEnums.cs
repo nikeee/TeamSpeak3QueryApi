@@ -1,4 +1,4 @@
-﻿namespace TeamSpeak3QueryApi.Net
+namespace TeamSpeak3QueryApi.Net
 {
     public enum HostMessageMode
     {
@@ -34,7 +34,7 @@
         OpusVoice,
         ///<summary>Opus music, optimized for music (stereo, 16bit, 48kHz).</summary>
         OpusMusic,
-	}
+    }
 
     public enum CodecEncryptionMode
     {

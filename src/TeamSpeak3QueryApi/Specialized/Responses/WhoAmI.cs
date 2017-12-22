@@ -1,8 +1,8 @@
-﻿namespace TeamSpeak3QueryApi.Net.Specialized.Responses
+namespace TeamSpeak3QueryApi.Net.Specialized.Responses
 {
     public class WhoAmI : Response
     {
-        
+
         [QuerySerialize("virtualserver_status")]
         public string VirtualServerStatus; // Status of the virtual server (online | virtual online | offline | booting up | shutting down| ...
 

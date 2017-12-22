@@ -100,3 +100,4 @@ Thumbs.db
 *.sln.ide/
 
 logindata.secret
+.vs

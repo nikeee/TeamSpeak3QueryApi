@@ -1,4 +1,4 @@
-﻿namespace TeamSpeak3QueryApi.Net
+namespace TeamSpeak3QueryApi.Net
 {
     /// <summary>Represents a query error that comes with every API response.</summary>
     public class QueryError
