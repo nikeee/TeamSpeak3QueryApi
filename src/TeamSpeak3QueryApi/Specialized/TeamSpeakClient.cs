@@ -12,6 +12,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
     {
         public QueryClient Client { get; }
 
+        // TODO: Migrate to ValueTuples
         private readonly List<Tuple<NotificationType, object, Action<NotificationData>>> _callbacks = new List<Tuple<NotificationType, object, Action<NotificationData>>>();
 
         #region Ctors
@@ -67,8 +68,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         private static NotificationType GetNotificationType<T>()
         {
-            NotificationType notification;
-            if (!Enum.TryParse(typeof(T).Name, out notification)) // This may violate the generic pattern. May change this later.
+            if (!Enum.TryParse(typeof(T).Name, out NotificationType notification)) // This may violate the generic pattern. May change this later.
                 throw new ArgumentException("The specified generic parameter is not a supported NotificationType."); // For this time, we only support class-internal types which are listed in NotificationType
             return notification;
         }
@@ -95,26 +95,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #region Notification Methods
 
-        public Task RegisterChannelNotification(int channelId)
-        {
-            return RegisterNotification(NotificationEventTarget.Channel, channelId);
-        }
-        public Task RegisterServerNotification()
-        {
-            return RegisterNotification(NotificationEventTarget.Server, -1);
-        }
-        public Task RegisterTextServerNotification()
-        {
-            return RegisterNotification(NotificationEventTarget.TextServer, -1);
-        }
-        public Task RegisterTextChannelNotification()
-        {
-            return RegisterNotification(NotificationEventTarget.TextChannel, -1);
-        }
-        public Task RegisterTextPrivateNotification()
-        {
-            return RegisterNotification(NotificationEventTarget.TextPrivate, -1);
-        }
+        public Task RegisterChannelNotification(int channelId) => RegisterNotification(NotificationEventTarget.Channel, channelId);
+        public Task RegisterServerNotification() => RegisterNotification(NotificationEventTarget.Server, -1);
+        public Task RegisterTextServerNotification() => RegisterNotification(NotificationEventTarget.TextServer, -1);
+        public Task RegisterTextChannelNotification() => RegisterNotification(NotificationEventTarget.TextChannel, -1);
+        public Task RegisterTextPrivateNotification() => RegisterNotification(NotificationEventTarget.TextPrivate, -1);
         private Task RegisterNotification(NotificationEventTarget target, int channelId)
         {
             var ev = new Parameter("event", target.ToString().ToLowerInvariant());
@@ -383,9 +368,10 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public Task EditChannel(int channelId, EditChannelInfo channel)
         {
-            List<Parameter> updateParameters = new List<Parameter>();
-
-            updateParameters.Add(new Parameter("cid", channelId));
+            var updateParameters = new List<Parameter>
+            {
+                new Parameter("cid", channelId),
+            };
 
             if (channel.Name != null) { updateParameters.Add(new Parameter("channel_name", channel.Name)); }
             if (channel.Topic != null) { updateParameters.Add(new Parameter("channel_topic", channel.Topic)); }
@@ -408,6 +394,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             if (channel.IconId != null) { updateParameters.Add(new Parameter("channel_icon_id", (int)channel.IconId)); }
             if (channel.IsCodecUnencrypted != null) { updateParameters.Add(new Parameter("channel_codec_is_unencrypted", channel.IsCodecUnencrypted)); }
             if (channel.ParentChannelId != null) { updateParameters.Add(new Parameter("channel_cpid", channel.ParentChannelId)); }
+
             return Client.Send("channeledit", updateParameters.ToArray());
         }
 
@@ -421,6 +408,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 new Parameter("permvalue", permValue));
         }
         #endregion
+
         #endregion
 
         #region Server Methods
@@ -514,10 +502,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
 
         #region ChangeNickName
-        public Task ChangeNickName(string nickName)
-        {
-            return ChangeNickName(nickName, null);
-        }
+        public Task ChangeNickName(string nickName) => ChangeNickName(nickName, default);
 
         public Task ChangeNickName(string nickName, WhoAmI whoAmI)
         {

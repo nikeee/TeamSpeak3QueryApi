@@ -14,10 +14,7 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.ParameterValue"/> using the specified <see cref="T:System.String[]" /> as a value.</summary>
         /// <param name="sourceArray">The values.</param>
-        public ParameterValueArray(ParameterValue[] sourceArray)
-        {
-            _sourceArray = sourceArray;
-        }
+        public ParameterValueArray(ParameterValue[] sourceArray) => _sourceArray = sourceArray;
 
         /// <summary>Creates an escaped string representation of the parameter value.</summary>
         /// <returns>An escaped string representation of the parameter value.</returns>

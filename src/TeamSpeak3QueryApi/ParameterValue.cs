@@ -16,22 +16,15 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.ParameterValue"/> using the specified <see cref="T:System.String" /> as a value.</summary>
         /// <param name="value">The value.</param>
-        public ParameterValue(string value)
-        {
-            Value = value;
-        }
+        public ParameterValue(string value) => Value = value;
+
         /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.ParameterValue"/> using the specified <see cref="T:System.Int32" /> as a value.</summary>
         /// <param name="value">The value.</param>
-        public ParameterValue(int value)
-        {
-            Value = value.ToString(CultureInfo.CurrentCulture);
-        }
+        public ParameterValue(int value) => Value = value.ToString(CultureInfo.CurrentCulture);
+
         /// <summary>Creates a new instance of <see cref="T:TeamSpeak3QueryApi.Net.ParameterValue"/> using the specified <see cref="T:System.Boolean" /> as a value.</summary>
         /// <param name="value">The value.</param>
-        public ParameterValue(bool value)
-        {
-            Value = value ? "1" : "0";
-        }
+        public ParameterValue(bool value) => Value = value ? "1" : "0";
 
         /// <summary>Creates an escaped string representation of the parameter.</summary>
         /// <returns>An escaped string representation of the parameter.</returns>
@@ -42,28 +35,18 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates a new parameter value using a <see cref="T:System.String"/> as value.</summary>
         /// <param name="fromParameter">The value</param>
-        public static implicit operator ParameterValue(string fromParameter)
-        {
-            return new ParameterValue(fromParameter);
-        }
+        public static implicit operator ParameterValue(string fromParameter) => new ParameterValue(fromParameter);
+
         /// <summary>Creates a new parameter value using a <see cref="T:System.Int32"/> as value.</summary>
         /// <param name="fromParameter">The value</param>
-        public static implicit operator ParameterValue(int fromParameter)
-        {
-            return new ParameterValue(fromParameter.ToString(CultureInfo.CurrentCulture));
-        }
+        public static implicit operator ParameterValue(int fromParameter) => new ParameterValue(fromParameter.ToString(CultureInfo.CurrentCulture));
+
         /// <summary>Creates a new parameter value using a <see cref="T:System.Int32"/> as value.</summary>
         /// <param name="fromParameter">The value</param>
-        public static implicit operator ParameterValue(bool fromParameter)
-        {
-            return new ParameterValue(fromParameter ? "1" : "0");
-        }
+        public static implicit operator ParameterValue(bool fromParameter) => new ParameterValue(fromParameter ? "1" : "0");
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
-        public override string ToString()
-        {
-            return string.Concat("Param: ", Value ?? "null");
-        }
+        public override string ToString() => string.Concat("Param: ", Value ?? "null");
     }
 }

@@ -2,12 +2,14 @@ namespace TeamSpeak3QueryApi.Net
 {
     internal static class StringExtensions
     {
-
         /// <summary>Escapes a string so it can be safely used for querying the api.</summary>
         /// <param name="s">The string to escape.</param>
         /// <returns>An escaped string.</returns>
         public static string TeamSpeakEscape(this string s)
         {
+            if (s == string.Empty)
+                return s;
+
             s = s.Replace("\\", "\\\\"); // Backslash
             s = s.Replace("/", "\\/"); // Slash
             s = s.Replace("|", "\\p"); // Pipe
@@ -27,6 +29,9 @@ namespace TeamSpeak3QueryApi.Net
         /// <returns>An unescaped string.</returns>
         public static string TeamSpeakUnescape(this string s)
         {
+            if (s == string.Empty)
+                return s;
+
             s = s.Replace("\\s", " ");	// Whitespace
             s = s.Replace("\\p", "|"); // Pipe
             s = s.Replace("\\n", "\n"); // Newline

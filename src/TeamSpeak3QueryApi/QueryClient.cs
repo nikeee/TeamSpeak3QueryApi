@@ -25,10 +25,10 @@ namespace TeamSpeak3QueryApi.Net
         public bool IsConnected { get; private set; }
 
         /// <summary>The default host which is used when no host is provided.</summary>
-        public static readonly string DefaultHost = "localhost";
+        public const string DefaultHost = "localhost";
 
         /// <summary>The default port which is used when no port is provided.</summary>
-        public static readonly short DefaultPort = 10011;
+        public const short DefaultPort = 10011;
 
         public TcpClient Client { get; }
         private StreamReader _reader;
@@ -175,6 +175,7 @@ namespace TeamSpeak3QueryApi.Net
 
             if (!_subscriptions.ContainsKey(notificationName))
                 return;
+
             _subscriptions[notificationName].Clear();
             _subscriptions[notificationName] = null;
             _subscriptions.TryRemove(notificationName, out var _); // TODO: Revisit this
@@ -255,7 +256,7 @@ namespace TeamSpeak3QueryApi.Net
                  id
                  2568
                 */
-                string fieldName = errData[0].ToUpperInvariant();
+                var fieldName = errData[0].ToUpperInvariant();
                 switch (fieldName)
                 {
                     case "ID":
@@ -400,7 +401,6 @@ namespace TeamSpeak3QueryApi.Net
         {
             if (disposing)
             {
-                //TODO: Test this
                 Client?.Dispose();
                 _ns?.Dispose();
                 _reader?.Dispose();
