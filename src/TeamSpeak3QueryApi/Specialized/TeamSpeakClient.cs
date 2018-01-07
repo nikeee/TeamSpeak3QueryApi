@@ -31,7 +31,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, short port) => Client = new QueryClient(hostName, port);
+        public TeamSpeakClient(string hostName, int port) => Client = new QueryClient(hostName, port);
 
         #endregion
 

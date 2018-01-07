@@ -20,7 +20,7 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Gets the remote port of the Query API client.</summary>
         /// <returns>The remote port of the Query API client.</returns>
-        public short Port { get; }
+        public int Port { get; }
 
         public bool IsConnected { get; private set; }
 
@@ -53,12 +53,12 @@ namespace TeamSpeak3QueryApi.Net
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public QueryClient(string hostName, short port)
+        public QueryClient(string hostName, int port)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException(nameof(hostName));
-            if (port < 1)
-                throw new ArgumentException($"Invalid {nameof(port)}.");
+            if (!ValidationHelper.ValidateTcpPort(port))
+                throw new ArgumentOutOfRangeException(nameof(port));
 
             Host = hostName;
             Port = port;
