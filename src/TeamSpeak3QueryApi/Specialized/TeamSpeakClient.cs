@@ -240,9 +240,9 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return DataProxy.SerializeGeneric<GetServerGroup>(res);
         }
 
-        public async Task<IReadOnlyList<GetServerGroup>> GetServerGroups(GetClientsInfo clientInfo) => GetServerGroups(clientInfo.DatabaseId);
+        public Task<IReadOnlyList<GetServerGroup>> GetServerGroups(GetClientsInfo clientInfo) => GetServerGroups(clientInfo.DatabaseId);
 
-        public async Task<IReadOnlyList<GetServerGroup>> GetServerGroups(WhoAmI clientInfo) => GetServerGroups(clientInfo.DatabaseId);
+        public Task<IReadOnlyList<GetServerGroup>> GetServerGroups(WhoAmI clientInfo) => GetServerGroups(clientInfo.DatabaseId);
 
         #endregion
 
