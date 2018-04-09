@@ -27,7 +27,7 @@ The TeamSpeak 3 Query API is documented [here](http://media.teamspeak.com/ts3_li
 This library has an online documentation which was created using [sharpDox](http://sharpdox.de). You can find the documentation on the [GitHub Page of this repository](https://nikeee.github.io/TeamSpeak3QueryAPI).
 
 ## Compatibility
-Every framework below .NET 4.0 will not be supported due to the lack of the TPL. If you find something that is missing (espacially in the `TeamSpeakClient` class), just submit a PR or an issue!
+This library requires .NET Standard `1.3`. You can look at [this table](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support) to see whether your platform is supported. If you find something that is missing (espacially in the `TeamSpeakClient` class), just submit a PR or an issue!
 
 ### NuGet
 There is currently no NuGet package, but there will be one as soon as this library is ported to .NET Standard.
