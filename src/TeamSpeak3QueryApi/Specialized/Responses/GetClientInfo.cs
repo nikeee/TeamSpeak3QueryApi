@@ -1,6 +1,6 @@
 namespace TeamSpeak3QueryApi.Net.Specialized.Responses
 {
-    public class GetClientsInfo : Response
+    public class GetClientInfo : Response
     {
         [QuerySerialize("clid")]
         public int Id;
