@@ -234,15 +234,15 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #region GetServerGroups
 
-        public async Task<IReadOnlyList<GetServerGroups>> GetServerGroups(int clientDatabaseId)
+        public async Task<IReadOnlyList<GetServerGroup>> GetServerGroups(int clientDatabaseId)
         {
             var res = await Client.Send("servergroupsbyclientid", new Parameter("cldbid", clientDatabaseId)).ConfigureAwait(false);
-            return DataProxy.SerializeGeneric<GetServerGroups>(res);
+            return DataProxy.SerializeGeneric<GetServerGroup>(res);
         }
 
-        public async Task<IReadOnlyList<GetServerGroups>> GetServerGroups(GetClientsInfo clientInfo) => GetServerGroups(clientInfo.DatabaseId);
+        public async Task<IReadOnlyList<GetServerGroup>> GetServerGroups(GetClientsInfo clientInfo) => GetServerGroups(clientInfo.DatabaseId);
 
-        public async Task<IReadOnlyList<GetServerGroups>> GetServerGroups(WhoAmI clientInfo) => GetServerGroups(clientInfo.DatabaseId);
+        public async Task<IReadOnlyList<GetServerGroup>> GetServerGroups(WhoAmI clientInfo) => GetServerGroups(clientInfo.DatabaseId);
 
         #endregion
 
