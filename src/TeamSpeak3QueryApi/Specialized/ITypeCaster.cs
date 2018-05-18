@@ -87,4 +87,24 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return TimeSpan.FromSeconds(int.Parse(source.ToString()));
         }
     }
+
+    class DateTimeTypeCaster : ITypeCaster
+    {
+        public dynamic Cast(object source)
+        {
+            if (source == null)
+                return false;
+
+            int unixTimestamp;
+
+            if (source is int)
+                unixTimestamp = (int)source;
+            else
+                unixTimestamp = int.Parse(source.ToString());
+
+            var timeSpan = TimeSpan.FromSeconds(unixTimestamp);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.Add(timeSpan);
+        }
+    }
 }

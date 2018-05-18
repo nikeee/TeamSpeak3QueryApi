@@ -235,6 +235,20 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return DataProxy.SerializeGeneric<GetClientInfo>(res);
         }
 
+        public async Task<GetClientDetailedInfo> GetClientInfo(GetClientInfo client)
+        {
+            return await GetClientInfo(client.Id);
+        }
+
+        public async Task<GetClientDetailedInfo> GetClientInfo(int clientId)
+        {
+            var res = await Client.Send("clientinfo",
+                new Parameter("clid", clientId))
+                .ConfigureAwait(false);
+
+            return DataProxy.SerializeGeneric<GetClientDetailedInfo>(res).FirstOrDefault();
+        }
+
         #endregion
 
         #region GetServerGroups
