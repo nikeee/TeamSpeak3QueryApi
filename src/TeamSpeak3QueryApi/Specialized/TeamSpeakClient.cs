@@ -8,7 +8,7 @@ using TeamSpeak3QueryApi.Net.Specialized.Responses;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
 {
-    public class TeamSpeakClient
+    public class TeamSpeakClient : IDisposable
     {
         public QueryClient Client { get; }
 
@@ -547,6 +547,33 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
 
         #endregion
+
+        #endregion
+
+        #region IDisposable support
+
+        /// <summary>Finalizes the object.</summary>
+        ~TeamSpeakClient()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        /// <param name="disposing">A value indicating whether the object is disposing or finalizing.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Client?.Dispose();
+            }
+        }
 
         #endregion
     }
