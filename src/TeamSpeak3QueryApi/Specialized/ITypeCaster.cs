@@ -95,12 +95,12 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             if (source == null)
                 return false;
 
-            int unixTimestamp;
+            long unixTimestamp;
 
-            if (source is int)
-                unixTimestamp = (int)source;
+            if (source is long)
+                unixTimestamp = (long)source;
             else
-                unixTimestamp = int.Parse(source.ToString());
+                unixTimestamp = long.Parse(source.ToString());
 
             var timeSpan = TimeSpan.FromSeconds(unixTimestamp);
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
