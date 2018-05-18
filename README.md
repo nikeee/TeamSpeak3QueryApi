@@ -30,7 +30,11 @@ This library has an online documentation which was created using [sharpDox](http
 This library requires .NET Standard `1.3`. You can look at [this table](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support) to see whether your platform is supported. If you find something that is missing (espacially in the `TeamSpeakClient` class), just submit a PR or an issue!
 
 ### NuGet
-There is currently no NuGet package, but there will be one as soon as this library is ported to .NET Standard.
+```Shell
+Install-Package TeamSpeak3QueryApi
+# or
+dotnet add package TeamSpeak3QueryApi
+```
 
 ## Examples
 Using the rich client, you can connect to a TeamSpeak Query server like this:
