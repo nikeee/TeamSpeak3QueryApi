@@ -67,10 +67,10 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(_serverGroupsStr))
+                if (string.IsNullOrWhiteSpace(_channelGroupsStr))
                     return new List<int>();
 
-                return _serverGroupsStr.Split(',').Select(grp => int.Parse(grp)).ToList();
+                return _channelGroupsStr.Split(',').Select(grp => int.Parse(grp)).ToList();
             }
             private set { }
         }
