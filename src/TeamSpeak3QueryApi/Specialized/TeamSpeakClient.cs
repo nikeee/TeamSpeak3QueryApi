@@ -81,6 +81,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return Client.Send("login", new Parameter("client_login_name", userName), new Parameter("client_login_password", password));
         }
 
+        public Task Logout()
+        {
+            return Client.Send("logout");
+        }
+
         public Task UseServer(int serverId)
         {
             return Client.Send("use", new Parameter("sid", serverId.ToString(CultureInfo.InvariantCulture)));
