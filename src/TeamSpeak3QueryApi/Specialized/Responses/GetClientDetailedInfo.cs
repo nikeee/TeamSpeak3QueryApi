@@ -91,11 +91,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
         public string AwayMessage;
         
         [QuerySerialize("connection_connected_time")]
-        private int _connectionTime; //Because it is in ms instead if s defined in Typecaster
+        private long _connectionTime; //Because it is in ms instead if s defined in Typecaster
         public TimeSpan ConnectionTime => TimeSpan.FromMilliseconds(_connectionTime);
 
         [QuerySerialize("client_idle_time")]
-        private int _idleTime; //Because it is in ms instead if s defined in Typecaster
+        private long _idleTime; //Because it is in ms instead if s defined in Typecaster
         public TimeSpan IdleTime => TimeSpan.FromMilliseconds(_idleTime);
     }
 }
