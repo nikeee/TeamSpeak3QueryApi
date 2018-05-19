@@ -81,6 +81,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return Client.Send("login", new Parameter("client_login_name", userName), new Parameter("client_login_password", password));
         }
 
+        public Task Logout() => Client.Send("logout");
+
         public Task UseServer(int serverId)
         {
             return Client.Send("use", new Parameter("sid", serverId.ToString(CultureInfo.InvariantCulture)));
@@ -228,6 +230,17 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             var optionList = options.GetFlagsName();
             var res = await Client.Send("clientlist", null, optionList.ToArray()).ConfigureAwait(false);
             return DataProxy.SerializeGeneric<GetClientInfo>(res);
+        }
+
+        public Task<GetClientDetailedInfo> GetClientInfo(GetClientInfo client) => GetClientInfo(client.Id);
+
+        public async Task<GetClientDetailedInfo> GetClientInfo(int clientId)
+        {
+            var res = await Client.Send("clientinfo",
+                new Parameter("clid", clientId))
+                .ConfigureAwait(false);
+
+            return DataProxy.SerializeGeneric<GetClientDetailedInfo>(res).FirstOrDefault();
         }
 
         #endregion

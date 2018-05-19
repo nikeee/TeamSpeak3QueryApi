@@ -18,10 +18,12 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             [typeof(ReasonId)] = new EnumTypeCaster<ReasonId>(),
             [typeof(ClientType)] = new EnumTypeCaster<ClientType>(),
             [typeof(TimeSpan)] = new TimeSpanTypeCaster(),
+            [typeof(DateTime)] = new DateTimeTypeCaster(),
             [typeof(long)] = new Int64TypeCaster(),
             [typeof(MessageTarget)] = new EnumTypeCaster<MessageTarget>(),
             [typeof(short)] = new Int16TypeCaster(),
-            [typeof(Codec)] = new EnumTypeCaster<Codec>()
+            [typeof(Codec)] = new EnumTypeCaster<Codec>(),
+            [typeof(IReadOnlyList<int>)] = new ReadonlyListIntCaster()
         };
 
         public static IReadOnlyList<T> SerializeGeneric<T>(IReadOnlyList<QueryResponseDictionary> response)

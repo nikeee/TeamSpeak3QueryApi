@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
 {
@@ -85,6 +87,42 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             if (source is int)
                 return TimeSpan.FromSeconds((int)source);
             return TimeSpan.FromSeconds(int.Parse(source.ToString()));
+        }
+    }
+
+    class DateTimeTypeCaster : ITypeCaster
+    {
+        public dynamic Cast(object source)
+        {
+            if (source == null)
+                return false;
+
+            long unixTimestamp;
+
+            if (source is long)
+                unixTimestamp = (long)source;
+            else
+                unixTimestamp = long.Parse(source.ToString());
+
+            return DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime;
+        }
+    }
+
+    class ReadonlyListIntCaster : ITypeCaster
+    {
+        public dynamic Cast(object source)
+        {
+            if (source == null)
+                return false;
+            if (source is int)
+                return new List<int> { (int)source };
+
+            var sourceStr = source as string;
+
+            if (string.IsNullOrWhiteSpace(sourceStr))
+                return null;
+            
+            return sourceStr.Split(',').Select(int.Parse).ToList();
         }
     }
 }
