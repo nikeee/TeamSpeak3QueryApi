@@ -232,7 +232,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return DataProxy.SerializeGeneric<GetClientInfo>(res);
         }
 
-        public async Task<GetClientDetailedInfo> GetClientInfo(GetClientInfo client) => await GetClientInfo(client.Id);
+        public Task<GetClientDetailedInfo> GetClientInfo(GetClientInfo client) => GetClientInfo(client.Id);
 
         public async Task<GetClientDetailedInfo> GetClientInfo(int clientId)
         {
