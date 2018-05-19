@@ -81,10 +81,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return Client.Send("login", new Parameter("client_login_name", userName), new Parameter("client_login_password", password));
         }
 
-        public Task Logout()
-        {
-            return Client.Send("logout");
-        }
+        public Task Logout() => Client.Send("logout");
 
         public Task UseServer(int serverId)
         {
@@ -235,10 +232,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return DataProxy.SerializeGeneric<GetClientInfo>(res);
         }
 
-        public async Task<GetClientDetailedInfo> GetClientInfo(GetClientInfo client)
-        {
-            return await GetClientInfo(client.Id);
-        }
+        public async Task<GetClientDetailedInfo> GetClientInfo(GetClientInfo client) => await GetClientInfo(client.Id);
 
         public async Task<GetClientDetailedInfo> GetClientInfo(int clientId)
         {

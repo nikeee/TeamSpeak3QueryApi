@@ -49,31 +49,10 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
         public bool IsRecording;
 
         [QuerySerialize("client_servergroups")]
-        private string _serverGroupsStr;
-        public List<int> ServerGroupIds
-        {
-            get {
-                if(string.IsNullOrWhiteSpace(_serverGroupsStr))
-                    return new List<int>();
-
-                return _serverGroupsStr.Split(',').Select(grp => int.Parse(grp)).ToList();
-            }
-            private set { }
-        }
+        public IReadOnlyList<int> ServerGroupIds;
 
         [QuerySerialize("client_channel_group_id")]
-        private string _channelGroupsStr; 
-        public List<int> ChannelGroupsIds
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(_channelGroupsStr))
-                    return new List<int>();
-
-                return _channelGroupsStr.Split(',').Select(grp => int.Parse(grp)).ToList();
-            }
-            private set { }
-        }
+        public IReadOnlyList<int> ChannelGroupsIds;
 
         [QuerySerialize("client_created")]
         public DateTime Created;
