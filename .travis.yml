@@ -12,9 +12,16 @@ script:
   - dotnet build -c Release
 
 deploy:
-  provider: script
-  skip-cleanup: true
-  script: bash scripts/deploy.sh
-  on:
-    branch: master
-    tags: true
+  - provider: script
+    skip-cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: master
+      tags: true
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file: src/TeamSpeak3QueryApi/bin/Release/*.nupkg
+    skip_cleanup: true
+    on:
+      branch: master
+      tags: true
