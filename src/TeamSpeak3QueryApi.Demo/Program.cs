@@ -31,6 +31,10 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await rc.RegisterServerNotification();
             await rc.RegisterChannelNotification(30);
 
+            var serverGroups = await rc.GetServerGroups();
+            var firstNormalGroup = serverGroups?.FirstOrDefault(s => s.ServerGroupType == ServerGroupType.NormalGroup);
+            var groupClients = await rc.GetServerGroupClientList(firstNormalGroup.Id);
+
             var currentClients = await rc.GetClients();
 
             var fullClients = currentClients.Where(c => c.Type == ClientType.FullClient).ToList();
