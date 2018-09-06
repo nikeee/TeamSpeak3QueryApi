@@ -33,7 +33,7 @@ namespace TeamSpeak3QueryApi.Net.Demo
 
             var serverGroups = await rc.GetServerGroups();
             var firstNormalGroup = serverGroups?.FirstOrDefault(s => s.ServerGroupType == ServerGroupType.NormalGroup);
-            var groupClients = await rc.GetServerGroupClientlist(firstNormalGroup.Id);
+            var groupClients = await rc.GetServerGroupClientList(firstNormalGroup.Id);
 
             var currentClients = await rc.GetClients();
 
