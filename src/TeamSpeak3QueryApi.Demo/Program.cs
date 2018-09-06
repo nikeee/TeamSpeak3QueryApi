@@ -26,6 +26,8 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await rc.Login(user, password);
             await rc.UseServer(1);
 
+            var serverGroups = await rc.GetServerGroups();
+
             await rc.WhoAmI();
 
             await rc.RegisterServerNotification();
