@@ -13,6 +13,7 @@
     <RepositoryType />
     <PackageTags>teamspeak</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <RootNamespace>TeamSpeak3QueryApi.Net</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup>

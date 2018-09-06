@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TeamSpeak3QueryApi.Specialized
+namespace TeamSpeak3QueryApi.Net.Specialized
 {
     public enum ServerGroupType
     {

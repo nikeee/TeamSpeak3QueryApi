@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using TeamSpeak3QueryApi.Specialized;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
 {

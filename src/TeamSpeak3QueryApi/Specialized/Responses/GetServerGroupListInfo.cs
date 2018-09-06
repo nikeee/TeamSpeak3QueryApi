@@ -1,5 +1,3 @@
-using TeamSpeak3QueryApi.Specialized;
-
 namespace TeamSpeak3QueryApi.Net.Specialized.Responses
 {
     public class GetServerGroupListInfo : Response
