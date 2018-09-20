@@ -20,9 +20,7 @@ deploy:
       tags: true
   - provider: script
     skip-cleanup: true
-    script:
-      - bash scripts/patch-version.sh
-      - bash scripts/deploy.sh
+    script: bash scripts/patch-version.sh && bash scripts/deploy.sh
     on:
       branch: master
       tags: false

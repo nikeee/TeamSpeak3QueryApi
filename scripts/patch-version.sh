@@ -28,4 +28,8 @@ RELEASE_TYPE="beta"
 # 1.2.3-beta.3+ab3fafb
 VERSION="${XML_VERSION}-${RELEASE_TYPE}.${COMMITS_SINCE_LAST_TAG}+${COMMIT_ID}"
 
+echo "Using patched version: ${VERSION}"
+echo "Patching file.."
+
 sed -i "s/${XML_VERSION}/${VERSION}/g" "${CSPROJ_FILE}"
+echo "File patched!"
