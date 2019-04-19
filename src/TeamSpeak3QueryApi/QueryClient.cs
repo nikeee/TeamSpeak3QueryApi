@@ -347,8 +347,18 @@ namespace TeamSpeak3QueryApi.Net
             {
                 while (!cts.Token.IsCancellationRequested)
                 {
-                    var line = await _reader.ReadLineAsync().WithCancellation(cts.Token).ConfigureAwait(false);
+                    string line = null;
+                    try
+                    {
+                        line = await _reader.ReadLineAsync().WithCancellation(cts.Token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+
                     Debug.WriteLine(line);
+
                     if (line == null)
                     {
                         cts.Cancel();
@@ -421,6 +431,7 @@ namespace TeamSpeak3QueryApi.Net
             if (disposing)
             {
                 _cts?.Cancel();
+                _cts?.Dispose();
                 Client?.Dispose();
                 _ns?.Dispose();
                 _reader?.Dispose();
