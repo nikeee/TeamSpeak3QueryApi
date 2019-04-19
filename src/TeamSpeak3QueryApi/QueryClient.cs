@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TeamSpeak3QueryApi.Net
@@ -34,7 +35,7 @@ namespace TeamSpeak3QueryApi.Net
         private StreamReader _reader;
         private StreamWriter _writer;
         private NetworkStream _ns;
-        private volatile bool _cancelTask;
+        private CancellationTokenSource _cts;
         private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
         private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
 
@@ -70,7 +71,7 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Connects to the Query API server.</summary>
         /// <returns>An awaitable <see cref="Task"/>.</returns>
-        public async Task Connect()
+        public async Task<CancellationTokenSource> Connect()
         {
             await Client.ConnectAsync(Host, Port).ConfigureAwait(false);
             if (!Client.Connected)
@@ -86,8 +87,15 @@ namespace TeamSpeak3QueryApi.Net
             await _reader.ReadLineAsync().ConfigureAwait(false); // Ignore welcome message
             await _reader.ReadLineAsync().ConfigureAwait(false);
 
-            _cancelTask = false;
-            ResponseProcessingLoop();
+            return ResponseProcessingLoop();
+        }
+
+        public void Disconnect()
+        {
+            if (_cts == null)
+                return;
+
+            _cts.Cancel();
         }
 
         #region Send
@@ -332,16 +340,24 @@ namespace TeamSpeak3QueryApi.Net
             }
         }
 
-        private void ResponseProcessingLoop()
+        private CancellationTokenSource ResponseProcessingLoop()
         {
+            var cts = _cts = new CancellationTokenSource();
             Task.Run(async () =>
             {
-                while (!_cancelTask)
+                while (!cts.Token.IsCancellationRequested)
                 {
-                    var line = await _reader.ReadLineAsync().ConfigureAwait(false);
+                    var line = await _reader.ReadLineAsync().WithCancellation(cts.Token).ConfigureAwait(false);
                     Debug.WriteLine(line);
+                    if (line == null)
+                    {
+                        cts.Cancel();
+                        continue;
+                    }
+
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
+
                     var s = line.Trim();
                     if (s.StartsWith("error", StringComparison.OrdinalIgnoreCase))
                     {
@@ -364,7 +380,10 @@ namespace TeamSpeak3QueryApi.Net
                         _currentCommand.ResponseDictionary = ParseResponse(s);
                     }
                 }
+
+                IsConnected = false;
             });
+            return cts;
         }
 
         private QueryCommand _currentCommand;
@@ -401,6 +420,7 @@ namespace TeamSpeak3QueryApi.Net
         {
             if (disposing)
             {
+                _cts?.Cancel();
                 Client?.Dispose();
                 _ns?.Dispose();
                 _reader?.Dispose();
