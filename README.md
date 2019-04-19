@@ -1,5 +1,4 @@
-# C# TeamSpeak3Query API
-> [![Travis Build Status](https://travis-ci.org/nikeee/TeamSpeak3QueryAPI.svg?branch=master)](https://travis-ci.org/nikeee/TeamSpeak3QueryAPI)
+# C# TeamSpeak3Query API [![Travis Build Status](https://travis-ci.org/nikeee/TeamSpeak3QueryAPI.svg?branch=master)](https://travis-ci.org/nikeee/TeamSpeak3QueryAPI) ![NuGet Downloads](https://img.shields.io/nuget/dt/TeamSpeak3QueryApi.svg)
 
 An API wrapper for the TeamSpeak 3 Query API written in C#. Still work in progress.
 
