@@ -259,6 +259,39 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #endregion
 
+        #region AddServerGroup
+
+        #region One User
+
+        public Task AddServerGroup(int serverGroupId, int clientDatabaseId) => AddServerGroup(serverGroupId, new int[] { clientDatabaseId });
+
+        public Task AddServerGroup(int serverGroupId, GetClientInfo clientInfo) => AddServerGroup(serverGroupId, clientInfo.DatabaseId);
+
+        public Task AddServerGroup(GetServerGroup serverGroup, int clientDatabaseId) => AddServerGroup(serverGroup.Id, clientDatabaseId);
+
+        public Task AddServerGroup(GetServerGroup serverGroup, GetClientInfo clientInfo) => AddServerGroup(serverGroup.Id, clientInfo.DatabaseId);
+
+        #endregion
+
+        #region Multiple Users
+
+        public Task AddServerGroup(int serverGroupId, IEnumerable<GetClientInfo> clientInfo) => AddServerGroup(serverGroupId, clientInfo.Select(info => info.DatabaseId));
+
+        public Task AddServerGroup(GetServerGroup serverGroup, IEnumerable<int> clientDatabaseIds) => AddServerGroup(serverGroup.Id, clientDatabaseIds);
+
+        public Task AddServerGroup(GetServerGroup serverGroup, IEnumerable<GetClientInfo> clientInfo) => AddServerGroup(serverGroup.Id, clientInfo.Select(info => info.DatabaseId));
+
+        public Task AddServerGroup(int serverGroupId, IEnumerable<int> clientDatabaseIds)
+        {
+            return Client.Send("servergroupaddclient",
+                new Parameter("sgid", serverGroupId),
+                new Parameter("cldbid", clientDatabaseIds.Select(id => new ParameterValue(id)).ToArray()));
+        }
+
+        #endregion
+
+        #endregion
+
         #endregion
 
         #region Channel Methods
