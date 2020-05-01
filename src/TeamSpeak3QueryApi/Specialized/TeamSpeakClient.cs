@@ -292,6 +292,39 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #endregion
 
+        #region RemoveServerGroup
+
+        #region One User
+
+        public Task RemoveServerGroup(int serverGroupId, int clientDatabaseId) => RemoveServerGroup(serverGroupId, new int[] { clientDatabaseId });
+
+        public Task RemoveServerGroup(int serverGroupId, GetClientInfo clientInfo) => RemoveServerGroup(serverGroupId, clientInfo.DatabaseId);
+
+        public Task RemoveServerGroup(GetServerGroup serverGroup, int clientDatabaseId) => RemoveServerGroup(serverGroup.Id, clientDatabaseId);
+
+        public Task RemoveServerGroup(GetServerGroup serverGroup, GetClientInfo clientInfo) => RemoveServerGroup(serverGroup.Id, clientInfo.DatabaseId);
+
+        #endregion
+
+        #region Multiple Users
+
+        public Task RemoveServerGroup(int serverGroupId, IEnumerable<GetClientInfo> clientInfo) => RemoveServerGroup(serverGroupId, clientInfo.Select(info => info.DatabaseId));
+
+        public Task RemoveServerGroup(GetServerGroup serverGroup, IEnumerable<int> clientDatabaseIds) => RemoveServerGroup(serverGroup.Id, clientDatabaseIds);
+
+        public Task RemoveServerGroup(GetServerGroup serverGroup, IEnumerable<GetClientInfo> clientInfo) => RemoveServerGroup(serverGroup.Id, clientInfo.Select(info => info.DatabaseId));
+
+        public Task RemoveServerGroup(int serverGroupId, IEnumerable<int> clientDatabaseIds)
+        {
+            return Client.Send("servergroupdelclient",
+                new Parameter("sgid", serverGroupId),
+                new Parameter("cldbid", clientDatabaseIds.Select(id => new ParameterValue(id)).ToArray()));
+        }
+
+        #endregion
+
+        #endregion
+
         #endregion
 
         #region Channel Methods
