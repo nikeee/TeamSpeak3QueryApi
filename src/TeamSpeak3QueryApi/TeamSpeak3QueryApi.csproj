@@ -5,7 +5,7 @@
     <Authors>Niklas Mollenhauer</Authors>
     <Company />
     <Product />
-    <PackageVersion>1.10.0</PackageVersion>
+    <PackageVersion>1.11.0</PackageVersion>
     <Description>.NET API for the TeamSpeak 3 Query API</Description>
     <PackageLicenseUrl>https://github.com/nikeee/TeamSpeak3QueryAPI/raw/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/nikeee/TeamSpeak3QueryAPI</PackageProjectUrl>
