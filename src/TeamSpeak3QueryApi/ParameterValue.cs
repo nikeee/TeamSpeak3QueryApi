@@ -41,6 +41,10 @@ namespace TeamSpeak3QueryApi.Net
         /// <param name="fromParameter">The value</param>
         public static implicit operator ParameterValue(int fromParameter) => new ParameterValue(fromParameter.ToString(CultureInfo.CurrentCulture));
 
+        /// <summary>Creates a new parameter value using a <see cref="T:System.Int64"/> as value.</summary>
+        /// <param name="fromParameter">The value</param>
+        public static implicit operator ParameterValue(long fromParameter) => new ParameterValue(fromParameter.ToString(CultureInfo.CurrentCulture));
+
         /// <summary>Creates a new parameter value using a <see cref="T:System.Int32"/> as value.</summary>
         /// <param name="fromParameter">The value</param>
         public static implicit operator ParameterValue(bool fromParameter) => new ParameterValue(fromParameter ? "1" : "0");
