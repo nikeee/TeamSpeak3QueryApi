@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace TeamSpeak3QueryApi.Net.Specialized
@@ -123,6 +124,18 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 return null;
             
             return sourceStr.Split(',').Select(int.Parse).ToList();
+        }
+    }
+
+    class DoubleTypeCaster : ITypeCaster
+    {
+        public virtual dynamic Cast(object source)
+        {
+            if (source == null)
+                return 0.0;
+            if (source is double)
+                return (double)source;
+            return double.Parse(source.ToString(), CultureInfo.InvariantCulture);
         }
     }
 }

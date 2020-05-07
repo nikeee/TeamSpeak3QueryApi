@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TeamSpeak3QueryApi.Net.Specialized.Notifications;
 using TeamSpeak3QueryApi.Net.Specialized.Responses;
@@ -14,6 +17,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         // TODO: Migrate to ValueTuples
         private readonly List<Tuple<NotificationType, object, Action<NotificationData>>> _callbacks = new List<Tuple<NotificationType, object, Action<NotificationData>>>();
+
+        private readonly FileTransferClient _fileTransferClient;
 
         #region Ctors
 
@@ -31,7 +36,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, int port) => Client = new QueryClient(hostName, port);
+        public TeamSpeakClient(string hostName, int port)
+        {
+            Client = new QueryClient(hostName, port);
+            _fileTransferClient = new FileTransferClient(hostName);
+        }
 
         #endregion
 
@@ -617,6 +626,283 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 new Parameter("client_nickname", nickName));
         }
         #endregion
+
+        #endregion
+
+        #region Filetransfer Methods
+
+        #region CreateDirectory
+
+        public Task CreateDirectory(int channelId, string dirPath) => CreateDirectory(channelId, string.Empty, dirPath);
+
+        public Task CreateDirectory(int channelId, string channelPassword, string dirPath)
+        {
+            return Client.Send("ftcreatedir",
+                new Parameter("cid", channelId),
+                new Parameter("cpw", channelPassword),
+                new Parameter("dirname", NormalizePath(dirPath)));
+        }
+
+        #endregion
+
+        #region DeleteFile
+
+        public Task DeleteFile(int channelId, string filePath) => DeleteFile(channelId, string.Empty, new string[] { filePath });
+
+        public Task DeleteFile(int channelId, string channelPassword, string filePath) => DeleteFile(channelId, channelPassword, new string[] { filePath });
+
+        public Task DeleteFile(int channelId, IEnumerable<string> filePaths) => DeleteFile(channelId, string.Empty, filePaths);
+
+        public Task DeleteFile(int channelId, string channelPassword, IEnumerable<string> filePaths)
+        {
+            return Client.Send("ftdeletefile",
+                new Parameter("cid", channelId),
+                new Parameter("cpw", channelPassword),
+                new Parameter("name", filePaths.Select(path => new ParameterValue(NormalizePath(path))).ToArray()));
+        }
+
+        #endregion
+
+        #region GetFileInfo
+
+        public Task<GetFileInfo> GetFileInfo(int channelId, string filePath) => GetFileInfo(channelId, string.Empty, filePath);
+
+        public async Task<GetFileInfo> GetFileInfo(int channelId, string channelPassword, string filePath)
+        {
+            var res = await Client.Send("ftgetfileinfo",
+                new Parameter("cid", channelId),
+                new Parameter("cpw", channelPassword),
+                new Parameter("name", NormalizePath(filePath))).ConfigureAwait(false);
+
+            return DataProxy.SerializeGeneric<GetFileInfo>(res).FirstOrDefault();
+        }
+
+        #endregion
+
+        #region GetFileList
+
+        public Task<IReadOnlyList<GetFiles>> GetFiles(int channelId) => GetFiles(channelId, string.Empty, "/");
+
+        public Task<IReadOnlyList<GetFiles>> GetFiles(int channelId, string dirPath) => GetFiles(channelId, string.Empty, dirPath);
+
+        public async Task<IReadOnlyList<GetFiles>> GetFiles(int channelId, string channelPassword, string dirPath)
+        {
+            var res = await Client.Send("ftgetfilelist",
+                new Parameter("cid", channelId),
+                new Parameter("cpw", channelPassword),
+                new Parameter("path", NormalizePath(dirPath))).ConfigureAwait(false);
+
+            return DataProxy.SerializeGeneric<GetFiles>(res);
+        }
+
+        #endregion
+
+        #region MoveFile
+
+        #region Same Channel
+
+        public Task MoveFile(int channelId, string oldFilePath, string newFilePath) => MoveFile(channelId, string.Empty, oldFilePath, newFilePath);
+
+        public Task MoveFile(int channelId, string channelPassword, string oldFilePath, string newFilePath)
+        {
+            return Client.Send("ftrenamefile",
+                new Parameter("cid", channelId),
+                new Parameter("cpw", channelPassword),
+                new Parameter("oldname", NormalizePath(oldFilePath)),
+                new Parameter("newname", NormalizePath(newFilePath)));
+        }
+
+        #endregion
+
+        #region Other Channel
+
+        public Task MoveFile(int channelId, string oldFilePath, int targetChannelId, string newFilePath) => MoveFile(channelId, string.Empty, oldFilePath, targetChannelId, string.Empty, newFilePath);
+
+        public Task MoveFile(int channelId, string channelPassword, string oldFilePath, int targetChannelId, string newFilePath) => MoveFile(channelId, channelPassword, oldFilePath, targetChannelId, string.Empty, newFilePath);
+
+        public Task MoveFile(int channelId, string oldFilePath, int targetChannelId, string targetChannelPassword, string newFilePath) => MoveFile(channelId, string.Empty, oldFilePath, targetChannelId, targetChannelPassword, newFilePath);
+
+        public Task MoveFile(int channelId, string channelPassword, string oldFilePath, int targetChannelId, string targetChannelPassword, string newFilePath)
+        {
+            return Client.Send("ftrenamefile",
+                new Parameter("cid", channelId),
+                new Parameter("cpw", channelPassword),
+                new Parameter("tcid", targetChannelId),
+                new Parameter("tcpw", targetChannelPassword),
+                new Parameter("oldname", NormalizePath(oldFilePath)),
+                new Parameter("newname", NormalizePath(newFilePath)));
+        }
+
+        #endregion
+
+        #endregion
+
+        #region UploadFile
+
+        public Task UploadFile(int channelId, string filePath, byte[] data, bool overwrite = true, bool verify = true) => UploadFile(channelId, string.Empty, filePath, data, overwrite, verify);
+
+        public async Task UploadFile(int channelId, string channelPassword, string filePath, byte[] data, bool overwrite = true, bool verify = true)
+        {
+            var res = await Client.Send("ftinitupload",
+                new Parameter("clientftfid", _fileTransferClient.GetFileTransferId()),
+                new Parameter("cid", channelId),
+                new Parameter("cpw", channelPassword),
+                new Parameter("name", NormalizePath(filePath)),
+                new Parameter("size", data.Length),
+                new Parameter("overwrite", overwrite),
+                new Parameter("resume", 0)).ConfigureAwait(false);
+
+            var parsedRes = DataProxy.SerializeGeneric<InitUpload>(res).First();
+
+            await _fileTransferClient.SendFile(data, parsedRes.Port, parsedRes.FileTransferKey).ConfigureAwait(false);
+
+            if (verify)
+            {
+                await VerifyUpload(parsedRes.ServerFileTransferId).ConfigureAwait(false);
+            }
+        }
+
+        public Task UploadFile(int channelId, string filePath, Stream dataStream, long size, bool overwrite = true, bool verify = true) => UploadFile(channelId, string.Empty, filePath, dataStream, size, overwrite, verify);
+
+        public async Task UploadFile(int channelId, string channelPassword, string filePath, Stream dataStream, long size, bool overwrite = true, bool verify = true)
+        {
+            var res = await Client.Send("ftinitupload",
+                new Parameter("clientftfid", _fileTransferClient.GetFileTransferId()),
+                new Parameter("cid", channelId),
+                new Parameter("cpw", channelPassword),
+                new Parameter("name", NormalizePath(filePath)),
+                new Parameter("size", size),
+                new Parameter("overwrite", overwrite),
+                new Parameter("resume", 0)).ConfigureAwait(false);
+
+            var parsedRes = DataProxy.SerializeGeneric<InitUpload>(res).First();
+
+            await _fileTransferClient.SendFile(dataStream, size, parsedRes.Port, parsedRes.FileTransferKey).ConfigureAwait(false);
+
+            if (verify)
+            {
+                await VerifyUpload(parsedRes.ServerFileTransferId).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>Waits until the server fully receives the file or throws an exception when the upload times out.</summary>
+        private async Task VerifyUpload(int serverFileTransferId)
+        {
+            long arrivedBytes = 0;
+            var intervalMillis = 100;
+            var timeoutMillis = 3000;
+            var currentTimeoutMillis = intervalMillis * -1;
+            
+            while (true)
+            {
+                var transfers = await GetCurrentFileTransfers();
+                var currentTransfer = transfers.Where(transfer => transfer.ServerFileTransferId == serverFileTransferId).FirstOrDefault();
+
+                if (currentTransfer == null)
+                {
+                    // Download finished
+                    return;
+                }
+
+                if (currentTransfer.SizeDone == arrivedBytes)
+                {
+                    // No upload progress
+                    currentTimeoutMillis += intervalMillis;
+
+                    if (currentTimeoutMillis > timeoutMillis)
+                    {
+                        try
+                        {
+                            await StopFileTransfer(serverFileTransferId).ConfigureAwait(false);
+                        }
+                        catch
+                        { }
+
+                        throw new FileTransferException("File upload timed out.");
+                    }
+                }
+                else
+                {
+                    // Upload progress
+                    currentTimeoutMillis = 0;
+                    arrivedBytes = currentTransfer.SizeDone;
+                }
+
+                await Task.Delay(intervalMillis).ConfigureAwait(false);
+            }
+        }
+
+        #endregion
+
+        #region DownloadFile
+
+        public async Task<byte[]> DownloadFile(int channelId, string channelPassword, string filePath)
+        {
+            var res = await Client.Send("ftinitdownload",
+                new Parameter("clientftfid", _fileTransferClient.GetFileTransferId()),
+                new Parameter("cid", channelId),
+                new Parameter("cpw", channelPassword),
+                new Parameter("name", NormalizePath(filePath)),
+                new Parameter("seekpos", 0)).ConfigureAwait(false);
+
+            var parsedRes = DataProxy.SerializeGeneric<InitDownload>(res).First();
+
+            if (parsedRes.Size > int.MaxValue)
+            {
+                throw new FileTransferException("The file is too big for a single byte array.");
+            }
+
+            return await _fileTransferClient.ReceiveFile((int)parsedRes.Size, parsedRes.Port, parsedRes.FileTransferKey).ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region GetCurrentFileTransfers
+
+        public async Task<IReadOnlyList<GetCurrentFileTransfer>> GetCurrentFileTransfers()
+        {
+            try
+            {
+                var res = await Client.Send("ftlist").ConfigureAwait(false);
+
+                return DataProxy.SerializeGeneric<GetCurrentFileTransfer>(res);
+            }
+            catch (QueryException ex)
+            {
+                if (ex.Error.Id == 1281)
+                {
+                    // For some reason this error occurs when there are no active file transfers
+                    return new ReadOnlyCollection<GetCurrentFileTransfer>(new GetCurrentFileTransfer[0]);
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        #endregion
+
+        private Task StopFileTransfer(int serverFileTransferId, bool delete = true)
+        {
+            return Client.Send("ftstop",
+                new Parameter("serverftfid", serverFileTransferId),
+                new Parameter("delete", delete));
+        }
+
+        private string NormalizePath(string path)
+        {
+            // Replace a sequence of backslashes with one forward slash
+            var result = Regex.Replace(path, @"\\+", "/");
+
+            // Make sure that the path starts with a slash
+            if (!result.StartsWith("/"))
+            {
+                result = "/" + result;
+            }
+
+            return result;
+        }
 
         #endregion
 
