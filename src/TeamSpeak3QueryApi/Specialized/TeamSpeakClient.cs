@@ -792,7 +792,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             var intervalMillis = 100;
             var timeoutMillis = 3000;
             var currentTimeoutMillis = intervalMillis * -1;
-            
+
             while (true)
             {
                 var transfers = await GetCurrentFileTransfers();
@@ -835,6 +835,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
 
         #region DownloadFile
+
+        public Task<byte[]> DownloadFile(int channelId, string filePath) => DownloadFile(channelId, string.Empty, filePath);
 
         public async Task<byte[]> DownloadFile(int channelId, string channelPassword, string filePath)
         {
