@@ -50,7 +50,7 @@ namespace TeamSpeak3QueryApi.Net
             await dataStream.CopyToAsync(ns).ConfigureAwait(false);
         }
 
-        public async Task<MemoryStream> ReceiveFile(int size, int port, string key)
+        public async Task<Stream> ReceiveFile(int size, int port, string key)
         {
             using var client = new TcpClient();
             await client.ConnectAsync(_host, port).ConfigureAwait(false);
