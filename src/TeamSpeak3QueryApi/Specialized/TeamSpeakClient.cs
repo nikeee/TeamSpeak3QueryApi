@@ -777,7 +777,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
             var parsedRes = DataProxy.SerializeGeneric<InitUpload>(res).First();
 
-            await _fileTransferClient.SendFile(dataStream, size, parsedRes.Port, parsedRes.FileTransferKey).ConfigureAwait(false);
+            await _fileTransferClient.SendFile(dataStream, parsedRes.Port, parsedRes.FileTransferKey).ConfigureAwait(false);
 
             if (verify)
             {
@@ -836,9 +836,9 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #region DownloadFile
 
-        public Task<byte[]> DownloadFile(int channelId, string filePath) => DownloadFile(channelId, string.Empty, filePath);
+        public Task<MemoryStream> DownloadFile(int channelId, string filePath) => DownloadFile(channelId, string.Empty, filePath);
 
-        public async Task<byte[]> DownloadFile(int channelId, string channelPassword, string filePath)
+        public async Task<MemoryStream> DownloadFile(int channelId, string channelPassword, string filePath)
         {
             var res = await Client.Send("ftinitdownload",
                 new Parameter("clientftfid", _fileTransferClient.GetFileTransferId()),
