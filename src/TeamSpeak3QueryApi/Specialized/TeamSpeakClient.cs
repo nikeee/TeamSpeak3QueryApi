@@ -836,9 +836,9 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         #region DownloadFile
 
-        public Task<MemoryStream> DownloadFile(int channelId, string filePath) => DownloadFile(channelId, string.Empty, filePath);
+        public Task<Stream> DownloadFile(int channelId, string filePath) => DownloadFile(channelId, string.Empty, filePath);
 
-        public async Task<MemoryStream> DownloadFile(int channelId, string channelPassword, string filePath)
+        public async Task<Stream> DownloadFile(int channelId, string channelPassword, string filePath)
         {
             var res = await Client.Send("ftinitdownload",
                 new Parameter("clientftfid", _fileTransferClient.GetFileTransferId()),
