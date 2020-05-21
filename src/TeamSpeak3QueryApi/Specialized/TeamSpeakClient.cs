@@ -260,6 +260,38 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return DataProxy.SerializeGeneric<GetClientIds>(res).FirstOrDefault();
         }
 
+        public async Task<DBIDFromUID> DBIDFromUID(string cluid)
+        {
+            var res = await Client.Send("clientgetdbidfromuid",
+                new Parameter("cluid", cluid))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<DBIDFromUID>(res).FirstOrDefault();
+        }
+
+        public async Task<NAMEFromDBID> NAMEFromDBID(int cldbid)
+        {
+            var res = await Client.Send("clientgetnamefromdbid",
+                new Parameter("cldbid", cldbid))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<NAMEFromDBID>(res).FirstOrDefault();
+        }
+
+        public async Task<NAMEFromUID> NAMEFromUID(string cluid)
+        {
+            var res = await Client.Send("clientgetnamefromuid",
+                new Parameter("cluid", cluid))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<NAMEFromUID>(res).FirstOrDefault();
+        }
+
+        public async Task<UIDFromCLID> UIDFromCLID(int clid)
+        {
+            var res = await Client.Send("clientgetuidfromclid",
+                new Parameter("clid", clid))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<UIDFromCLID>(res).FirstOrDefault();
+        }
+
         #endregion
 
         #region GetServerGroups
