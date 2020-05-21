@@ -252,6 +252,14 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return DataProxy.SerializeGeneric<GetClientDetailedInfo>(res).FirstOrDefault();
         }
 
+        public async Task<GetClientIds> GetClientIds(string cluid)
+        {
+            var res = await Client.Send("clientgetids",
+                new Parameter("cluid", cluid))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<GetClientIds>(res).FirstOrDefault();
+        }
+
         #endregion
 
         #region GetServerGroups
