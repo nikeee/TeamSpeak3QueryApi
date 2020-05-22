@@ -583,6 +583,16 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         }
 
         #endregion
+        #region ServerEdit
+        public async Task<IReadOnlyCollection<ServerEditResponse>> ServerEdit(ServerEdit serverEdit, string value)
+        {
+            var res = await Client.Send("serveredit",
+                new Parameter(serverEdit.ToString(), value))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<ServerEditResponse>(res);
+        }
+
+        #endregion
 
         #endregion
 
