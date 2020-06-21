@@ -9,7 +9,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         channel_topic,
         channel_description,
         channel_password,
-        codec,
+        channel_codec,
         channel_codec_quality,
         channel_maxclients,
         channel_maxfamilyclients,
@@ -23,9 +23,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         channel_flag_maxfamilyclients_inherited,
         channel_needed_talk_power,
         channel_name_phonetic,
-        channel_filepath,
         channel_icon_id,
         channel_codec_is_unencrypted,
-        cpid
     }
 }
