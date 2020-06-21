@@ -508,11 +508,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         #endregion
         #region EditChannel
 
-        public async Task<IReadOnlyCollection<EditChannelInfo>> EditChannel(int channel_id, ChannelEdit EditChannel, string value)
+        public async Task<IReadOnlyCollection<EditChannelInfo>> EditChannel(int channelid, ChannelEdit editChannel, string value)
         {
             var res = await Client.Send("channeledit",
-                new Parameter("cid", channel_id),
-                new Parameter(EditChannel.ToString(), value))
+                new Parameter("cid", channelid),
+                new Parameter(editChannel.ToString(), value))
                 .ConfigureAwait(false);
             return DataProxy.SerializeGeneric<EditChannelInfo>(res);
         }
