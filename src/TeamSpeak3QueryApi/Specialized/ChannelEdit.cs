@@ -9,7 +9,6 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         channel_topic,
         channel_description,
         channel_password,
-        channel,
         codec,
         channel_codec_quality,
         channel_maxclients,
