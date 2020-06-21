@@ -3,7 +3,7 @@ dist: bionic
 sudo: false
 
 mono: none
-dotnet: 3.1.300
+dotnet: 2.2.203
 
 install:
   - dotnet restore
