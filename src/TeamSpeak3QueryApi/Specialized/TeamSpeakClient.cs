@@ -260,36 +260,36 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return DataProxy.SerializeGeneric<GetClientIds>(res).FirstOrDefault();
         }
 
-        public async Task<DBIDFromUID> DBIDFromUID(string cluid)
+        public async Task<DatabaseIdFromClientUid> DatabaseIdFromClientUid(string cluid)
         {
             var res = await Client.Send("clientgetdbidfromuid",
                 new Parameter("cluid", cluid))
                 .ConfigureAwait(false);
-            return DataProxy.SerializeGeneric<DBIDFromUID>(res).FirstOrDefault();
+            return DataProxy.SerializeGeneric<DatabaseIdFromClientUid>(res).FirstOrDefault();
         }
 
-        public async Task<NAMEFromDBID> NAMEFromDBID(int cldbid)
+        public async Task<NameFromDatabaseId> NameFromDatabaseId(int cldbid)
         {
             var res = await Client.Send("clientgetnamefromdbid",
                 new Parameter("cldbid", cldbid))
                 .ConfigureAwait(false);
-            return DataProxy.SerializeGeneric<NAMEFromDBID>(res).FirstOrDefault();
+            return DataProxy.SerializeGeneric<NameFromDatabaseId>(res).FirstOrDefault();
         }
 
-        public async Task<NAMEFromUID> NAMEFromUID(string cluid)
+        public async Task<NameFromClientUid> NameFromClientUid(string cluid)
         {
             var res = await Client.Send("clientgetnamefromuid",
                 new Parameter("cluid", cluid))
                 .ConfigureAwait(false);
-            return DataProxy.SerializeGeneric<NAMEFromUID>(res).FirstOrDefault();
+            return DataProxy.SerializeGeneric<NameFromClientUid>(res).FirstOrDefault();
         }
 
-        public async Task<UIDFromCLID> UIDFromCLID(int clid)
+        public async Task<ClientUidFromClientId> ClientUidFromClientId(int clid)
         {
             var res = await Client.Send("clientgetuidfromclid",
                 new Parameter("clid", clid))
                 .ConfigureAwait(false);
-            return DataProxy.SerializeGeneric<UIDFromCLID>(res).FirstOrDefault();
+            return DataProxy.SerializeGeneric<ClientUidFromClientId>(res).FirstOrDefault();
         }
 
         #endregion
