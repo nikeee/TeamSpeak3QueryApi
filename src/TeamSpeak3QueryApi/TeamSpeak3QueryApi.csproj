@@ -13,6 +13,10 @@
     <RepositoryType />
     <PackageTags>teamspeak</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
+    <!-- https://github.com/NuGet/Home/issues/4142#issuecomment-341867400 -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+
     <RootNamespace>TeamSpeak3QueryApi.Net</RootNamespace>
   </PropertyGroup>
 
