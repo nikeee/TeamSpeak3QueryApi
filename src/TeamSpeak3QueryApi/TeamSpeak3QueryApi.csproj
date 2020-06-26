@@ -5,7 +5,7 @@
     <Authors>Niklas Mollenhauer</Authors>
     <Company />
     <Product />
-    <PackageVersion>1.12.0</PackageVersion>
+    <PackageVersion>1.13.0</PackageVersion>
     <Description>.NET API for the TeamSpeak 3 Query API</Description>
     <PackageLicenseUrl>https://github.com/nikeee/TeamSpeak3QueryAPI/raw/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/nikeee/TeamSpeak3QueryAPI</PackageProjectUrl>
@@ -13,6 +13,10 @@
     <RepositoryType />
     <PackageTags>teamspeak</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
+    <!-- https://github.com/NuGet/Home/issues/4142#issuecomment-341867400 -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+
     <RootNamespace>TeamSpeak3QueryApi.Net</RootNamespace>
   </PropertyGroup>
 
