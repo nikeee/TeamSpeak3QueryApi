@@ -433,6 +433,8 @@ namespace TeamSpeak3QueryApi.Net.Query
                         continue;
 
                     var s = line.Trim();
+                    Debug.WriteLine(line);
+
                     if (s.StartsWith("error", StringComparison.OrdinalIgnoreCase))
                     {
                         Debug.Assert(_currentCommand != null);
