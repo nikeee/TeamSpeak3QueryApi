@@ -20,7 +20,6 @@ namespace TeamSpeak3QueryApi.Net.Demo
             var password = loginData[2].Trim();
 
             var rc = new TeamSpeakClient(host);
-
             await rc.Connect();
 
             await rc.LoginAsync(user, password);
@@ -29,12 +28,12 @@ namespace TeamSpeak3QueryApi.Net.Demo
             await rc.WhoAmIAsync();
 
             await rc.RegisterServerNotificationAsync();
-            await rc.RegisterChannelNotificationAsync(30);
-
+            await rc.RegisterAllChannelNotificationAsync();
+            
             var serverGroups = await rc.GetServerGroupsAsync();
-            var firstNormalGroup = serverGroups?.FirstOrDefault(s => s.ServerGroupType == ServerGroupType.NormalGroup);
-            var groupClients = await rc.GetServerGroupClientListAsync(firstNormalGroup.Id);
+            var firstNormalGroup = serverGroups?.FirstOrDefault(s => s.ServerGroupType == ServerGroupType.NormalGroup && s.Id != 46); // Id 46 is default Servergroup
 
+            var groupClients = await rc.GetServerGroupClientListAsync(firstNormalGroup.Id);
             var currentClients = await rc.GetClientsAsync();
 
             var fullClients = currentClients.Where(c => c.Type == ClientType.FullClient).ToList();
