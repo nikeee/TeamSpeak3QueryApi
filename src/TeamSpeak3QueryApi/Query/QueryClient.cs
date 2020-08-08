@@ -7,8 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Renci.SshNet;
+using Renci.SshNet.Common;
+using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Extensions;
 using TeamSpeak3QueryApi.Net.Notifications;
 using TeamSpeak3QueryApi.Net.Parameters;
@@ -33,13 +37,15 @@ namespace TeamSpeak3QueryApi.Net.Query
         /// <returns>The remote port of the Query API client.</returns>
         public int Port { get; }
 
+        public TeamspeakConnectionType ConnectionType { get; set; }
+
         public bool IsConnected { get; private set; }
 
         /// <summary>The default host which is used when no host is provided.</summary>
         public const string DefaultHost = "localhost";
 
         /// <summary>The default port which is used when no port is provided.</summary>
-        public const short DefaultPort = 10011;
+        public const short DefaultPort = 10022;
 
         public TcpClient Client { get; }
         private StreamReader _reader;
@@ -49,22 +55,26 @@ namespace TeamSpeak3QueryApi.Net.Query
         private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
         private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
 
+        SshClient _sshClient;
+        ShellStream _shell;
+        string username;
+
         #region Ctors
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
-        public QueryClient()
-            : this(DefaultHost, DefaultPort)
+        public QueryClient(TeamspeakConnectionType type)
+            : this(DefaultHost, DefaultPort, type)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        public QueryClient(string hostName)
-            : this(hostName, DefaultPort)
+        public QueryClient(string hostName, TeamspeakConnectionType type)
+            : this(hostName, DefaultPort, type)
         { }
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public QueryClient(string hostName, int port)
+        public QueryClient(string hostName, int port, TeamspeakConnectionType type)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException(nameof(hostName));
@@ -73,6 +83,7 @@ namespace TeamSpeak3QueryApi.Net.Query
 
             Host = hostName;
             Port = port;
+            ConnectionType = type;
             IsConnected = false;
             Client = new TcpClient();
         }
@@ -83,6 +94,9 @@ namespace TeamSpeak3QueryApi.Net.Query
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task<CancellationTokenSource> ConnectAsync()
         {
+            if(ConnectionType != TeamspeakConnectionType.Telnet)
+                throw new InvalidOperationException("ConnectAsync Method without parameters can only be used with telnet Query. Please use ConnectSsh method.");
+
             await Client.ConnectAsync(Host, Port).ConfigureAwait(false);
             if (!Client.Connected)
                 throw new InvalidOperationException("Could not connect.");
@@ -96,12 +110,38 @@ namespace TeamSpeak3QueryApi.Net.Query
 
 
             var headline = await _reader.ReadLineAsync().ConfigureAwait(false);
-            if(headline != "TS3")
+            if (headline != "TS3")
             {
                 throw new QueryProtocolException("Telnet Query isn't a valid Teamspeak Query");
             }
             await _reader.ReadLineAsync().ConfigureAwait(false); // Ignore welcome message
             await _reader.ReadLineAsync().ConfigureAwait(false);
+
+            return ResponseProcessingLoop();
+        }
+
+        public CancellationTokenSource ConnectSsh(string username, string password)
+        {
+            this.username = username;
+
+            _sshClient = new SshClient(Host, Port, username, password);
+            _sshClient.Connect();
+
+            var terminalMode = new Dictionary<TerminalModes, uint>();
+            terminalMode.Add(TerminalModes.ECHO, 53);
+
+            _shell = _sshClient.CreateShellStream("", 0, 0, 0, 0, 4096);
+
+            _reader = new StreamReader(_shell, Encoding.UTF8, true, 1024, true);
+            _writer = new StreamWriter(_shell) { NewLine = "\n", AutoFlush = true };
+
+            var headline = _shell.Expect("\r\n", new TimeSpan(0, 0, 3));
+            if (!headline.Contains("TS3"))
+            {
+                throw new QueryProtocolException("Telnet Query isn't a valid Teamspeak Query");
+            }
+            _shell.Expect("\n", new TimeSpan(0, 0, 3)); // Ignore welcome message
+            _shell.Expect("\n", new TimeSpan(0, 0, 3)); // Ignore welcome message
 
             return ResponseProcessingLoop();
         }
@@ -158,11 +198,10 @@ namespace TeamSpeak3QueryApi.Net.Query
             var d = new TaskCompletionSource<QueryResponseDictionary[]>();
 
             var newItem = new QueryCommand(cmd, ps.AsReadOnly(), options, d, toSend.ToString());
-
+            
             _queue.Enqueue(newItem);
 
             await CheckQueueAsync().ConfigureAwait(false);
-
             return await d.Task.ConfigureAwait(false);
         }
 
@@ -370,14 +409,19 @@ namespace TeamSpeak3QueryApi.Net.Query
                     string line = null;
                     try
                     {
-                        line = await _reader.ReadLineAsync().WithCancellation(cts.Token).ConfigureAwait(false);
+                        if(ConnectionType == TeamspeakConnectionType.SSH)
+                        {
+                            line = _shell.ReadLine();
+                        }
+                        else
+                        {
+                            line = await _reader.ReadLineAsync().WithCancellation(cts.Token).ConfigureAwait(false);
+                        }
                     }
                     catch (OperationCanceledException)
                     {
                         break;
                     }
-
-                    Debug.WriteLine(line);
 
                     if (line == null)
                     {
@@ -385,11 +429,10 @@ namespace TeamSpeak3QueryApi.Net.Query
                         continue;
                     }
 
-                    if (string.IsNullOrWhiteSpace(line))
+                    if (string.IsNullOrWhiteSpace(line) || string.IsNullOrEmpty(line) || line.StartsWith(username))
                         continue;
 
                     var s = line.Trim();
-
                     if (s.StartsWith("error", StringComparison.OrdinalIgnoreCase))
                     {
                         Debug.Assert(_currentCommand != null);
@@ -426,8 +469,8 @@ namespace TeamSpeak3QueryApi.Net.Query
             if (_queue.Count > 0)
             {
                 _currentCommand = _queue.Dequeue();
-                Debug.WriteLine(_currentCommand.SentText);
-                await _writer.WriteLineAsync(_currentCommand.SentText).ConfigureAwait(false);
+                Debug.WriteLine($"{ConnectionType}: {_currentCommand.SentText}");
+                await _writer.WriteLineAsync((ConnectionType == TeamspeakConnectionType.Telnet ? _currentCommand.SentText : _currentCommand.SentText + "\n")).ConfigureAwait(false);
                 await _writer.FlushAsync().ConfigureAwait(false);
             }
         }
@@ -460,6 +503,8 @@ namespace TeamSpeak3QueryApi.Net.Query
                 _ns?.Dispose();
                 _reader?.Dispose();
                 _writer?.Dispose();
+                _shell?.Dispose();
+                _sshClient?.Dispose();
             }
         }
 

@@ -19,8 +19,14 @@ namespace TeamSpeak3QueryApi.Net.Demo
             var user = loginData[1].Trim();
             var password = loginData[2].Trim();
 
-            var rc = new TeamSpeakClient(host);
-            await rc.Connect();
+            // Ssh connection
+            var rc = new TeamSpeakClient(host, TeamspeakConnectionType.SSH);
+            rc.ConnectSsh(user, password);
+
+            // Telnet connection
+            //var rc = new TeamSpeakClient(host);
+            //await rc.ConnectTelnetAsync();
+            //await rc.LoginAsync(user, password);
 
             await rc.LoginAsync(user, password);
             await rc.UseServerAsync(1);
