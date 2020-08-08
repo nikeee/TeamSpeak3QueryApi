@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using TeamSpeak3QueryApi.Net.Specialized;
-using TeamSpeak3QueryApi.Net.Specialized.Notifications;
+using TeamSpeak3QueryApi.Net.Enums;
+using TeamSpeak3QueryApi.Net.Notifications;
 
 namespace TeamSpeak3QueryApi.Net.Demo
 {
@@ -23,25 +23,25 @@ namespace TeamSpeak3QueryApi.Net.Demo
 
             await rc.Connect();
 
-            await rc.Login(user, password);
-            await rc.UseServer(1);
+            await rc.LoginAsync(user, password);
+            await rc.UseServerAsync(1);
 
-            await rc.WhoAmI();
+            await rc.WhoAmIAsync();
 
-            await rc.RegisterServerNotification();
-            await rc.RegisterChannelNotification(30);
+            await rc.RegisterServerNotificationAsync();
+            await rc.RegisterChannelNotificationAsync(30);
 
-            var serverGroups = await rc.GetServerGroups();
+            var serverGroups = await rc.GetServerGroupsAsync();
             var firstNormalGroup = serverGroups?.FirstOrDefault(s => s.ServerGroupType == ServerGroupType.NormalGroup);
-            var groupClients = await rc.GetServerGroupClientList(firstNormalGroup.Id);
+            var groupClients = await rc.GetServerGroupClientListAsync(firstNormalGroup.Id);
 
-            var currentClients = await rc.GetClients();
+            var currentClients = await rc.GetClientsAsync();
 
             var fullClients = currentClients.Where(c => c.Type == ClientType.FullClient).ToList();
-            await rc.KickClient(fullClients, KickOrigin.Channel);
+            await rc.KickClientAsync(fullClients, KickOrigin.Channel, "You're kicked from channel");
 
-            // await rc.MoveClient(1, 1);
-            // await rc.KickClient(1, KickTarget.Server);
+            // await rc.MoveClientAsync(1, 1);
+            // await rc.KickClientAsync(1, KickTarget.Server);
 
             rc.Subscribe<ClientEnterView>(data => data.ForEach(c => Debug.WriteLine($"Client {c.NickName} joined.")));
             rc.Subscribe<ClientLeftView>(data => data.ForEach(c => Debug.WriteLine($"Client with id {c.Id} left (kicked/banned/left).")));
