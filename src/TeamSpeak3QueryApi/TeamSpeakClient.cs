@@ -13,6 +13,7 @@ using TeamSpeak3QueryApi.Net.Responses;
 using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Notifications;
 using TeamSpeak3QueryApi.Net.Extensions;
+using System.Diagnostics;
 
 namespace TeamSpeak3QueryApi.Net
 {
@@ -29,27 +30,29 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
         public TeamSpeakClient()
-            : this(QueryClient.DefaultHost, QueryClient.DefaultPort)
+            : this(QueryClient.DefaultHost, QueryClient.DefaultPort, TeamspeakConnectionType.Telnet)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        public TeamSpeakClient(string hostName)
-            : this(hostName, QueryClient.DefaultPort)
+        public TeamSpeakClient(string hostName, TeamspeakConnectionType type = TeamspeakConnectionType.Telnet)
+            : this(hostName, QueryClient.DefaultPort, type)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, int port)
+        public TeamSpeakClient(string hostName, int port, TeamspeakConnectionType type)
         {
-            Client = new QueryClient(hostName, port);
+            Client = new QueryClient(hostName, port, type);
             _fileTransferClient = new FileTransferClient(hostName);
         }
 
         #endregion
 
-        public Task Connect() => Client.ConnectAsync();
+        public Task ConnectTelnetAsync() => Client.ConnectAsync();
+        public void ConnectSsh(string username, string password) => Client.ConnectSsh(username, password);
+
 
         #region Subscriptions
 
