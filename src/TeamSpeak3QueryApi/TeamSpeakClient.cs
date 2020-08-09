@@ -456,6 +456,43 @@ namespace TeamSpeak3QueryApi.Net
             return DataProxy.SerializeGeneric<CreatedChannel>(res).FirstOrDefault();
         }
 
+        public async Task<CreatedChannel> CreateChannelAsync(string name, EditChannelInfo channel)
+        {
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException(nameof(name));
+
+            var addParameters = new List<Parameter>
+            {
+                new Parameter("channel_name", name),
+            };
+
+            if (channel.Topic != null) { addParameters.Add(new Parameter("channel_topic", channel.Topic)); }
+            if (channel.Description != null) { addParameters.Add(new Parameter("channel_description", channel.Description)); }
+            if (channel.Password != null) { addParameters.Add(new Parameter("channel_password", channel.Password)); }
+            if (channel.Codec != null) { addParameters.Add(new Parameter("channel_codec", (int)channel.Codec)); }
+            if (channel.CodecQuality != null) { addParameters.Add(new Parameter("channel_codec_quality", channel.CodecQuality)); }
+            if (channel.MaxClients != null) { addParameters.Add(new Parameter("channel_maxclients", channel.MaxClients)); }
+            if (channel.MaxFamilyClients != null) { addParameters.Add(new Parameter("channel_maxfamilyclients", channel.MaxFamilyClients)); }
+            if (channel.Order != null) { addParameters.Add(new Parameter("channel_order", channel.Order)); }
+            if (channel.IsPermanent != null) { addParameters.Add(new Parameter("channel_flag_permanent", channel.IsPermanent)); }
+            if (channel.IsSemiPermanent != null) { addParameters.Add(new Parameter("channel_flag_semi_permanent", channel.IsSemiPermanent)); }
+            if (channel.IsTemporary != null) { addParameters.Add(new Parameter("channel_flag_temporary", channel.IsTemporary)); }
+            if (channel.IsDefaultChannel != null) { addParameters.Add(new Parameter("channel_flag_default", channel.IsDefaultChannel)); }
+            if (channel.IsMaxClientsUnlimited != null) { addParameters.Add(new Parameter("channel_flag_maxclients_unlimited", channel.IsMaxClientsUnlimited)); }
+            if (channel.IsMaxFamilyClientsUnlimited != null) { addParameters.Add(new Parameter("channel_flag_maxfamilyclients_unlimited", channel.IsMaxFamilyClientsUnlimited)); }
+            if (channel.IsMaxFamilyClientsInherited != null) { addParameters.Add(new Parameter("channel_flag_maxfamilyclients_inherited", channel.IsMaxFamilyClientsInherited)); }
+            if (channel.NeededTalkPower != null) { addParameters.Add(new Parameter("channel_needed_talk_power", channel.NeededTalkPower)); }
+            if (channel.PhoneticName != null) { addParameters.Add(new Parameter("channel_name_phonetic", channel.PhoneticName)); }
+            if (channel.IconId != null) { addParameters.Add(new Parameter("channel_icon_id", (int)channel.IconId)); }
+            if (channel.IsCodecUnencrypted != null) { addParameters.Add(new Parameter("channel_codec_is_unencrypted", channel.IsCodecUnencrypted)); }
+            if (channel.ParentChannelId != null) { addParameters.Add(new Parameter("cpid", channel.ParentChannelId)); }
+
+            var res = await Client
+                .SendAsync("channelcreate", addParameters.ToArray())
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<CreatedChannel>(res).FirstOrDefault();
+        }
+
         #endregion
         #region DeleteChannel
 
@@ -514,7 +551,7 @@ namespace TeamSpeak3QueryApi.Net
             if (channel.PhoneticName != null) { updateParameters.Add(new Parameter("channel_name_phonetic", channel.PhoneticName)); }
             if (channel.IconId != null) { updateParameters.Add(new Parameter("channel_icon_id", (int)channel.IconId)); }
             if (channel.IsCodecUnencrypted != null) { updateParameters.Add(new Parameter("channel_codec_is_unencrypted", channel.IsCodecUnencrypted)); }
-            if (channel.ParentChannelId != null) { updateParameters.Add(new Parameter("channel_cpid", channel.ParentChannelId)); }
+            if (channel.ParentChannelId != null) { updateParameters.Add(new Parameter("cpid", channel.ParentChannelId)); }
 
             return Client.SendAsync("channeledit", updateParameters.ToArray());
         }
