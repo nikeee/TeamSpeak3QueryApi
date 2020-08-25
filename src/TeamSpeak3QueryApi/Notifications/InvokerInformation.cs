@@ -1,4 +1,4 @@
-using TeamSpeak3QueryApi.Net.Enums;
+using TeamSpeak3QueryApi.Net.Query.Enums;
 
 namespace TeamSpeak3QueryApi.Net.Notifications
 {

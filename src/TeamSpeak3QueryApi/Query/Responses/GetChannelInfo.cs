@@ -1,18 +1,27 @@
 using System;
 using TeamSpeak3QueryApi.Net.Query.Enums;
 
-namespace TeamSpeak3QueryApi.Net.Notifications
+namespace TeamSpeak3QueryApi.Net.Query.Responses
 {
-    public class ChannelEdited : InvokerInformation
+    public class GetChannelInfo : Response
     {
         [QuerySerialize("cid")]
         public int ChannelId;
+
+        [QuerySerialize("pid")]
+        public int ParentChannelId;
 
         [QuerySerialize("channel_name")]
         public string Name;
 
         [QuerySerialize("channel_topic")]
         public string Topic;
+
+        [QuerySerialize("channel_description")]
+        public string Description;
+
+        [QuerySerialize("channel_password")]
+        public string Password;
 
         [QuerySerialize("channel_codec")]
         public Codec Codec;
@@ -29,43 +38,61 @@ namespace TeamSpeak3QueryApi.Net.Notifications
         [QuerySerialize("channel_order")]
         public int Order;
 
-        [QuerySerialize("channel_flag_permanent")]
-        public bool IsPermanent;
-
-        [QuerySerialize("channel_flag_semi_permanent")]
-        public bool IsSemiPermanent;
-
         [QuerySerialize("channel_flag_default")]
         public bool IsDefaultChannel;
 
         [QuerySerialize("channel_flag_password")]
         public bool HasPassword;
 
+        [QuerySerialize("channel_flag_permanent")]
+        public bool IsPermanent;
+
+        [QuerySerialize("channel_flag_semi_permanent")]
+        public bool IsSemiPermanent;
+
+        [QuerySerialize("channel_flag_temporary")]
+        public bool IsTemporary;
+
         [QuerySerialize("channel_codec_latency_factor")]
         public int CodecLatencyFactor;
 
         [QuerySerialize("channel_codec_is_unencrypted")]
-        public bool IsUnencrypted;
+        public bool IsCodecUnencrypted;
+
+        [QuerySerialize("channel_security_salt")]
+        public string SecuritySalt;
 
         [QuerySerialize("channel_delete_delay")]
         public TimeSpan DeleteDelay;
 
         [QuerySerialize("channel_flag_maxclients_unlimited")]
-        public bool CanHasUnlimitedClients;
+        public bool IsMaxClientsUnlimited;
 
         [QuerySerialize("channel_flag_maxfamilyclients_unlimited")]
-        public bool CanHasUnlimitedFamilyClients;
+        public bool IsMaxFamilyClientsUnlimited;
 
         [QuerySerialize("channel_flag_maxfamilyclients_inherited")]
         public bool IsMaxFamilyClientsInherited;
 
+        [QuerySerialize("channel_filepath")]
+        public string ChannelFilePath;
+
         [QuerySerialize("channel_needed_talk_power")]
         public int NeededTalkPower;
 
+        [QuerySerialize("channel_forced_silence")]
+        public bool ForcedSilence; // bool? dunno
+
         [QuerySerialize("channel_name_phonetic")]
-        public string PhoneticChannelName;
+        public string PhoneticName;
 
         [QuerySerialize("channel_icon_id")]
-        public string IconId;
+        public long IconId;
+
+        [QuerySerialize("channel_flag_private")]
+        public bool IsPrivate;
+
+        [QuerySerialize("seconds_empty")]
+        public TimeSpan SecondsEmpty;
     }
 }
