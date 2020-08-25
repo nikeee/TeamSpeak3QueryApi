@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TeamSpeak3QueryApi.Net.Parameters;
+using TeamSpeak3QueryApi.Net.Query.Parameters;
 
 namespace TeamSpeak3QueryApi.Net.Query
 {

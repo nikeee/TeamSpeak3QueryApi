@@ -7,13 +7,14 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TeamSpeak3QueryApi.Net.FileTransfer;
-using TeamSpeak3QueryApi.Net.Parameters;
 using TeamSpeak3QueryApi.Net.Query;
-using TeamSpeak3QueryApi.Net.Responses;
 using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Notifications;
 using TeamSpeak3QueryApi.Net.Extensions;
 using System.Diagnostics;
+using TeamSpeak3QueryApi.Net.Query.Parameters;
+using TeamSpeak3QueryApi.Net.Query.Responses;
+using TeamSpeak3QueryApi.Net.Query.Enums;
 
 namespace TeamSpeak3QueryApi.Net
 {
@@ -30,19 +31,19 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
         public TeamSpeakClient()
-            : this(QueryClient.DefaultHost, QueryClient.DefaultPort, TeamspeakConnectionType.Telnet)
+            : this(QueryClient.DefaultHost, QueryClient.DefaultPort, Protocol.Telnet)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        public TeamSpeakClient(string hostName, TeamspeakConnectionType type = TeamspeakConnectionType.Telnet)
+        public TeamSpeakClient(string hostName, Protocol type = Protocol.Telnet)
             : this(hostName, QueryClient.DefaultPort, type)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, int port, TeamspeakConnectionType type)
+        public TeamSpeakClient(string hostName, int port, Protocol type)
         {
             Client = new QueryClient(hostName, port, type);
             _fileTransferClient = new FileTransferClient(hostName);

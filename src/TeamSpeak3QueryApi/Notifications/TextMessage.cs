@@ -1,4 +1,4 @@
-using TeamSpeak3QueryApi.Net.Enums;
+using TeamSpeak3QueryApi.Net.Query.Enums;
 
 namespace TeamSpeak3QueryApi.Net.Notifications
 {
@@ -11,6 +11,6 @@ namespace TeamSpeak3QueryApi.Net.Notifications
         public string Message;
 
         [QuerySerialize("target")]
-        public int TargetClientId; // (clid des Empf‰ngers; Parameter nur bei textprivate vorhanden)
+        public int TargetClientId; // (clid des Empf√§ngers; Parameter nur bei textprivate vorhanden)
     }
 }

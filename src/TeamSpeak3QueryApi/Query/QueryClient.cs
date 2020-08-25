@@ -15,7 +15,7 @@ using Renci.SshNet.Common;
 using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Extensions;
 using TeamSpeak3QueryApi.Net.Notifications;
-using TeamSpeak3QueryApi.Net.Parameters;
+using TeamSpeak3QueryApi.Net.Query.Parameters;
 
 namespace TeamSpeak3QueryApi.Net.Query
 {
@@ -37,7 +37,7 @@ namespace TeamSpeak3QueryApi.Net.Query
         /// <returns>The remote port of the Query API client.</returns>
         public int Port { get; }
 
-        public TeamspeakConnectionType ConnectionType { get; set; }
+        public Protocol ConnectionType { get; set; }
 
         public bool IsConnected { get; private set; }
 
@@ -62,19 +62,19 @@ namespace TeamSpeak3QueryApi.Net.Query
         #region Ctors
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
-        public QueryClient(TeamspeakConnectionType type)
+        public QueryClient(Protocol type)
             : this(DefaultHost, DefaultPort, type)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        public QueryClient(string hostName, TeamspeakConnectionType type)
+        public QueryClient(string hostName, Protocol type)
             : this(hostName, DefaultPort, type)
         { }
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public QueryClient(string hostName, int port, TeamspeakConnectionType type)
+        public QueryClient(string hostName, int port, Protocol type)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException(nameof(hostName));
@@ -94,7 +94,7 @@ namespace TeamSpeak3QueryApi.Net.Query
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task<CancellationTokenSource> ConnectAsync()
         {
-            if(ConnectionType != TeamspeakConnectionType.Telnet)
+            if(ConnectionType != Protocol.Telnet)
                 throw new InvalidOperationException("ConnectAsync Method without parameters can only be used with telnet Query. Please use ConnectSsh method.");
 
             await Client.ConnectAsync(Host, Port).ConfigureAwait(false);
@@ -409,7 +409,7 @@ namespace TeamSpeak3QueryApi.Net.Query
                     string line = null;
                     try
                     {
-                        if(ConnectionType == TeamspeakConnectionType.SSH)
+                        if(ConnectionType == Protocol.SSH)
                         {
                             line = _shell.ReadLine();
                         }
@@ -472,7 +472,7 @@ namespace TeamSpeak3QueryApi.Net.Query
             {
                 _currentCommand = _queue.Dequeue();
                 Debug.WriteLine($"{ConnectionType}: {_currentCommand.SentText}");
-                await _writer.WriteLineAsync((ConnectionType == TeamspeakConnectionType.Telnet ? _currentCommand.SentText : _currentCommand.SentText + "\n")).ConfigureAwait(false);
+                await _writer.WriteLineAsync((ConnectionType == Protocol.Telnet ? _currentCommand.SentText : _currentCommand.SentText + "\n")).ConfigureAwait(false);
                 await _writer.FlushAsync().ConfigureAwait(false);
             }
         }

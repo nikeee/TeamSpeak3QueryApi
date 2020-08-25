@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Notifications;
+using TeamSpeak3QueryApi.Net.Query.Enums;
 
 namespace TeamSpeak3QueryApi.Net.Demo
 {
@@ -20,7 +21,7 @@ namespace TeamSpeak3QueryApi.Net.Demo
             var password = loginData[2].Trim();
 
             // Ssh connection
-            var rc = new TeamSpeakClient(host, TeamspeakConnectionType.SSH);
+            var rc = new TeamSpeakClient(host, Protocol.SSH);
             rc.ConnectSsh(user, password);
 
             // Telnet connection
