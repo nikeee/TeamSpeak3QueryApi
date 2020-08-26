@@ -15,6 +15,7 @@ using System.Diagnostics;
 using TeamSpeak3QueryApi.Net.Query.Parameters;
 using TeamSpeak3QueryApi.Net.Query.Responses;
 using TeamSpeak3QueryApi.Net.Query.Enums;
+using TeamSpeak3QueryApi.Net.Query.Protocols;
 
 namespace TeamSpeak3QueryApi.Net
 {
@@ -31,28 +32,30 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
         public TeamSpeakClient()
-            : this(QueryClient.DefaultHost, QueryClient.DefaultPort, Protocol.Telnet)
-        { }
-
-        /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
-        /// <param name="hostName">The host name of the remote server.</param>
-        public TeamSpeakClient(string hostName, Protocol type = Protocol.Telnet)
-            : this(hostName, QueryClient.DefaultPort, type)
+            : this(QueryClient.DefaultHost, TelnetProtocol.DefaultPort, Protocol.Telnet)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, int port, Protocol type)
+        public TeamSpeakClient(string hostName, int port = TelnetProtocol.DefaultPort, Protocol type = Protocol.Telnet)
         {
-            Client = new QueryClient(hostName, port, type);
+            switch (type)
+            {
+                case Protocol.Telnet:
+                    Client = new TelnetProtocol(hostName, port);
+                    break;
+                case Protocol.SSH:
+                    Client = new SshProtocol(hostName, port);
+                    break;
+            }
             _fileTransferClient = new FileTransferClient(hostName);
         }
 
         #endregion
 
-        public Task ConnectTelnetAsync() => Client.ConnectAsync();
-        public void ConnectSsh(string username, string password) => Client.ConnectSsh(username, password);
+        public Task ConnectAsync() => Client.ConnectAsync();
+        public void Connect(string username, string password) => Client.Connect(username, password);
 
 
         #region Subscriptions
@@ -96,6 +99,9 @@ namespace TeamSpeak3QueryApi.Net
 
         public Task LoginAsync(string userName, string password)
         {
+            if (Client.ConnectionType == Protocol.SSH)
+                throw new InvalidOperationException("Login is not needed in ssh protocol");
+
             return Client.SendAsync("login", new Parameter("client_login_name", userName), new Parameter("client_login_password", password));
         }
 

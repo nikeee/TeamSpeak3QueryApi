@@ -4,7 +4,7 @@ using TeamSpeak3QueryApi.Net.Query.Parameters;
 
 namespace TeamSpeak3QueryApi.Net.Query
 {
-    internal class QueryCommand
+    public class QueryCommand
     {
         public string Command { get; }
         public string[] Options { get; }
