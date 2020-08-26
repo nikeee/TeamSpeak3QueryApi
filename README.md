@@ -1,12 +1,13 @@
 # C# TeamSpeak3Query API [![Travis Build Status](https://travis-ci.org/nikeee/TeamSpeak3QueryAPI.svg?branch=master)](https://travis-ci.org/nikeee/TeamSpeak3QueryAPI) ![NuGet Downloads](https://img.shields.io/nuget/dt/TeamSpeak3QueryApi.svg)
 
-An API wrapper for the TeamSpeak 3 Query API written in C#. Still work in progress.
+An API wrapper for the TeamSpeak 3 Query API written in C#. **Still work in progress**.
 
 Key features of this library:
 - Built entirely with the .NET TAP pattern for perfect async/await usage opportunities
 - Robust library architecture
 - Query responses are fully mapped to .NET objects, including the naming style
 - Usable via Middleware/Rich Client
+- SSH and Telnet protocol will be supported
 
 ## Contents
 1. [Documentation](#documentation)
@@ -26,9 +27,10 @@ The TeamSpeak 3 Query API is documented [here](http://media.teamspeak.com/ts3_li
 This library has an online documentation which was created using [sharpDox](http://sharpdox.de). You can find the documentation on the [GitHub Page of this repository](https://nikeee.github.io/TeamSpeak3QueryAPI).
 
 ## Compatibility
-This library requires .NET Standard `1.3`. You can look at [this table](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support) to see whether your platform is supported. If you find something that is missing (espacially in the `TeamSpeakClient` class), just submit a PR or an issue!
+This library requires .NET Core `3.0`. You can look at [this table](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support) to see whether your platform is supported. If you find something that is missing (espacially in the `TeamSpeakClient` class), just submit a PR or an issue!
 
 ### NuGet
+*This is currently not possible.*
 ```Shell
 Install-Package TeamSpeak3QueryApi
 # or
@@ -39,10 +41,17 @@ dotnet add package TeamSpeak3QueryApi
 Using the rich client, you can connect to a TeamSpeak Query server like this:
 ### Connect and Login
 
-```C#
+```C# Telnet query
 var rc = new TeamSpeakClient(host, port); // Create rich client instance
-await rc.Connect(); // connect to the server
-await rc.Login(user, password); // login to do some stuff that requires permission
+await rc.ConnectAsync(); // connect to the server
+await rc.LoginAsync(user, password); // login to do some stuff that requires permission
+await rc.UseServer(1); // Use the server with id '1'
+var me = await rc.WhoAmI(); // Get information about yourself!
+```
+
+```C# SSH query
+var rc = new TeamSpeakClient(host, 10022, Protocol.SSH); // Create rich client instance
+await rc.Connect(user, password); // connect to the server with login data
 await rc.UseServer(1); // Use the server with id '1'
 var me = await rc.WhoAmI(); // Get information about yourself!
 ```
@@ -70,7 +79,7 @@ rc.Subscribe<ClientEnterView>(data => {
 Getting all clients and moving them to a specific channel is as simple as:
 
 ```C#
-var currentClients = await rc.GetClients();
+var currentClients = await rc.GetClientsAsync();
 await rc.MoveClient(currentClients, 30); // Where 30 is the channel id
 ```
 ...and kick someone whose name is "Foobar".
@@ -78,7 +87,7 @@ await rc.MoveClient(currentClients, 30); // Where 30 is the channel id
 ```C#
 var fooBar = currentClients.SingleOrDefault(c => c.NickName == "Foobar"); // Using linq to find our dude
 if(fooBar != null) // Make sure we pass a valid reference
-    await rc.KickClient(fooBar, 30);
+    await rc.KickClientAsync(fooBar, 30);
 ```
 
 ### Exceptions
@@ -100,16 +109,16 @@ If you want to work more loose-typed, you can do this. This is possible using th
 
 ```C#
 var qc = new QueryClient(host, port);
-await qc.Connect();
+await qc.ConnectAsync();
 
-await qc.Send("login", new Parameter("client_login_name", userName), new Parameter("client_login_password", password));
+await qc.SendAsync("login", new Parameter("client_login_name", userName), new Parameter("client_login_password", password));
 
-await qc.Send("use", new Parameter("sid", "1"));
+await qc.SendAsync("use", new Parameter("sid", "1"));
 
-var me = await qc.Send("whoami");
+var me = await qc.SendAsync("whoami");
 
-await qc.Send("servernotifyregister", new Parameter("event", "server"));
-await qc.Send("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", channelId));
+await qc.SendAsync("servernotifyregister", new Parameter("event", "server"));
+await qc.SendAsync("servernotifyregister", new Parameter("event", "channel"), new Parameter("id", channelId));
 
 // and so on.
 ```
