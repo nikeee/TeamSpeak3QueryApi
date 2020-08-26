@@ -7,20 +7,19 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Renci.SshNet;
-using Renci.SshNet.Common;
 using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Extensions;
 using TeamSpeak3QueryApi.Net.Notifications;
 using TeamSpeak3QueryApi.Net.Query.Parameters;
+using TeamSpeak3QueryApi.Net.Query.Protocols;
 
 namespace TeamSpeak3QueryApi.Net.Query
 {
     /// <summary>Represents a client that can be used to access the TeamSpeak Query API on a remote server.</summary>
-    public class QueryClient : IDisposable
+    public class QueryClient : IDisposable, IProtocol
     {
         /// <summary>
         /// Events for handling in the correct moment
@@ -31,120 +30,30 @@ namespace TeamSpeak3QueryApi.Net.Query
 
         /// <summary>Gets the remote host of the Query API client.</summary>
         /// <returns>The remote host of the Query API client.</returns>
-        public string Host { get; }
+        public string Host { get; internal set; }
 
         /// <summary>Gets the remote port of the Query API client.</summary>
         /// <returns>The remote port of the Query API client.</returns>
-        public int Port { get; }
+        public int Port { get; internal set; }
 
-        public Protocol ConnectionType { get; set; }
+        public Protocol ConnectionType { get; internal set; }
 
-        public bool IsConnected { get; private set; }
+        public bool IsConnected { get; internal set; }
 
         /// <summary>The default host which is used when no host is provided.</summary>
         public const string DefaultHost = "localhost";
 
-        /// <summary>The default port which is used when no port is provided.</summary>
-        public const short DefaultPort = 10022;
-
-        public TcpClient Client { get; }
-        private StreamReader _reader;
-        private StreamWriter _writer;
-        private NetworkStream _ns;
-        private CancellationTokenSource _cts;
+        public TcpClient Client { get; internal set; }
+        protected StreamReader _reader;
+        protected StreamWriter _writer;
+        protected NetworkStream _ns;
+        protected CancellationTokenSource _cts;
         private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
         private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
 
-        SshClient _sshClient;
-        ShellStream _shell;
-        string username;
-
-        #region Ctors
-
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
-        public QueryClient(Protocol type)
-            : this(DefaultHost, DefaultPort, type)
-        { }
-
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
-        /// <param name="hostName">The host name of the remote server.</param>
-        public QueryClient(string hostName, Protocol type)
-            : this(hostName, DefaultPort, type)
-        { }
-        /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
-        /// <param name="hostName">The host name of the remote server.</param>
-        /// <param name="port">The TCP port of the Query API server.</param>
-        public QueryClient(string hostName, int port, Protocol type)
-        {
-            if (string.IsNullOrWhiteSpace(hostName))
-                throw new ArgumentNullException(nameof(hostName));
-            if (!ValidationHelper.ValidateTcpPort(port))
-                throw new ArgumentOutOfRangeException(nameof(port));
-
-            Host = hostName;
-            Port = port;
-            ConnectionType = type;
-            IsConnected = false;
-            Client = new TcpClient();
-        }
-
-        #endregion
-
-        /// <summary>Connects to the Query API server.</summary>
-        /// <returns>An awaitable <see cref="Task"/>.</returns>
-        public async Task<CancellationTokenSource> ConnectAsync()
-        {
-            if(ConnectionType != Protocol.Telnet)
-                throw new InvalidOperationException("ConnectAsync Method without parameters can only be used with telnet Query. Please use ConnectSsh method.");
-
-            await Client.ConnectAsync(Host, Port).ConfigureAwait(false);
-            if (!Client.Connected)
-                throw new InvalidOperationException("Could not connect.");
-
-            _ns = Client.GetStream();
-            _reader = new StreamReader(_ns);
-            _writer = new StreamWriter(_ns) { NewLine = "\n" };
-
-            IsConnected = true;
-            OnConnected?.Invoke(this, EventArgs.Empty);
-
-
-            var headline = await _reader.ReadLineAsync().ConfigureAwait(false);
-            if (headline != "TS3")
-            {
-                throw new QueryProtocolException("Telnet Query isn't a valid Teamspeak Query");
-            }
-            await _reader.ReadLineAsync().ConfigureAwait(false); // Ignore welcome message
-            await _reader.ReadLineAsync().ConfigureAwait(false);
-
-            return ResponseProcessingLoop();
-        }
-
-        public CancellationTokenSource ConnectSsh(string username, string password)
-        {
-            this.username = username;
-
-            _sshClient = new SshClient(Host, Port, username, password);
-            _sshClient.Connect();
-
-            var terminalMode = new Dictionary<TerminalModes, uint>();
-            terminalMode.Add(TerminalModes.ECHO, 53);
-
-            _shell = _sshClient.CreateShellStream("", 0, 0, 0, 0, 4096);
-
-            _reader = new StreamReader(_shell, Encoding.UTF8, true, 1024, true);
-            _writer = new StreamWriter(_shell) { NewLine = "\n", AutoFlush = true };
-
-            var headline = _shell.Expect("\r\n", new TimeSpan(0, 0, 3));
-            if (!headline.Contains("TS3"))
-            {
-                throw new QueryProtocolException("Telnet Query isn't a valid Teamspeak Query");
-            }
-            _shell.Expect("\n", new TimeSpan(0, 0, 3)); // Ignore welcome message
-            _shell.Expect("\n", new TimeSpan(0, 0, 3)); // Ignore welcome message
-
-            return ResponseProcessingLoop();
-        }
+        protected SshClient _sshClient;
+        protected ShellStream _shell;
+        protected string username;
 
         public void Disconnect()
         {
@@ -153,6 +62,20 @@ namespace TeamSpeak3QueryApi.Net.Query
 
             OnDisconnected?.Invoke(this, EventArgs.Empty);
             _cts.Cancel();
+        }
+
+        /// <summary>Connects to the Query API server.</summary>
+        /// <returns>An awaitable <see cref="Task"/>.</returns>
+        public virtual Task<CancellationTokenSource> ConnectAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>Connects to the Query API server.</summary>
+        /// <returns>An awaitable <see cref="Task"/>.</returns>
+        public virtual CancellationTokenSource Connect(string username, string password)
+        {
+            throw new NotImplementedException();
         }
 
         #region Send
@@ -266,7 +189,7 @@ namespace TeamSpeak3QueryApi.Net.Query
         #endregion
         #region Parsing
 
-        private static QueryResponseDictionary[] ParseResponse(string rawResponse)
+        protected static QueryResponseDictionary[] ParseResponse(string rawResponse)
         {
             var records = rawResponse.Split('|');
             var response = records.Select(s =>
@@ -298,7 +221,7 @@ namespace TeamSpeak3QueryApi.Net.Query
             return response.ToArray();
         }
 
-        private static QueryError ParseError(string errorString)
+        protected static QueryError ParseError(string errorString)
         {
             // Ex:
             // error id=2568 msg=insufficient\sclient\spermissions failed_permid=27
@@ -342,7 +265,7 @@ namespace TeamSpeak3QueryApi.Net.Query
             return parsedError;
         }
 
-        private static QueryNotification ParseNotification(string notificationString)
+        protected static QueryNotification ParseNotification(string notificationString)
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(notificationString));
 
@@ -360,7 +283,7 @@ namespace TeamSpeak3QueryApi.Net.Query
             return new QueryNotification(notificationName, notData);
         }
 
-        private static void InvokeResponse(QueryCommand forCommand)
+        protected static void InvokeResponse(QueryCommand forCommand)
         {
             Debug.Assert(forCommand != null);
             Debug.Assert(forCommand.Defer != null);
@@ -379,7 +302,7 @@ namespace TeamSpeak3QueryApi.Net.Query
         #endregion
         #region Invocation
 
-        private void InvokeNotification(QueryNotification notification)
+        protected void InvokeNotification(QueryNotification notification)
         {
             Debug.Assert(notification != null);
             Debug.Assert(notification.Name != null);
@@ -399,73 +322,7 @@ namespace TeamSpeak3QueryApi.Net.Query
             }
         }
 
-        private CancellationTokenSource ResponseProcessingLoop()
-        {
-            var cts = _cts = new CancellationTokenSource();
-            Task.Run(async () =>
-            {
-                while (!cts.Token.IsCancellationRequested)
-                {
-                    string line = null;
-                    try
-                    {
-                        if(ConnectionType == Protocol.SSH)
-                        {
-                            line = _shell.ReadLine();
-                        }
-                        else
-                        {
-                            line = await _reader.ReadLineAsync().WithCancellation(cts.Token).ConfigureAwait(false);
-                        }
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        break;
-                    }
-
-                    if (line == null)
-                    {
-                        cts.Cancel();
-                        continue;
-                    }
-
-                    if (string.IsNullOrWhiteSpace(line) || string.IsNullOrEmpty(line) || line.StartsWith(username))
-                        continue;
-
-                    var s = line.Trim();
-                    Debug.WriteLine(line);
-
-                    if (s.StartsWith("error", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Debug.Assert(_currentCommand != null);
-
-                        var error = ParseError(s);
-                        _currentCommand.Error = error;
-                        InvokeResponse(_currentCommand);
-                    }
-                    else if (s.StartsWith("notify", StringComparison.OrdinalIgnoreCase))
-                    {
-                        s = s.Remove(0, "notify".Length);
-                        var not = ParseNotification(s);
-                        InvokeNotification(not);
-                    }
-                    else
-                    {
-                        Debug.Assert(_currentCommand != null);
-                        _currentCommand.RawResponse = s;
-                        _currentCommand.ResponseDictionary = ParseResponse(s);
-                    }
-                }
-
-                IsConnected = false;
-                OnConnectionLost?.Invoke(this, EventArgs.Empty);
-                OnDisconnected?.Invoke(this, EventArgs.Empty);
-
-            });
-            return cts;
-        }
-
-        private QueryCommand _currentCommand;
+        protected QueryCommand _currentCommand;
         private async Task CheckQueueAsync()
         {
             if (_queue.Count > 0)
@@ -509,7 +366,6 @@ namespace TeamSpeak3QueryApi.Net.Query
                 _sshClient?.Dispose();
             }
         }
-
         #endregion
     }
 }
