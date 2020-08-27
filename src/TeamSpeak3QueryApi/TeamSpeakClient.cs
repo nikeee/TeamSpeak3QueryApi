@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 using TeamSpeak3QueryApi.Net.FileTransfer;
 using TeamSpeak3QueryApi.Net.Query;
 using TeamSpeak3QueryApi.Net.Enums;
-using TeamSpeak3QueryApi.Net.Notifications;
 using TeamSpeak3QueryApi.Net.Extensions;
 using System.Diagnostics;
 using TeamSpeak3QueryApi.Net.Query.Parameters;
 using TeamSpeak3QueryApi.Net.Query.Responses;
 using TeamSpeak3QueryApi.Net.Query.Enums;
 using TeamSpeak3QueryApi.Net.Query.Protocols;
+using TeamSpeak3QueryApi.Net.Query.Notifications;
 
 namespace TeamSpeak3QueryApi.Net
 {

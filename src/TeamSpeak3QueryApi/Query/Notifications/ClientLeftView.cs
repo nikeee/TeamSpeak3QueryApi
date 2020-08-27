@@ -1,7 +1,7 @@
 using System;
 using TeamSpeak3QueryApi.Net.Query.Enums;
 
-namespace TeamSpeak3QueryApi.Net.Notifications
+namespace TeamSpeak3QueryApi.Net.Query.Notifications
 {
     public class ClientLeftView : Notification
     {

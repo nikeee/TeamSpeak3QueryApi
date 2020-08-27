@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using TeamSpeak3QueryApi.Net.Query;
 
-namespace TeamSpeak3QueryApi.Net.Notifications
+namespace TeamSpeak3QueryApi.Net.Query.Notifications
 {
     /// <summary>Provides data that was retrieved by a notification.</summary>
     public class NotificationData

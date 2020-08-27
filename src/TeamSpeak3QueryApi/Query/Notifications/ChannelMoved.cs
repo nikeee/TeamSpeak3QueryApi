@@ -1,4 +1,4 @@
-namespace TeamSpeak3QueryApi.Net.Notifications
+namespace TeamSpeak3QueryApi.Net.Query.Notifications
 {
     public class ChannelMoved : InvokerInformation
     {

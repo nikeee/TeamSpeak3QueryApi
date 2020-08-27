@@ -1,12 +1,15 @@
 using System;
 using TeamSpeak3QueryApi.Net.Query.Enums;
 
-namespace TeamSpeak3QueryApi.Net.Notifications
+namespace TeamSpeak3QueryApi.Net.Query.Notifications
 {
-    public class ChannelEdited : InvokerInformation
+    public class ChannelCreated : InvokerInformation
     {
         [QuerySerialize("cid")]
         public int ChannelId;
+
+        [QuerySerialize("cpid")]
+        public int ParentChannelId;
 
         [QuerySerialize("channel_name")]
         public string Name;
