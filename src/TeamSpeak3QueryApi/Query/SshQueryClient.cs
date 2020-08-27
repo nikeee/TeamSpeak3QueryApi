@@ -11,27 +11,27 @@ using Renci.SshNet.Common;
 using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Extensions;
 
-namespace TeamSpeak3QueryApi.Net.Query.Protocols
+namespace TeamSpeak3QueryApi.Net.Query
 {
-    public class SshProtocol : QueryClient
+    public class SshQueryClient : QueryClient
     {
         /// <summary>The default port which is used when no port is provided.</summary>
         public const short DefaultPort = 10022;
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
-        public SshProtocol()
+        public SshQueryClient()
             : this(DefaultHost, DefaultPort)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        public SshProtocol(string hostName)
+        public SshQueryClient(string hostName)
             : this(hostName, DefaultPort)
         { }
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public SshProtocol(string hostName, int port)
+        public SshQueryClient(string hostName, int port)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException(nameof(hostName));

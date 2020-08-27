@@ -1,35 +1,33 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Extensions;
 
-namespace TeamSpeak3QueryApi.Net.Query.Protocols
+namespace TeamSpeak3QueryApi.Net.Query
 {
-    public class TelnetProtocol : QueryClient
+    public class TelnetQueryClient : QueryClient
     {
         /// <summary>The default port which is used when no port is provided.</summary>
         public const short DefaultPort = 10011;
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
-        public TelnetProtocol()
+        public TelnetQueryClient()
             : this(DefaultHost, DefaultPort)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        public TelnetProtocol(string hostName)
+        public TelnetQueryClient(string hostName)
             : this(hostName, DefaultPort)
         { }
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TelnetProtocol(string hostName, int port)
+        public TelnetQueryClient(string hostName, int port)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException(nameof(hostName));

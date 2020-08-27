@@ -14,7 +14,6 @@ using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Extensions;
 using TeamSpeak3QueryApi.Net.Query.Notifications;
 using TeamSpeak3QueryApi.Net.Query.Parameters;
-using TeamSpeak3QueryApi.Net.Query.Protocols;
 
 namespace TeamSpeak3QueryApi.Net.Query
 {

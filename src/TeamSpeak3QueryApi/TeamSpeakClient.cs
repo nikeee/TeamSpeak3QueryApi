@@ -10,11 +10,9 @@ using TeamSpeak3QueryApi.Net.FileTransfer;
 using TeamSpeak3QueryApi.Net.Query;
 using TeamSpeak3QueryApi.Net.Enums;
 using TeamSpeak3QueryApi.Net.Extensions;
-using System.Diagnostics;
 using TeamSpeak3QueryApi.Net.Query.Parameters;
 using TeamSpeak3QueryApi.Net.Query.Responses;
 using TeamSpeak3QueryApi.Net.Query.Enums;
-using TeamSpeak3QueryApi.Net.Query.Protocols;
 using TeamSpeak3QueryApi.Net.Query.Notifications;
 
 namespace TeamSpeak3QueryApi.Net
@@ -32,21 +30,21 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
         public TeamSpeakClient()
-            : this(QueryClient.DefaultHost, TelnetProtocol.DefaultPort, Protocol.Telnet)
+            : this(QueryClient.DefaultHost, TelnetQueryClient.DefaultPort, Protocol.Telnet)
         { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, int port = TelnetProtocol.DefaultPort, Protocol type = Protocol.Telnet)
+        public TeamSpeakClient(string hostName, int port = TelnetQueryClient.DefaultPort, Protocol type = Protocol.Telnet)
         {
             switch (type)
             {
                 case Protocol.Telnet:
-                    Client = new TelnetProtocol(hostName, port);
+                    Client = new TelnetQueryClient(hostName, port);
                     break;
                 case Protocol.SSH:
-                    Client = new SshProtocol(hostName, port);
+                    Client = new SshQueryClient(hostName, port);
                     break;
             }
             _fileTransferClient = new FileTransferClient(hostName);
