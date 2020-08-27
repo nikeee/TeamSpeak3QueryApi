@@ -13,7 +13,7 @@ using TeamSpeak3QueryApi.Net.Extensions;
 
 namespace TeamSpeak3QueryApi.Net.Query.Protocols
 {
-    public class SshProtocol : QueryClient, IProtocol
+    public class SshProtocol : QueryClient
     {
         /// <summary>The default port which is used when no port is provided.</summary>
         public const short DefaultPort = 10022;
