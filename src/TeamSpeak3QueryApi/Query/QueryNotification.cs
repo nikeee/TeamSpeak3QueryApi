@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using TeamSpeak3QueryApi.Net.Notifications;
+using TeamSpeak3QueryApi.Net.Query.Notifications;
 
 namespace TeamSpeak3QueryApi.Net.Query
 {

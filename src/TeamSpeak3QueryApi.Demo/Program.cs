@@ -4,9 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using TeamSpeak3QueryApi.Net.Enums;
-using TeamSpeak3QueryApi.Net.Notifications;
 using TeamSpeak3QueryApi.Net.Query.Enums;
+using TeamSpeak3QueryApi.Net.Query.Notifications;
 
 namespace TeamSpeak3QueryApi.Net.Demo
 {
