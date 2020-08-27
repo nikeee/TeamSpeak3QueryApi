@@ -11,7 +11,7 @@ using TeamSpeak3QueryApi.Net.Extensions;
 
 namespace TeamSpeak3QueryApi.Net.Query.Protocols
 {
-    public class TelnetProtocol : QueryClient, IProtocol
+    public class TelnetProtocol : QueryClient
     {
         /// <summary>The default port which is used when no port is provided.</summary>
         public const short DefaultPort = 10011;

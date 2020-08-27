@@ -19,7 +19,7 @@ using TeamSpeak3QueryApi.Net.Query.Protocols;
 namespace TeamSpeak3QueryApi.Net.Query
 {
     /// <summary>Represents a client that can be used to access the TeamSpeak Query API on a remote server.</summary>
-    public class QueryClient : IDisposable, IProtocol
+    public abstract class QueryClient : IDisposable
     {
         /// <summary>
         /// Events for handling in the correct moment
@@ -66,17 +66,11 @@ namespace TeamSpeak3QueryApi.Net.Query
 
         /// <summary>Connects to the Query API server.</summary>
         /// <returns>An awaitable <see cref="Task"/>.</returns>
-        public virtual Task<CancellationTokenSource> ConnectAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract Task<CancellationTokenSource> ConnectAsync();
 
         /// <summary>Connects to the Query API server.</summary>
         /// <returns>An awaitable <see cref="Task"/>.</returns>
-        public virtual CancellationTokenSource Connect(string username, string password)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract CancellationTokenSource Connect(string username, string password);
 
         #region Send
 
