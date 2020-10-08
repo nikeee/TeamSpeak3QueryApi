@@ -27,6 +27,9 @@ namespace TeamSpeak3QueryApi.Net.Query.Responses
         [QuerySerialize("client_version")]
         public string Version;
 
+        [QuerySerialize("connection_client_ip")]
+        public string ConnectionIp;
+
         [QuerySerialize("client_platform")]
         public string Plattform;
 

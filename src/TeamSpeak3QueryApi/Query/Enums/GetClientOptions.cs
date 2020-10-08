@@ -13,5 +13,6 @@ namespace TeamSpeak3QueryApi.Net.Query.Enums
         Info = 1 << 5,
         Icon = 1 << 6,
         Country = 1 << 7,
+        Ip = 1 << 8
     }
 }
