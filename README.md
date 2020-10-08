@@ -45,14 +45,14 @@ Using the rich client, you can connect to a TeamSpeak Query server like this:
 var rc = new TeamSpeakClient(host, port); // Create rich client instance
 await rc.ConnectAsync(); // connect to the server
 await rc.LoginAsync(user, password); // login to do some stuff that requires permission
-await rc.UseServer(1); // Use the server with id '1'
-var me = await rc.WhoAmI(); // Get information about yourself!
+await rc.UseServerAsync(1); // Use the server with id '1'
+var me = await rc.WhoAmIAsync(); // Get information about yourself!
 ```
 
 ```C# SSH query
 var rc = new TeamSpeakClient(host, 10022, Protocol.SSH); // Create rich client instance
-await rc.Connect(user, password); // connect to the server with login data
-await rc.UseServer(1); // Use the server with id '1'
+rc.Connect(user, password); // connect to the server with login data
+await rc.UseServerAsync(1); // Use the server with id '1'
 var me = await rc.WhoAmI(); // Get information about yourself!
 ```
 
@@ -61,10 +61,10 @@ You can receive notifications. The notification data is fully typed, so you can 
 
 ```C#
 // assuming connected
-await rc.RegisterServerNotification(); // register notifications to receive server notifications
+await rc.RegisterServerNotificationAsync(); // register notifications to receive server notifications
 
 // register channel notifications to receive notifications for channel with id '30'
-await rc.RegisterChannelNotification(30);
+await rc.RegisterChannelNotificationAsync(30);
 
 //Subscribe a callback to a notification:
 rc.Subscribe<ClientEnterView>(data => {
