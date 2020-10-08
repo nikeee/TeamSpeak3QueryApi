@@ -20,6 +20,9 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         private readonly FileTransferClient _fileTransferClient;
 
+        //I think users might want to check if it's enabled, but ctor should be used to set it.
+        public bool useInternalKeepAlive { get; private set; }
+
         #region Ctors
 
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
@@ -36,15 +39,39 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, int port)
+        public TeamSpeakClient(string hostName, int port, bool useKeepAlive = false)
         {
+            useInternalKeepAlive = useKeepAlive;
             Client = new QueryClient(hostName, port);
             _fileTransferClient = new FileTransferClient(hostName);
         }
 
         #endregion
 
-        public Task Connect() => Client.Connect();
+        public Task Connect()
+        {
+            if (useInternalKeepAlive == true)//Clarity
+            {
+                Task.Run(() => KeepAlive());
+            }
+
+            return Client.Connect();
+        }
+
+        private async Task<Task> KeepAlive()
+        {
+            if (useInternalKeepAlive == true) //How tho
+                return Task.CompletedTask;
+
+            while (this.Client.IsConnected) //You never know....
+            {
+                if (Client.Idle.ElapsedMilliseconds > TimeSpan.FromMinutes(5).TotalMilliseconds) //Apparently default is 5 mins, we might want to look at adding a param you could set?
+                {
+                    await WhoAmI(); //Simple mindless task
+                }
+            }
+            return Task.CompletedTask;
+        }
 
         #region Subscriptions
 
