@@ -279,7 +279,7 @@ namespace TeamSpeak3QueryApi.Net
             return DataProxy.SerializeGeneric<GetDbClientInfo>(res);
         }
 
-        public async Task<GetClientIds> GetClientIds(string UniqueIdentifier)
+        public async Task<GetClientIds> GetClientIdsAsync(string UniqueIdentifier)
         {
             var res = await Client.SendAsync("clientgetids",
                 new Parameter("cluid", UniqueIdentifier))
@@ -287,7 +287,7 @@ namespace TeamSpeak3QueryApi.Net
             return DataProxy.SerializeGeneric<GetClientIds>(res).FirstOrDefault();
         }
 
-        public async Task<GetDatabaseIdFromClientUniqueId> GetDatabaseIdFromClientUniqueId(string UniqueIdentifier)
+        public async Task<GetDatabaseIdFromClientUniqueId> GetDatabaseIdFromClientUniqueIdAsync(string UniqueIdentifier)
         {
             var res = await Client.SendAsync("clientgetdbidfromuid",
                 new Parameter("cluid", UniqueIdentifier))
@@ -295,7 +295,7 @@ namespace TeamSpeak3QueryApi.Net
             return DataProxy.SerializeGeneric<GetDatabaseIdFromClientUniqueId>(res).FirstOrDefault();
         }
 
-        public async Task<GetNameFromClientDatabaseId> GetNameFromClientDatabaseId(int DatabaseId)
+        public async Task<GetNameFromClientDatabaseId> GetNameFromClientDatabaseIdAsync(int DatabaseId)
         {
             var res = await Client.SendAsync("clientgetnamefromdbid",
                 new Parameter("cldbid", DatabaseId))
@@ -303,7 +303,7 @@ namespace TeamSpeak3QueryApi.Net
             return DataProxy.SerializeGeneric<GetNameFromClientDatabaseId>(res).FirstOrDefault();
         }
 
-        public async Task<GetNameFromClientUniqueId> NameFromClientUid(string UniqueIdentifier)
+        public async Task<GetNameFromClientUniqueId> NameFromClientUidAsync(string UniqueIdentifier)
         {
             var res = await Client.SendAsync("clientgetnamefromuid",
                 new Parameter("cluid", UniqueIdentifier))
@@ -311,7 +311,7 @@ namespace TeamSpeak3QueryApi.Net
             return DataProxy.SerializeGeneric<GetNameFromClientUniqueId>(res).FirstOrDefault();
         }
 
-        public async Task<GetClientUniqueIdFromClientId> ClientUidFromClientId(int id)
+        public async Task<GetClientUniqueIdFromClientId> ClientUidFromClientIdAsync(int id)
         {
             var res = await Client.SendAsync("clientgetuidfromclid",
                 new Parameter("clid", id))
