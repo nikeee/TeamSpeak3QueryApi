@@ -279,6 +279,46 @@ namespace TeamSpeak3QueryApi.Net
             return DataProxy.SerializeGeneric<GetDbClientInfo>(res);
         }
 
+        public async Task<GetClientIds> GetClientIds(string UniqueIdentifier)
+        {
+            var res = await Client.SendAsync("clientgetids",
+                new Parameter("cluid", UniqueIdentifier))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<GetClientIds>(res).FirstOrDefault();
+        }
+
+        public async Task<GetDatabaseIdFromClientUniqueId> GetDatabaseIdFromClientUniqueId(string UniqueIdentifier)
+        {
+            var res = await Client.SendAsync("clientgetdbidfromuid",
+                new Parameter("cluid", UniqueIdentifier))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<GetDatabaseIdFromClientUniqueId>(res).FirstOrDefault();
+        }
+
+        public async Task<GetNameFromClientDatabaseId> GetNameFromClientDatabaseId(int DatabaseId)
+        {
+            var res = await Client.SendAsync("clientgetnamefromdbid",
+                new Parameter("cldbid", DatabaseId))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<GetNameFromClientDatabaseId>(res).FirstOrDefault();
+        }
+
+        public async Task<GetNameFromClientUniqueId> NameFromClientUid(string UniqueIdentifier)
+        {
+            var res = await Client.SendAsync("clientgetnamefromuid",
+                new Parameter("cluid", UniqueIdentifier))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<GetNameFromClientUniqueId>(res).FirstOrDefault();
+        }
+
+        public async Task<GetClientUniqueIdFromClientId> ClientUidFromClientId(int id)
+        {
+            var res = await Client.SendAsync("clientgetuidfromclid",
+                new Parameter("clid", id))
+                .ConfigureAwait(false);
+            return DataProxy.SerializeGeneric<GetClientUniqueIdFromClientId>(res).FirstOrDefault();
+        }
+
         #endregion
 
         #region GetServerGroups
