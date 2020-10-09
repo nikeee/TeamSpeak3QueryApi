@@ -40,7 +40,7 @@ Using the rich client, you can connect to a TeamSpeak Query server like this:
 ### Connect and Login
 
 ```C#
-var rc = new TeamSpeakClient(host, port); // Create rich client instance
+var rc = new TeamSpeakClient(host, port); // Create rich client instance, optionally use the internal 'keep-alive' logic to keep the client from disconnecting by passing true here.
 await rc.Connect(); // connect to the server
 await rc.Login(user, password); // login to do some stuff that requires permission
 await rc.UseServer(1); // Use the server with id '1'
