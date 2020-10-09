@@ -69,6 +69,10 @@ namespace TeamSpeak3QueryApi.Net.Specialized
                 {
                     await WhoAmI(); //Simple mindless task
                 }
+                if(TimeSpan.FromMilliseconds(Client.Idle.ElapsedMilliseconds).TotalMinutes > 1)
+                {
+                    await Task.Delay((int)TimeSpan.FromMinutes(1).TotalMilliseconds); //May as well wait 1 minute, since we're not close.
+                }
             }
             return Task.CompletedTask;
         }
