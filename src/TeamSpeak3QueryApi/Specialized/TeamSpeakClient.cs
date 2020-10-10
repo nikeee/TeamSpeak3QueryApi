@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using TeamSpeak3QueryApi.Net.Specialized.Notifications;
 using TeamSpeak3QueryApi.Net.Specialized.Responses;
@@ -22,6 +23,8 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         //I think users might want to check if it's enabled, but ctor should be used to set it.
         public bool useInternalKeepAlive { get; private set; }
+        //We're allowing it to be null just incase the user won't spefify a time.
+        public TimeSpan? KeepAliveInterval { get; }
 
         #region Ctors
 
@@ -39,41 +42,43 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public TeamSpeakClient(string hostName, int port, bool useKeepAlive = false)
+        /// <param name="keepAliveInterval">The Timespan used to use on the internal keep alive wait.</param>
+        public TeamSpeakClient(string hostName, int port, bool useKeepAlive = false, TimeSpan? keepAliveInterval = null)
         {
-            useInternalKeepAlive = useKeepAlive;
-            Client = new QueryClient(hostName, port);
-            _fileTransferClient = new FileTransferClient(hostName);
+            //Added 'this' for my clarity.
+            this.useInternalKeepAlive = useKeepAlive;
+            this.KeepAliveInterval = keepAliveInterval;
+            this.Client = new QueryClient(hostName, port);
+            this._fileTransferClient = new FileTransferClient(hostName);
         }
 
         #endregion
+
+        //This token is used to stop the KeepAliveLoop, putting here as it's only related to the below two functions.
+        private CancellationTokenSource CancellationToken = new CancellationTokenSource();
 
         public Task Connect()
         {
             if (useInternalKeepAlive == true)//Clarity
             {
-                Task.Run(() => KeepAlive());
+                Task.Run(() => KeepAliveLoop(), CancellationToken.Token);
             }
-
             return Client.Connect();
         }
 
-        private async Task<Task> KeepAlive()
+        private async Task<Task> KeepAliveLoop()
         {
-            if (useInternalKeepAlive == true) //How tho
+            if (this.KeepAliveInterval == null) //User didn't specifiy a time.
                 return Task.CompletedTask;
 
-            while (this.Client.IsConnected) //You never know....
+            while(this.Client.IsConnected)
             {
-                if (Client.Idle.ElapsedMilliseconds > TimeSpan.FromMinutes(5).TotalMilliseconds) //Apparently default is 5 mins, we might want to look at adding a param you could set?
-                {
-                    await WhoAmI(); //Simple mindless task
-                }
-                if(TimeSpan.FromMilliseconds(Client.Idle.ElapsedMilliseconds).TotalMinutes > 1)
-                {
-                    await Task.Delay((int)TimeSpan.FromMinutes(1).TotalMilliseconds); //May as well wait 1 minute, since we're not close.
-                }
+                if (TimeSpan.FromMilliseconds(Client.Idle.ElapsedMilliseconds).TotalMinutes > 5) //If we're idle for more then 5 minutes we should send a whoami
+                    await this.WhoAmI();
+                else
+                    await Task.Delay(TimeSpan.FromMinutes(1)); //we can wait a minute otherwise.
             }
+
             return Task.CompletedTask;
         }
 
@@ -121,7 +126,11 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             return Client.Send("login", new Parameter("client_login_name", userName), new Parameter("client_login_password", password));
         }
 
-        public Task Logout() => Client.Send("logout");
+        public Task Logout()
+        {
+            CancellationToken.Cancel();
+            return Client.Send("logout");
+        }
 
         public Task UseServer(int serverId)
         {
