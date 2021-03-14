@@ -16,8 +16,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
     {
         public QueryClient Client { get; }
 
-        // TODO: Migrate to ValueTuples
-        private readonly List<Tuple<NotificationType, object, Action<NotificationData>>> _callbacks = new List<Tuple<NotificationType, object, Action<NotificationData>>>();
+        private readonly Dictionary<NotificationType, Dictionary<object, Action<NotificationData>>> _callbackMap = new();
 
         private readonly FileTransferClient _fileTransferClient;
         private readonly CancellationTokenSource _keepAliveCancellationTokenSource = new CancellationTokenSource();
@@ -98,29 +97,47 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             var notification = GetNotificationType<T>();
 
-            Action<NotificationData> cb = data => callback(DataProxy.SerializeGeneric<T>(data.Payload));
+            void dataProxiedCallback(NotificationData data) => callback(DataProxy.SerializeGeneric<T>(data.Payload));
 
-            _callbacks.Add(Tuple.Create(notification, callback as object, cb));
-            Client.Subscribe(notification.ToString(), cb);
+            var callbacksOfNotification = _callbackMap.GetOrAddNew(notification, new Dictionary<object, Action<NotificationData>>());
+
+            callbacksOfNotification[callback] = dataProxiedCallback;
+
+            Client.Subscribe(notification.ToString(), dataProxiedCallback);
         }
-        public void Unsubscribe<T>()
+
+
+        /// <returns>true if the element is successfully found and removed; otherwise, false. </returns>
+        public bool Unsubscribe<T>()
             where T : Notification
         {
             var notification = GetNotificationType<T>();
-            var cbts = _callbacks.Where(tp => tp.Item1 == notification).ToList();
-            cbts.ForEach(k => _callbacks.Remove(k));
+
+            var res = _callbackMap.Remove(notification);
+
             Client.Unsubscribe(notification.ToString());
+
+            return res;
         }
-        public void Unsubscribe<T>(Action<IReadOnlyCollection<T>> callback)
+
+        /// <returns>true if the element is successfully found and removed; otherwise, false. </returns>
+        public bool Unsubscribe<T>(Action<IReadOnlyCollection<T>> callback)
             where T : Notification
         {
             var notification = GetNotificationType<T>();
-            var cbt = _callbacks.SingleOrDefault(t => t.Item1 == notification && t.Item2 == callback as object);
-            if (cbt != null)
-            {
-                _callbacks.Remove(cbt);
-                Client.Unsubscribe(notification.ToString(), cbt.Item3);
-            }
+
+            if (!_callbackMap.TryGetValue(notification, out var callbacks))
+                return false;
+
+            if (!callbacks.TryGetValue(callback, out var proxiedCallback))
+                return false;
+
+            var res = callbacks.Remove(callback);
+            System.Diagnostics.Debug.Assert(res);
+
+            Client.Unsubscribe(notification.ToString(), proxiedCallback);
+
+            return res;
         }
 
         private static NotificationType GetNotificationType<T>()
