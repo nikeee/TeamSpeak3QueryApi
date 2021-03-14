@@ -117,7 +117,10 @@ namespace TeamSpeak3QueryApi.Net.Specialized
             var notification = GetNotificationType<T>();
             var cbt = _callbacks.SingleOrDefault(t => t.Item1 == notification && t.Item2 == callback as object);
             if (cbt != null)
+            {
+                _callbacks.Remove(cbt);
                 Client.Unsubscribe(notification.ToString(), cbt.Item3);
+            }
         }
 
         private static NotificationType GetNotificationType<T>()
