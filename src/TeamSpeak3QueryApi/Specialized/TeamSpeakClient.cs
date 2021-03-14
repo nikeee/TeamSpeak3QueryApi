@@ -20,9 +20,9 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         private readonly List<Tuple<NotificationType, object, Action<NotificationData>>> _callbacks = new List<Tuple<NotificationType, object, Action<NotificationData>>>();
 
         private readonly FileTransferClient _fileTransferClient;
+        private readonly CancellationTokenSource _keepAliveCancellationTokenSource = new CancellationTokenSource();
+        private static readonly TimeSpan _maxClientIdleTime = TimeSpan.FromMinutes(5);
 
-        //I think users might want to check if it's enabled, but ctor should be used to set it.
-        public bool useInternalKeepAlive { get; private set; }
         //We're allowing it to be null just incase the user won't spefify a time.
         public TimeSpan? KeepAliveInterval { get; }
 
@@ -42,41 +42,50 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        /// <param name="keepAliveInterval">The Timespan used to use on the internal keep alive wait.</param>
-        public TeamSpeakClient(string hostName, int port, bool useKeepAlive = false, TimeSpan? keepAliveInterval = null)
+        /// <param name="keepAliveInterval">The TimeSpan used to use on the internal keep alive wait. Pass null to disable KeepAlive</param>
+        public TeamSpeakClient(string hostName, int port, TimeSpan? keepAliveInterval = null)
         {
-            //Added 'this' for my clarity.
-            this.useInternalKeepAlive = useKeepAlive;
-            this.KeepAliveInterval = keepAliveInterval;
-            this.Client = new QueryClient(hostName, port);
-            this._fileTransferClient = new FileTransferClient(hostName);
+            KeepAliveInterval = keepAliveInterval;
+            Client = new QueryClient(hostName, port);
+            _fileTransferClient = new FileTransferClient(hostName);
         }
 
         #endregion
 
-        //This token is used to stop the KeepAliveLoop, putting here as it's only related to the below two functions.
-        private CancellationTokenSource CancellationToken = new CancellationTokenSource();
-
         public Task Connect()
         {
-            if (useInternalKeepAlive == true)//Clarity
-            {
-                Task.Run(() => KeepAliveLoop(), CancellationToken.Token);
-            }
+            if (KeepAliveInterval.HasValue)
+                _ = KeepAliveLoop(); // Keep the KeepAliveLoop in the background
+
             return Client.Connect();
         }
 
         private async Task<Task> KeepAliveLoop()
         {
-            if (this.KeepAliveInterval == null) //User didn't specifiy a time.
+            var interval = KeepAliveInterval;
+            if (interval == null)
                 return Task.CompletedTask;
 
-            while(this.Client.IsConnected)
+            while (Client.IsConnected)
             {
-                if (TimeSpan.FromMilliseconds(Client.Idle.ElapsedMilliseconds).TotalMinutes > 5) //If we're idle for more then 5 minutes we should send a whoami
-                    await this.WhoAmI();
+                var currentIdleTime = TimeSpan.FromMilliseconds(Client.Idle.ElapsedMilliseconds);
+
+                // If we're idle for more then 5 minutes we should send a whoami
+                if (currentIdleTime > _maxClientIdleTime)
+                {
+                    await WhoAmI();
+                }
                 else
-                    await Task.Delay(TimeSpan.FromMinutes(1)); //we can wait a minute otherwise.
+                {
+                    try
+                    {
+                        await Task.Delay(interval.Value, _keepAliveCancellationTokenSource.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return Task.CompletedTask;
+                    }
+                }
             }
 
             return Task.CompletedTask;
@@ -128,7 +137,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
         public Task Logout()
         {
-            CancellationToken.Cancel();
+            _keepAliveCancellationTokenSource.Cancel();
             return Client.Send("logout");
         }
 
@@ -971,6 +980,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         {
             if (disposing)
             {
+                _keepAliveCancellationTokenSource?.Cancel();
                 Client?.Dispose();
             }
         }
