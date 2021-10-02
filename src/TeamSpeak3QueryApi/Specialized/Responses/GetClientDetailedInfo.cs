@@ -56,19 +56,25 @@ namespace TeamSpeak3QueryApi.Net.Specialized.Responses
 
         [QuerySerialize("client_created")]
         public DateTime Created;
-        
+
         [QuerySerialize("client_lastconnected")]
         public DateTime LastConnected;
-        
+
+        [QuerySerialize("client_talk_request")]
+        public int RequestedTalkPower;
+
+        [QuerySerialize("client_talk_request_msg")]
+        public string TalkPowerRequestMessage;
+
         [QuerySerialize("client_totalconnections")]
         public int TotalConnectionCount;
-        
+
         [QuerySerialize("client_away")]
         public bool Away;
-        
+
         [QuerySerialize("client_away_message")]
         public string AwayMessage;
-        
+
         [QuerySerialize("connection_connected_time")]
         private long _connectionTime; //Because it is in ms instead if s defined in Typecaster
         public TimeSpan ConnectionTime => TimeSpan.FromMilliseconds(_connectionTime);
