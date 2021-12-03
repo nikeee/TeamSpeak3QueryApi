@@ -7,7 +7,7 @@ Please don't restructure the entire project or do other large changes because so
 Maybe it is cool, but please have a chat with us _beforehand_.
 
 ## Keep PRs small.
-Large PRs are always hard to merge. Keep PRs as small as possible to make it easier for everyone. When in doubt, split your changes into multiple PRs if possible.
+Large PRs are always hard to merge. Keep PRs as small as possible to make it easier for everyone. When in doubt, split your changes into multiple PRs if possible. Or just ask beforehand.
 
 ## Change only what you changed.
 Keep the project formatting. Please don't do stuff like changing global formatting options just because it's the way _you_ do it. Don't auto-format parts of the code that you did not change.
