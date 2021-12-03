@@ -14,11 +14,10 @@ Keep the project formatting. Please don't do stuff like changing global formatti
 
 Don't format parts of the code that you did not touch.
 
-## Keep changes atomic.
-Try to [keep commits atomic](https://www.codewithjason.com/atomic-commits-testing/).
-
 ## Address one thing only.
 Try to keep a PR address _a single thing_, so we can test and deploy independently (don't resolve multiple issues with a single PR).
+
+Try to [keep commits atomic](https://www.codewithjason.com/atomic-commits-testing/).
 
 ## Keep it simple.
 [Keep things simple](https://en.wikipedia.org/wiki/KISS_principle), even if Netflix solves things cooler. We're not Netflix. [Do it the boring way](http://boringtechnology.club).
