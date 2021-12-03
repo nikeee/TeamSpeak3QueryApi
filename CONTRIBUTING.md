@@ -1,7 +1,7 @@
 # CONTRIBUTING.md
 We value contributions! If you want to contribute code, we've some guidelines to make life easier for everyone:
 
-## Keep Structure.
+## Keep structure.
 Please don't restructure the entire project or do other large changes because something is not right in your opinion or there is some cool new language feature that everyone should use.
 
 Maybe it is cool, but please have a chat with us _beforehand_.
