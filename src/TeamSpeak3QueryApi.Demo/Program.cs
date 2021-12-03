@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,7 +12,7 @@ namespace TeamSpeak3QueryApi.Net.Demo
     {
         static async Task Main(string[] args)
         {
-            var loginData = File.ReadAllLines("..\\..\\..\\logindata.secret");
+            var loginData = File.ReadAllLines("logindata.secret");
 
             var host = loginData[0].Trim();
             var user = loginData[1].Trim();
@@ -51,17 +50,6 @@ namespace TeamSpeak3QueryApi.Net.Demo
 
             Console.WriteLine("Done");
             Console.ReadLine();
-        }
-    }
-
-    internal static class ReadOnlyCollectionExtensions
-    {
-        public static void ForEach<T>(this IReadOnlyCollection<T> collection, Action<T> action)
-        {
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
-            foreach (var i in collection)
-                action(i);
         }
     }
 }
