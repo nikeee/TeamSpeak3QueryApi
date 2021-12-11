@@ -10,7 +10,7 @@ using Renci.SshNet.Common;
 
 namespace TeamSpeak3QueryApi.Net
 {
-    public interface IProtocol : IDisposable
+    public interface IProtocolClient : IDisposable
     {
         bool IsConnected { get; }
         bool RequiresAuthenticationOnConnect { get; }
@@ -20,7 +20,7 @@ namespace TeamSpeak3QueryApi.Net
         Task FlushAsync(CancellationToken cancellationToken);
     }
 
-    public class RawTcpProtocol : IProtocol
+    public class RawTcpProtocolClient : IProtocolClient
     {
         public TcpClient Client { get; }
         public bool IsConnected => Client.Connected;
@@ -30,7 +30,7 @@ namespace TeamSpeak3QueryApi.Net
         private StreamWriter? _writer;
         private NetworkStream? _ns;
 
-        public RawTcpProtocol()
+        public RawTcpProtocolClient()
         {
             var client = new TcpClient();
             Client = client;
@@ -61,7 +61,7 @@ namespace TeamSpeak3QueryApi.Net
         #endregion
     }
 
-    public class SshProtocol : IProtocol
+    public class SshProtocolClient : IProtocolClient
     {
         public SshClient? Client { get; private set; }
         public bool IsConnected => Client?.IsConnected ?? false;
@@ -73,7 +73,7 @@ namespace TeamSpeak3QueryApi.Net
         private readonly string _userName;
         private readonly string _password;
 
-        public SshProtocol(string userName, string password)
+        public SshProtocolClient(string userName, string password)
         {
             _userName = userName ?? throw new ArgumentNullException(nameof(userName));
             _password = password ?? throw new ArgumentNullException(nameof(password));

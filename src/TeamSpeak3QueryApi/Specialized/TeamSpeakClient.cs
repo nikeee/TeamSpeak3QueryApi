@@ -43,10 +43,18 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         /// <param name="port">The TCP port of the Query API server.</param>
         /// <param name="keepAliveInterval">The TimeSpan used to use on the internal keep alive wait. Pass null to disable KeepAlive</param>
         public TeamSpeakClient(string hostName, ushort port, TimeSpan? keepAliveInterval = null)
+            : this(new QueryClient(hostName, port), keepAliveInterval)
+        { }
+
+        /// <summary>Creates a new instance of <see cref="TeamSpeakClient"/> using the provided host TCP port.</summary>
+        /// <param name="hostName">The host name of the remote server.</param>
+        /// <param name="port">The TCP port of the Query API server.</param>
+        /// <param name="keepAliveInterval">The TimeSpan used to use on the internal keep alive wait. Pass null to disable KeepAlive</param>
+        public TeamSpeakClient(QueryClient client, TimeSpan? keepAliveInterval = null)
         {
             KeepAliveInterval = keepAliveInterval;
-            Client = new QueryClient(hostName, port);
-            _fileTransferClient = new FileTransferClient(hostName);
+            Client = client ?? throw new ArgumentNullException(nameof(client));
+            _fileTransferClient = new FileTransferClient(client.Host);
         }
 
         #endregion

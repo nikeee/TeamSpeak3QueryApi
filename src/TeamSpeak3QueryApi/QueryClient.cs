@@ -32,7 +32,7 @@ namespace TeamSpeak3QueryApi.Net
         public const ushort DefaultPort = 10011;
 
         /// <summary>Handler for the underliying protocol (probably raw TCP or SSH).</summary>
-        public IProtocol Protocol { get; }
+        public IProtocolClient Protocol { get; }
 
         internal readonly Stopwatch IdleStopWatch = new();
 
@@ -51,8 +51,8 @@ namespace TeamSpeak3QueryApi.Net
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP/SSH port of the Query API server.</param>
-        /// <param name="protocol">The protocol handler to use, for example <see cref="TeamSpeak3QueryApi.Net.RawTcpProtocol"/> or <see cref="TeamSpeak3QueryApi.Net.SshProtocol"/>.</param>
-        public QueryClient(string hostName, ushort port, IProtocol? protocol = null)
+        /// <param name="protocol">The protocol handler to use, for example <see cref="TeamSpeak3QueryApi.Net.RawTcpProtocolClient"/> or <see cref="TeamSpeak3QueryApi.Net.SshProtocolClient"/>.</param>
+        public QueryClient(string hostName, ushort port, IProtocolClient? protocol = null)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException(nameof(hostName));
@@ -62,7 +62,7 @@ namespace TeamSpeak3QueryApi.Net
             Host = hostName;
             Port = port;
             IsConnected = false;
-            Protocol = protocol ?? new RawTcpProtocol();
+            Protocol = protocol ?? new RawTcpProtocolClient();
         }
 
         #endregion
