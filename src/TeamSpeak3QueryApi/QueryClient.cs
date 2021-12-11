@@ -43,19 +43,16 @@ namespace TeamSpeak3QueryApi.Net
         #region Ctors
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the <see cref="QueryClient.DefaultHost"/> and <see cref="QueryClient.DefaultPort"/>.</summary>
-        public QueryClient()
-            : this(DefaultHost, DefaultPort)
-        { }
+        public QueryClient() : this(DefaultHost, DefaultPort) { }
 
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host and the <see cref="QueryClient.DefaultPort"/>.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        public QueryClient(string hostName)
-            : this(hostName, DefaultPort)
-        { }
+        public QueryClient(string hostName) : this(hostName, DefaultPort) { }
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public QueryClient(string hostName, ushort port)
+        public QueryClient(string hostName, ushort port) : this(hostName, port, null) { }
+        public QueryClient(string hostName, ushort port, IProtocol? protocol)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException(nameof(hostName));
@@ -65,7 +62,7 @@ namespace TeamSpeak3QueryApi.Net
             Host = hostName;
             Port = port;
             IsConnected = false;
-            Protocol = new RawTcpProtocol();
+            Protocol = protocol ?? new RawTcpProtocol();
         }
 
         #endregion
