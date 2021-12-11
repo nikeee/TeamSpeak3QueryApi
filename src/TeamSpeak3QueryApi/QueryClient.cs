@@ -38,7 +38,7 @@ namespace TeamSpeak3QueryApi.Net
         private CancellationTokenSource _cts;
         private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
         private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
-        internal Stopwatch Idle = new Stopwatch();
+        private readonly Stopwatch _idleTimer = new Stopwatch();
 
         #region Ctors
 
@@ -88,14 +88,14 @@ namespace TeamSpeak3QueryApi.Net
             await _reader.ReadLineAsync().ConfigureAwait(false); // Ignore welcome message
             await _reader.ReadLineAsync().ConfigureAwait(false);
 
-            Idle.Restart(); //Should restart since you're freshly connected.
+            _idleTimer.Restart(); //Should restart since you're freshly connected.
 
             return ResponseProcessingLoop();
         }
 
         public void Disconnect()
         {
-            Idle.Stop(); //You're disconnected, there is no reason you should be idle.
+            _idleTimer.Stop(); //You're disconnected, there is no reason you should be idle.
             if (_cts == null)
                 return;
 
@@ -150,7 +150,7 @@ namespace TeamSpeak3QueryApi.Net
 
             await CheckQueue().ConfigureAwait(false);
 
-            Idle.Restart(); //You've done something, so you're technically no longer idle.
+            _idleTimer.Restart(); //You've done something, so you're technically no longer idle.
 
             return await d.Task.ConfigureAwait(false);
         }
