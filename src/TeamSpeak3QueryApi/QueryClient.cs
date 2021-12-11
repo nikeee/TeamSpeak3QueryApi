@@ -76,18 +76,6 @@ namespace TeamSpeak3QueryApi.Net
             return await HandleHandshake().ConfigureAwait(false);
         }
 
-        /// <summary>Connects to the Query API server.</summary>
-        /// <returns>An awaitable <see cref="Task"/>.</returns>
-        public async Task<CancellationTokenSource> Connect(string userName, string password)
-        {
-            if (userName == null) throw new ArgumentNullException(nameof(userName));
-            if (password == null) throw new ArgumentNullException(nameof(password));
-
-            _cts = new CancellationTokenSource();
-            await Protocol.ConnectAsync(Host, Port, userName, password, _cts.Token).ConfigureAwait(false);
-            return await HandleHandshake().ConfigureAwait(false);
-        }
-
         private async Task<CancellationTokenSource> HandleHandshake()
         {
             if (!Protocol.IsConnected)
