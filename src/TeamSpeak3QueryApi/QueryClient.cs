@@ -82,6 +82,8 @@ namespace TeamSpeak3QueryApi.Net
 
             IsConnected = true;
 
+            // TODO: Timeout for this, because SSH may cause the lcient to hang if the server is not a valid TS server
+
             await Protocol.ReadLineAsync(cts.Token).ConfigureAwait(false); // TODO: Check if this line is a valid teamspeak line?
             await Protocol.ReadLineAsync(cts.Token).ConfigureAwait(false); // Ignore welcome message
             await Protocol.ReadLineAsync(cts.Token).ConfigureAwait(false);
