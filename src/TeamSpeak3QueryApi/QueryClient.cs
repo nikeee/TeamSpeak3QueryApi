@@ -71,9 +71,25 @@ namespace TeamSpeak3QueryApi.Net
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task<CancellationTokenSource> Connect()
         {
-            var cts = _cts = new CancellationTokenSource();
+            _cts = new CancellationTokenSource();
+            await Protocol.ConnectAsync(Host, Port, _cts.Token).ConfigureAwait(false);
+            return await HandleHandshake().ConfigureAwait(false);
+        }
 
-            await Protocol.ConnectAsync(Host, Port, cts.Token).ConfigureAwait(false);
+        /// <summary>Connects to the Query API server.</summary>
+        /// <returns>An awaitable <see cref="Task"/>.</returns>
+        public async Task<CancellationTokenSource> Connect(string userName, string password)
+        {
+            if (userName == null) throw new ArgumentNullException(nameof(userName));
+            if (password == null) throw new ArgumentNullException(nameof(password));
+
+            _cts = new CancellationTokenSource();
+            await Protocol.ConnectAsync(Host, Port, userName, password, _cts.Token).ConfigureAwait(false);
+            return await HandleHandshake().ConfigureAwait(false);
+        }
+
+        private async Task<CancellationTokenSource> HandleHandshake()
+        {
             if (!Protocol.IsConnected)
                 throw new InvalidOperationException("Could not connect.");
 
@@ -81,9 +97,9 @@ namespace TeamSpeak3QueryApi.Net
 
             // TODO: Timeout for this, because SSH may cause the lcient to hang if the server is not a valid TS server
 
-            await Protocol.ReadLineAsync(cts.Token).ConfigureAwait(false); // TODO: Check if this line is a valid teamspeak line?
-            await Protocol.ReadLineAsync(cts.Token).ConfigureAwait(false); // Ignore welcome message
-            await Protocol.ReadLineAsync(cts.Token).ConfigureAwait(false);
+            await Protocol.ReadLineAsync(_cts.Token).ConfigureAwait(false); // TODO: Check if this line is a valid teamspeak line?
+            await Protocol.ReadLineAsync(_cts.Token).ConfigureAwait(false); // Ignore welcome message
+            await Protocol.ReadLineAsync(_cts.Token).ConfigureAwait(false);
 
             IdleStopWatch.Restart(); //Should restart since you're freshly connected.
 
