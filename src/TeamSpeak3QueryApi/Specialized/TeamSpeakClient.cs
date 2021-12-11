@@ -42,7 +42,7 @@ namespace TeamSpeak3QueryApi.Net.Specialized
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
         /// <param name="keepAliveInterval">The TimeSpan used to use on the internal keep alive wait. Pass null to disable KeepAlive</param>
-        public TeamSpeakClient(string hostName, int port, TimeSpan? keepAliveInterval = null)
+        public TeamSpeakClient(string hostName, ushort port, TimeSpan? keepAliveInterval = null)
         {
             KeepAliveInterval = keepAliveInterval;
             Client = new QueryClient(hostName, port);
@@ -67,9 +67,9 @@ namespace TeamSpeak3QueryApi.Net.Specialized
 
             while (Client.IsConnected)
             {
-                var currentIdleTime = TimeSpan.FromMilliseconds(Client.Idle.ElapsedMilliseconds);
+                var currentIdleTime = TimeSpan.FromMilliseconds(Client.IdleStopWatch.ElapsedMilliseconds);
 
-                // If we're idle for more then 5 minutes we should send a whoami
+                // If we're idle for more than 5 minutes we should send a "whoami" command
                 if (currentIdleTime > _maxClientIdleTime)
                 {
                     await WhoAmI();

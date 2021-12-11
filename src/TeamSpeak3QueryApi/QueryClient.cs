@@ -21,7 +21,7 @@ namespace TeamSpeak3QueryApi.Net
 
         /// <summary>Gets the remote port of the Query API client.</summary>
         /// <returns>The remote port of the Query API client.</returns>
-        public int Port { get; }
+        public ushort Port { get; }
 
         public bool IsConnected { get; private set; }
 
@@ -29,16 +29,16 @@ namespace TeamSpeak3QueryApi.Net
         public const string DefaultHost = "localhost";
 
         /// <summary>The default port which is used when no port is provided.</summary>
-        public const short DefaultPort = 10011;
+        public const ushort DefaultPort = 10011;
 
-        public TcpClient Client { get; }
-        private StreamReader _reader;
-        private StreamWriter _writer;
-        private NetworkStream _ns;
+        /// <summary>Handler for the underliying protocol (probably raw TCP or SSH).</summary>
+        public IProtocol Protocol { get; }
+
+        internal readonly Stopwatch IdleStopWatch = new();
+
         private CancellationTokenSource _cts;
-        private readonly Queue<QueryCommand> _queue = new Queue<QueryCommand>();
-        private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new ConcurrentDictionary<string, List<Action<NotificationData>>>();
-        private readonly Stopwatch _idleTimer = new Stopwatch();
+        private readonly Queue<QueryCommand> _queue = new();
+        private readonly ConcurrentDictionary<string, List<Action<NotificationData>>> _subscriptions = new();
 
         #region Ctors
 
@@ -55,7 +55,7 @@ namespace TeamSpeak3QueryApi.Net
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
         /// <param name="port">The TCP port of the Query API server.</param>
-        public QueryClient(string hostName, int port)
+        public QueryClient(string hostName, ushort port)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException(nameof(hostName));
@@ -65,7 +65,7 @@ namespace TeamSpeak3QueryApi.Net
             Host = hostName;
             Port = port;
             IsConnected = false;
-            Client = new TcpClient();
+            Protocol = new RawTcpProtocol();
         }
 
         #endregion
@@ -74,28 +74,26 @@ namespace TeamSpeak3QueryApi.Net
         /// <returns>An awaitable <see cref="Task"/>.</returns>
         public async Task<CancellationTokenSource> Connect()
         {
-            await Client.ConnectAsync(Host, Port).ConfigureAwait(false);
-            if (!Client.Connected)
-                throw new InvalidOperationException("Could not connect.");
+            var cts = _cts = new CancellationTokenSource();
 
-            _ns = Client.GetStream();
-            _reader = new StreamReader(_ns);
-            _writer = new StreamWriter(_ns) { NewLine = "\n" };
+            await Protocol.ConnectAsync(Host, Port, cts.Token).ConfigureAwait(false);
+            if (!Protocol.IsConnected)
+                throw new InvalidOperationException("Could not connect.");
 
             IsConnected = true;
 
-            await _reader.ReadLineAsync().ConfigureAwait(false);
-            await _reader.ReadLineAsync().ConfigureAwait(false); // Ignore welcome message
-            await _reader.ReadLineAsync().ConfigureAwait(false);
+            await Protocol.ReadLineAsync(cts.Token).ConfigureAwait(false); // TODO: Check if this line is a valid teamspeak line?
+            await Protocol.ReadLineAsync(cts.Token).ConfigureAwait(false); // Ignore welcome message
+            await Protocol.ReadLineAsync(cts.Token).ConfigureAwait(false);
 
-            _idleTimer.Restart(); //Should restart since you're freshly connected.
+            IdleStopWatch.Restart(); //Should restart since you're freshly connected.
 
             return ResponseProcessingLoop();
         }
 
         public void Disconnect()
         {
-            _idleTimer.Stop(); //You're disconnected, there is no reason you should be idle.
+            IdleStopWatch.Stop(); // You're disconnected, there is no reason you should be idle.
             if (_cts == null)
                 return;
 
@@ -150,7 +148,7 @@ namespace TeamSpeak3QueryApi.Net
 
             await CheckQueue().ConfigureAwait(false);
 
-            _idleTimer.Restart(); //You've done something, so you're technically no longer idle.
+            IdleStopWatch.Restart(); //You've done something, so you're technically no longer idle.
 
             return await d.Task.ConfigureAwait(false);
         }
@@ -348,15 +346,14 @@ namespace TeamSpeak3QueryApi.Net
 
         private CancellationTokenSource ResponseProcessingLoop()
         {
-            var cts = _cts = new CancellationTokenSource();
             Task.Run(async () =>
             {
-                while (!cts.Token.IsCancellationRequested)
+                while (!_cts.Token.IsCancellationRequested)
                 {
                     string line = null;
                     try
                     {
-                        line = await _reader.ReadLineAsync().WithCancellation(cts.Token).ConfigureAwait(false);
+                        line = await Protocol.ReadLineAsync(_cts.Token).ConfigureAwait(false);
                     }
                     catch (OperationCanceledException)
                     {
@@ -367,7 +364,7 @@ namespace TeamSpeak3QueryApi.Net
 
                     if (line == null)
                     {
-                        cts.Cancel();
+                        _cts.Cancel();
                         continue;
                     }
 
@@ -399,7 +396,7 @@ namespace TeamSpeak3QueryApi.Net
 
                 IsConnected = false;
             });
-            return cts;
+            return _cts;
         }
 
         private QueryCommand _currentCommand;
@@ -409,8 +406,8 @@ namespace TeamSpeak3QueryApi.Net
             {
                 _currentCommand = _queue.Dequeue();
                 Debug.WriteLine(_currentCommand.SentText);
-                await _writer.WriteLineAsync(_currentCommand.SentText).ConfigureAwait(false);
-                await _writer.FlushAsync().ConfigureAwait(false);
+                await Protocol.WriteLineAsync(_currentCommand.SentText, _cts.Token).ConfigureAwait(false);
+                await Protocol.FlushAsync(_cts.Token).ConfigureAwait(false);
             }
         }
 
@@ -438,10 +435,7 @@ namespace TeamSpeak3QueryApi.Net
             {
                 _cts?.Cancel();
                 _cts?.Dispose();
-                Client?.Dispose();
-                _ns?.Dispose();
-                _reader?.Dispose();
-                _writer?.Dispose();
+                Protocol.Dispose();
             }
         }
 
