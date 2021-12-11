@@ -43,7 +43,7 @@ namespace TeamSpeak3QueryApi.Net
             _writer = new StreamWriter(_ns) { NewLine = "\n" };
             return Task.CompletedTask;
         }
-        public Task<string> ReadLineAsync(CancellationToken cancellationToken) => _reader.ReadLineAsync();
+        public Task<string> ReadLineAsync(CancellationToken cancellationToken) => _reader.ReadLineAsync().WithCancellation(cancellationToken);
         public Task WriteLineAsync(string line, CancellationToken cancellationToken) => _writer.WriteLineAsync(line);
         public Task FlushAsync(CancellationToken cancellationToken) => _writer.FlushAsync();
 
@@ -98,7 +98,7 @@ namespace TeamSpeak3QueryApi.Net
             string? line;
             do
             {
-                line = await _reader.ReadLineAsync();
+                line = await _reader.ReadLineAsync().WithCancellation(cancellationToken);
                 // Somehow, we need to ignore lines starting with our user name? (see GH#60)
             } while (line == null || line.StartsWith(_userName));
             return line;
