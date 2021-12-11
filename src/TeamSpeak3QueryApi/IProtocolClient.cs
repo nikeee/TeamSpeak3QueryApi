@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Renci.SshNet;
-using Renci.SshNet.Common;
 
 namespace TeamSpeak3QueryApi.Net
 {
