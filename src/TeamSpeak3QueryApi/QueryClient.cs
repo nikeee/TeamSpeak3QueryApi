@@ -333,14 +333,11 @@ namespace TeamSpeak3QueryApi.Net
                 return; // going short here
 
             var notName = NormalizeNotificationName(notification.Name);
-            if (_subscriptions.ContainsKey(notName))
-            {
-                var cbs = _subscriptions[notName];
-                for (int i = 0; i < cbs.Count; ++i)
-                {
-                    cbs[i]?.Invoke(notification.Data);
-                }
-            }
+            if (!_subscriptions.TryGetValue(notName, out var cbs))
+                return;
+
+            for (int i = 0; i < cbs.Count; ++i)
+                cbs[i]?.Invoke(notification.Data);
         }
 
         private CancellationTokenSource ResponseProcessingLoop()
