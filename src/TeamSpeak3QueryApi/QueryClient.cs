@@ -50,9 +50,9 @@ namespace TeamSpeak3QueryApi.Net
         public QueryClient(string hostName) : this(hostName, DefaultPort) { }
         /// <summary>Creates a new instance of <see cref="TeamSpeak3QueryApi.Net.QueryClient"/> using the provided host TCP port.</summary>
         /// <param name="hostName">The host name of the remote server.</param>
-        /// <param name="port">The TCP port of the Query API server.</param>
-        public QueryClient(string hostName, ushort port) : this(hostName, port, null) { }
-        public QueryClient(string hostName, ushort port, IProtocol? protocol)
+        /// <param name="port">The TCP/SSH port of the Query API server.</param>
+        /// <param name="protocol">The protocol handler to use, for example <see cref="TeamSpeak3QueryApi.Net.RawTcpProtocol"/> or <see cref="TeamSpeak3QueryApi.Net.SshProtocol"/>.</param>
+        public QueryClient(string hostName, ushort port, IProtocol? protocol = null)
         {
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException(nameof(hostName));
