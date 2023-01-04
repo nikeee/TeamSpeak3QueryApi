@@ -1,8 +1,7 @@
-namespace TeamSpeak3QueryApi.Net.Specialized
+namespace TeamSpeak3QueryApi.Net.Specialized;
+
+public enum KickOrigin
 {
-    public enum KickOrigin
-    {
-        Channel = 4,
-        Server = 5
-    }
+    Channel = 4,
+    Server = 5
 }

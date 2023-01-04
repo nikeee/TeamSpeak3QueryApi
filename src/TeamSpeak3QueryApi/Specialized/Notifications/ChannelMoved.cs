@@ -1,14 +1,13 @@
-namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
+namespace TeamSpeak3QueryApi.Net.Specialized.Notifications;
+
+public class ChannelMoved : InvokerInformation
 {
-    public class ChannelMoved : InvokerInformation
-    {
-        [QuerySerialize("cid")]
-        public int ChannelId;
+    [QuerySerialize("cid")]
+    public int ChannelId;
 
-        [QuerySerialize("cpid")]
-        public int ParentChannelId;
+    [QuerySerialize("cpid")]
+    public int ParentChannelId;
 
-        [QuerySerialize("order")]
-        public int Order;
-    }
+    [QuerySerialize("order")]
+    public int Order;
 }

@@ -2,23 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TeamSpeak3QueryApi.Net.Specialized.Responses
+namespace TeamSpeak3QueryApi.Net.Specialized.Responses;
+
+public class InitDownload : Response
 {
-    public class InitDownload : Response
-    {
-        [QuerySerialize("clientftfid")]
-        public int ClientFileTransferId;
+    [QuerySerialize("clientftfid")]
+    public int ClientFileTransferId;
 
-        [QuerySerialize("serverftfid")]
-        public int ServerFileTransferId;
+    [QuerySerialize("serverftfid")]
+    public int ServerFileTransferId;
 
-        [QuerySerialize("ftkey")]
-        public string FileTransferKey;
+    [QuerySerialize("ftkey")]
+    public string FileTransferKey;
 
-        [QuerySerialize("port")]
-        public int Port;
+    [QuerySerialize("port")]
+    public int Port;
 
-        [QuerySerialize("size")]
-        public long Size;
-    }
+    [QuerySerialize("size")]
+    public long Size;
 }

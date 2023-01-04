@@ -1,8 +1,7 @@
-namespace TeamSpeak3QueryApi.Net.Specialized.Responses
+namespace TeamSpeak3QueryApi.Net.Specialized.Responses;
+
+public class CreatedChannel : Response
 {
-    public class CreatedChannel : Response
-    {
-        [QuerySerialize("cid")]
-        public int Id;
-    }
+    [QuerySerialize("cid")]
+    public int Id;
 }

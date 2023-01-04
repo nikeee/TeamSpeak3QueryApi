@@ -1,8 +1,7 @@
-namespace TeamSpeak3QueryApi.Net.Specialized.Responses
+namespace TeamSpeak3QueryApi.Net.Specialized.Responses;
+
+public class ClientBan : Response
 {
-    public class ClientBan : Response
-    {
-        [QuerySerialize("banid")]
-        public int Id;
-    }
+    [QuerySerialize("banid")]
+    public int Id;
 }

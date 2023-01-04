@@ -1,7 +1,6 @@
-namespace TeamSpeak3QueryApi.Net.Specialized
+namespace TeamSpeak3QueryApi.Net.Specialized;
+
+interface ITeamSpeakSerializable
 {
-    interface ITeamSpeakSerializable
-    {
-        // Empty interfaces are bad, i know.
-    }
+    // Empty interfaces are bad, i know.
 }

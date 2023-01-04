@@ -1,17 +1,16 @@
-namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
+namespace TeamSpeak3QueryApi.Net.Specialized.Notifications;
+
+public abstract class InvokerInformation : Notification
 {
-    public abstract class InvokerInformation : Notification
-    {
-        [QuerySerialize("reasonid")]
-        public ReasonId Reason;
+    [QuerySerialize("reasonid")]
+    public ReasonId Reason;
 
-        [QuerySerialize("invokerid")]
-        public int InvokerId;
+    [QuerySerialize("invokerid")]
+    public int InvokerId;
 
-        [QuerySerialize("invokername")]
-        public string InvokerName;
+    [QuerySerialize("invokername")]
+    public string InvokerName;
 
-        [QuerySerialize("invokeruid")]
-        public string InvokerUid;
-    }
+    [QuerySerialize("invokeruid")]
+    public string InvokerUid;
 }

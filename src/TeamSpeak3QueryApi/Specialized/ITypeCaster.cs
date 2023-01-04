@@ -3,139 +3,138 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace TeamSpeak3QueryApi.Net.Specialized
+namespace TeamSpeak3QueryApi.Net.Specialized;
+
+interface ITypeCaster
 {
-    interface ITypeCaster
+    dynamic Cast(object source);
+}
+
+class Int16TypeCaster : ITypeCaster
+{
+    public virtual dynamic Cast(object source)
     {
-        dynamic Cast(object source);
+        if (source == null)
+            return (short)0;
+        if (source is short)
+            return (short)source;
+        return short.Parse(source.ToString());
     }
+}
 
-    class Int16TypeCaster : ITypeCaster
+class Int32TypeCaster : ITypeCaster
+{
+    public virtual dynamic Cast(object source)
     {
-        public virtual dynamic Cast(object source)
-        {
-            if (source == null)
-                return (short)0;
-            if (source is short)
-                return (short)source;
-            return short.Parse(source.ToString());
-        }
+        if (source == null)
+            return 0;
+        if (source is int)
+            return (int)source;
+        return int.Parse(source.ToString());
     }
+}
 
-    class Int32TypeCaster : ITypeCaster
+class Int64TypeCaster : ITypeCaster
+{
+    public virtual dynamic Cast(object source)
     {
-        public virtual dynamic Cast(object source)
-        {
-            if (source == null)
-                return 0;
-            if (source is int)
-                return (int)source;
-            return int.Parse(source.ToString());
-        }
+        if (source == null)
+            return 0;
+        if (source is long)
+            return (long)source;
+        return long.Parse(source.ToString());
     }
+}
 
-    class Int64TypeCaster : ITypeCaster
+class EnumTypeCaster<T> : Int32TypeCaster where T : struct
+{
+    public override dynamic Cast(object source)
     {
-        public virtual dynamic Cast(object source)
-        {
-            if (source == null)
-                return 0;
-            if (source is long)
-                return (long)source;
-            return long.Parse(source.ToString());
-        }
+        var i = base.Cast(source);
+        return (T)i;
     }
+}
 
-    class EnumTypeCaster<T> : Int32TypeCaster where T : struct
+class StringTypeCaster : ITypeCaster
+{
+    public dynamic Cast(object source)
     {
-        public override dynamic Cast(object source)
-        {
-            var i = base.Cast(source);
-            return (T)i;
-        }
+        if (source == null)
+            return null;
+        if (source is int)
+            return ((int)source).ToString().TeamSpeakUnescape();
+        return source.ToString().TeamSpeakUnescape();
     }
+}
 
-    class StringTypeCaster : ITypeCaster
+class BooleanTypeCaster : ITypeCaster
+{
+    public dynamic Cast(object source)
     {
-        public dynamic Cast(object source)
-        {
-            if (source == null)
-                return null;
-            if (source is int)
-                return ((int)source).ToString().TeamSpeakUnescape();
-            return source.ToString().TeamSpeakUnescape();
-        }
+        if (source == null)
+            return false;
+        if (source is int)
+            return ((int)source) != 0;
+        return int.Parse(source.ToString()) != 0;
     }
+}
 
-    class BooleanTypeCaster : ITypeCaster
+class TimeSpanTypeCaster : ITypeCaster
+{
+    public dynamic Cast(object source)
     {
-        public dynamic Cast(object source)
-        {
-            if (source == null)
-                return false;
-            if (source is int)
-                return ((int)source) != 0;
-            return int.Parse(source.ToString()) != 0;
-        }
+        if (source == null)
+            return false;
+        if (source is int)
+            return TimeSpan.FromSeconds((int)source);
+        return TimeSpan.FromSeconds(int.Parse(source.ToString()));
     }
+}
 
-    class TimeSpanTypeCaster : ITypeCaster
+class DateTimeTypeCaster : ITypeCaster
+{
+    public dynamic Cast(object source)
     {
-        public dynamic Cast(object source)
-        {
-            if (source == null)
-                return false;
-            if (source is int)
-                return TimeSpan.FromSeconds((int)source);
-            return TimeSpan.FromSeconds(int.Parse(source.ToString()));
-        }
+        if (source == null)
+            return false;
+
+        long unixTimestamp;
+
+        if (source is long)
+            unixTimestamp = (long)source;
+        else
+            unixTimestamp = long.Parse(source.ToString());
+
+        return DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime;
     }
+}
 
-    class DateTimeTypeCaster : ITypeCaster
+class ReadonlyListIntCaster : ITypeCaster
+{
+    public dynamic Cast(object source)
     {
-        public dynamic Cast(object source)
-        {
-            if (source == null)
-                return false;
+        if (source == null)
+            return false;
+        if (source is int)
+            return new List<int> { (int)source };
 
-            long unixTimestamp;
+        var sourceStr = source as string;
 
-            if (source is long)
-                unixTimestamp = (long)source;
-            else
-                unixTimestamp = long.Parse(source.ToString());
-
-            return DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime;
-        }
+        if (string.IsNullOrWhiteSpace(sourceStr))
+            return null;
+        
+        return sourceStr.Split(',').Select(int.Parse).ToList();
     }
+}
 
-    class ReadonlyListIntCaster : ITypeCaster
+class DoubleTypeCaster : ITypeCaster
+{
+    public virtual dynamic Cast(object source)
     {
-        public dynamic Cast(object source)
-        {
-            if (source == null)
-                return false;
-            if (source is int)
-                return new List<int> { (int)source };
-
-            var sourceStr = source as string;
-
-            if (string.IsNullOrWhiteSpace(sourceStr))
-                return null;
-            
-            return sourceStr.Split(',').Select(int.Parse).ToList();
-        }
-    }
-
-    class DoubleTypeCaster : ITypeCaster
-    {
-        public virtual dynamic Cast(object source)
-        {
-            if (source == null)
-                return 0.0;
-            if (source is double)
-                return (double)source;
-            return double.Parse(source.ToString(), CultureInfo.InvariantCulture);
-        }
+        if (source == null)
+            return 0.0;
+        if (source is double)
+            return (double)source;
+        return double.Parse(source.ToString(), CultureInfo.InvariantCulture);
     }
 }

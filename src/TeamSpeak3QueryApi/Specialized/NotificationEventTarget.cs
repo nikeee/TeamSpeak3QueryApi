@@ -1,11 +1,10 @@
-namespace TeamSpeak3QueryApi.Net.Specialized
+namespace TeamSpeak3QueryApi.Net.Specialized;
+
+internal enum NotificationEventTarget
 {
-    internal enum NotificationEventTarget
-    {
-        Server,
-        Channel,
-        TextServer,
-        TextChannel,
-        TextPrivate
-    }
+    Server,
+    Channel,
+    TextServer,
+    TextChannel,
+    TextPrivate
 }

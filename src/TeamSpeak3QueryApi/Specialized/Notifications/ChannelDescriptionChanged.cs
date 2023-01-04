@@ -1,8 +1,7 @@
-namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
+namespace TeamSpeak3QueryApi.Net.Specialized.Notifications;
+
+public class ChannelDescriptionChanged : Notification
 {
-    public class ChannelDescriptionChanged : Notification
-    {
-        [QuerySerialize("cid")]
-        public int ChannelId;
-    }
+    [QuerySerialize("cid")]
+    public int ChannelId;
 }

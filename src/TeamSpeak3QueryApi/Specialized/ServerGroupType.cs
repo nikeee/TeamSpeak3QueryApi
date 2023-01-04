@@ -1,9 +1,8 @@
-namespace TeamSpeak3QueryApi.Net.Specialized
+namespace TeamSpeak3QueryApi.Net.Specialized;
+
+public enum ServerGroupType
 {
-    public enum ServerGroupType
-    {
-        TemplateGroup = 0,
-        NormalGroup = 1,
-        QueryGroup = 2
-    }
+    TemplateGroup = 0,
+    NormalGroup = 1,
+    QueryGroup = 2
 }

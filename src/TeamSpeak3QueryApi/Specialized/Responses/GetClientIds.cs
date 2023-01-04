@@ -1,14 +1,13 @@
-namespace TeamSpeak3QueryApi.Net.Specialized.Responses
+namespace TeamSpeak3QueryApi.Net.Specialized.Responses;
+
+public class GetClientIds : Response
 {
-    public class GetClientIds : Response
-    {
-        [QuerySerialize("clid")]
-        public int ClientId;
+    [QuerySerialize("clid")]
+    public int ClientId;
 
-        [QuerySerialize("cluid")]
-        public string ClientUid;
+    [QuerySerialize("cluid")]
+    public string ClientUid;
 
-        [QuerySerialize("name")]
-        public string Nickname;
-    }
+    [QuerySerialize("name")]
+    public string Nickname;
 }

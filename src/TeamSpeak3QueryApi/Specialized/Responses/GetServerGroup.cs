@@ -1,14 +1,13 @@
-namespace TeamSpeak3QueryApi.Net.Specialized.Responses
+namespace TeamSpeak3QueryApi.Net.Specialized.Responses;
+
+public class GetServerGroup : Response
 {
-    public class GetServerGroup : Response
-    {
-        [QuerySerialize("sgid")]
-        public int Id;
+    [QuerySerialize("sgid")]
+    public int Id;
 
-        [QuerySerialize("name")]
-        public string Name;
+    [QuerySerialize("name")]
+    public string Name;
 
-        [QuerySerialize("cldbid")]
-        public int ClientDatabaseId;
-    }
+    [QuerySerialize("cldbid")]
+    public int ClientDatabaseId;
 }

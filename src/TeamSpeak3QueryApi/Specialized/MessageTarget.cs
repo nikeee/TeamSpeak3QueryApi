@@ -1,9 +1,8 @@
-namespace TeamSpeak3QueryApi.Net.Specialized
+namespace TeamSpeak3QueryApi.Net.Specialized;
+
+public enum MessageTarget
 {
-    public enum MessageTarget
-    {
-        Private = 1,
-        Channel = 2,
-        Server = 3
-    }
+    Private = 1,
+    Channel = 2,
+    Server = 3
 }

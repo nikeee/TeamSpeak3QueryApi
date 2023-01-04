@@ -1,34 +1,33 @@
 using System;
 
-namespace TeamSpeak3QueryApi.Net.Specialized.Notifications
+namespace TeamSpeak3QueryApi.Net.Specialized.Notifications;
+
+public class ClientLeftView : Notification
 {
-    public class ClientLeftView : Notification
-    {
-        [QuerySerialize("cfid")]
-        public int SourceChannelId;
+    [QuerySerialize("cfid")]
+    public int SourceChannelId;
 
-        [QuerySerialize("ctid")]
-        public int TargetChannelId; // „0“ bei Verlassen
+    [QuerySerialize("ctid")]
+    public int TargetChannelId; // „0“ bei Verlassen
 
-        [QuerySerialize("reasonid")]
-        public ReasonId Reason;
+    [QuerySerialize("reasonid")]
+    public ReasonId Reason;
 
-        [QuerySerialize("clid")]
-        public int Id;
+    [QuerySerialize("clid")]
+    public int Id;
 
-        [QuerySerialize("invokerid")]
-        public int InvokerId;
+    [QuerySerialize("invokerid")]
+    public int InvokerId;
 
-        [QuerySerialize("invokername")]
-        public string InvokerName;
+    [QuerySerialize("invokername")]
+    public string InvokerName;
 
-        [QuerySerialize("invokeruid")]
-        public string InvokerUid;
+    [QuerySerialize("invokeruid")]
+    public string InvokerUid;
 
-        [QuerySerialize("reasonmsg")]
-        public string ReasonMessage;
+    [QuerySerialize("reasonmsg")]
+    public string ReasonMessage;
 
-        [QuerySerialize("bantime")]
-        public TimeSpan BanTime;
-    }
+    [QuerySerialize("bantime")]
+    public TimeSpan BanTime;
 }
